@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, ScrollView, Text, TouchableOpacity, StyleSheet, TextInput, View } from 'react-native';
+import { Modal, ScrollView, Text, TextInput, TouchableOpacity, StyleSheet, View } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -51,7 +51,6 @@ const Garages = () => {
       <ScrollView>
         {garageNames.map((garageName, index) => (
           <View
-            key={garageName}
             style={styles.garageListContainer}
           >
             <TouchableOpacity onPress={() => showCarList(garageName)}>
@@ -189,6 +188,7 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 15,
     margin: 10,
+    marginLeft: 15,
     color: 'black'
   },
   textInput: {

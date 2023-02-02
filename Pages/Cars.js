@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import { Alert, ScrollView, Text, TextInput, TouchableOpacity, View, } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -37,17 +37,66 @@ const Cars = ({ addGarage }) => {
     setGarageNames(updatedGarageNames);
   };
 
-  const addCar = async () => {
+  const addNewCar = async () => {
+
     if (!carName) {
+      Alert.alert('Error', "Car name can not be empty.");
       return;
     }
 
+    if (carName.includes(']')) {
+      Alert.alert('Error', 'Car name can not contain " ] " character.');
+      return;
+    }
+
+    carNameWithGarageName = '[' + selectedGarage + '] ' + carName;
+
     try {
+
       const garageCars = await retrieveData(`${selectedGarage}_cars`);
-      const cars = [...garageCars, carName];
-      await AsyncStorage.setItem(`${selectedGarage}_cars`, JSON.stringify(cars));
-      setAllCars(cars);
-      console.log(allCars)
+      const updatedGarageCars = [...garageCars, carNameWithGarageName];
+      await AsyncStorage.setItem(`${selectedGarage}_cars`, JSON.stringify(updatedGarageCars));
+
+      const allCarNames = [];
+
+      for (const garageName of garageNames) {
+        const garageCars = await retrieveData(`${garageName}_cars`);
+        allCarNames.push(...garageCars);
+      }
+
+      allCarNames.sort();
+      setAllCars(allCarNames);
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const deleteCar = async (carNameWithGarageName) => {
+
+    try {
+
+      const garageNameEndIndex = carNameWithGarageName.indexOf(']');
+      const nameofTheGarage = carNameWithGarageName.substr(1, garageNameEndIndex - 1);
+      const carToRemove = carNameWithGarageName.substr(garageNameEndIndex + 2);
+
+      // Find and remove the car from specific garage
+      const garageCars = await retrieveData(`${nameofTheGarage}_cars`);
+      const updatedGarageCars = garageCars.filter(e => e !== carNameWithGarageName);
+
+      await AsyncStorage.setItem(`${nameofTheGarage}_cars`, JSON.stringify(updatedGarageCars));
+
+      // Update the car list
+      const allCarNames = [];
+
+      for (const garageName of garageNames) {
+        const garageCars = await retrieveData(`${garageName}_cars`);
+        allCarNames.push(...garageCars);
+      }
+
+      allCarNames.sort();
+      setAllCars(allCarNames);
+
     } catch (error) {
       console.error(error);
     }
@@ -73,7 +122,7 @@ const Cars = ({ addGarage }) => {
 
           <TouchableOpacity
             style={{ marginLeft: 'auto' }}
-            onPress={() => handleDelete(carName)}
+            onPress={() => deleteCar(carName)}
           >
             <Text style={{color: 'red'}}>Delete</Text>
           </TouchableOpacity>
@@ -107,13 +156,13 @@ const Cars = ({ addGarage }) => {
           prompt='Your Garages'
           >
             {garageNames.map(name => (
-              <Picker.Item key={name} label={name} value={name} color='black' />
+              <Picker.Item label={name} value={name} color='black' />
             ))}
         </Picker>
       </View>
 
       <TouchableOpacity
-        onPress={addCar}
+        onPress={addNewCar}
         style={{
           height: 40,
           backgroundColor: '#009A44',
