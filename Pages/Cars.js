@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-community/async-storage';
+import { Picker } from '@react-native-picker/picker';
+import { GarageContext } from '../Context/GarageContext';
 
 const Cars = () => {
 
-  const [garageNames, setGarageNames] = useState([]);
+  const { garageNames, setGarageNames } = useContext(GarageContext);
   const [allCars, setAllCars] = useState([]);
   const [carName, setCarName] = useState('');
   const [selectedGarage, setSelectedGarage] = useState('');
@@ -138,7 +139,7 @@ const Cars = () => {
 
               <TouchableOpacity
                 style={{ marginLeft: 'auto' }}>
-                <Text style={{ color: 'black' }}>{'[' + carName.substr(1, carName.indexOf(']') - 1) + ']'}</Text>
+                <Text style={{ color: 'black', fontStyle: 'italic' }}>{carName.substr(1, carName.indexOf(']') - 1)}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -151,9 +152,9 @@ const Cars = () => {
         ))}
       </ScrollView>
 
-      <View style={{ flexDirection: 'row', alignItems: 'center', margin: 10 }}>
+      <View style={styles.addNewCarContainer}>
         <TextInput
-          style={styles.addNewCarContainer}
+          style={styles.newCarName}
           onChangeText={text => setCarName(text)}
           value={carName}
           placeholder="Car Name"
@@ -198,6 +199,13 @@ const retrieveData = async key => {
 };
 
 const styles = StyleSheet.create({
+  addNewCarContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    margin: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#ccc'
+  },
   button: {
     padding: 10,
     backgroundColor: '#2D640F',
@@ -205,20 +213,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     margin: 10
   },
-  addNewCarContainer: {
-    height: 40,
-    borderColor: 'gray',
-    color: 'black',
-    borderWidth: 1,
-    flex: 1,
-    marginRight: 10
-  },
   carListContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc'
+  },
+  newCarName: {
+    height: 40,
+    borderColor: 'gray',
+    color: 'black',
+    borderWidth: 1,
+    flex: 1,
+    marginRight: 10
   },
   picketContainer: {
     height: 40,
