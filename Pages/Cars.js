@@ -129,26 +129,26 @@ const Cars = () => {
             style={styles.carListContainer}
           >
 
-          <View style={{ flex: 1, flexDirection:'row' }}>
-            <TouchableOpacity>
-              <Text style={{color: 'black', fontWeight: 'bold'}}>
-                {carName.substr(carName.indexOf(']') + 2)}
+            <View style={{ flex: 1, flexDirection: 'row' }}>
+              <TouchableOpacity>
+                <Text style={{ color: 'black', fontWeight: 'bold' }}>
+                  {carName.substr(carName.indexOf(']') + 2)}
                 </Text>
-            </TouchableOpacity>
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              style={{ marginLeft: 'auto' }}>
-              <Text style={{ color: 'black' }}>{'[' + carName.substr(1, carName.indexOf(']') - 1) + ']'}</Text>
-            </TouchableOpacity>
+              <TouchableOpacity
+                style={{ marginLeft: 'auto' }}>
+                <Text style={{ color: 'black' }}>{'[' + carName.substr(1, carName.indexOf(']') - 1) + ']'}</Text>
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              style={{ marginLeft: 'auto' }}
-              onPress={() => removeCar(carName)}>
-              <Text style={{color: 'red'}}>Remove</Text>
-            </TouchableOpacity>
+              <TouchableOpacity
+                style={{ marginLeft: 'auto' }}
+                onPress={() => removeCar(carName)}>
+                <Text style={{ color: 'red' }}>Remove</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      ))}
+        ))}
       </ScrollView>
 
       <View style={{ flexDirection: 'row', alignItems: 'center', margin: 10 }}>
@@ -164,12 +164,12 @@ const Cars = () => {
           selectedValue={selectedGarage}
           style={styles.picketContainer}
           onValueChange={itemValue => setSelectedGarage(itemValue)}
-          dropdownIconColor= 'black'
+          dropdownIconColor='black'
           prompt='Your Garages'>
 
-            {garageNames.map(name => (
-              <Picker.Item label={name} value={name} color='black' />
-            ))}
+          {garageNames.map(name => (
+            <Picker.Item label={name} value={name} color='black' />
+          ))}
 
         </Picker>
       </View>
@@ -177,7 +177,7 @@ const Cars = () => {
       <TouchableOpacity
         onPress={addNewCar}
         style={styles.button}
-        >
+      >
         <Text style={{ color: 'white' }}>Add New Car</Text>
       </TouchableOpacity>
     </View>
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     color: 'black',
-    borderWidth:0.5,
+    borderWidth: 0.5,
     margin: 10
   }
 });

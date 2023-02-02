@@ -52,12 +52,12 @@ const Garages = () => {
           text: 'OK',
           onPress: async () => {
             try {
-            const newGarageNames = garageNames.filter((_, i) => i !== index);
-            setGarageNames(newGarageNames);
-            await AsyncStorage.setItem('garageNames', JSON.stringify(newGarageNames));
+              const newGarageNames = garageNames.filter((_, i) => i !== index);
+              setGarageNames(newGarageNames);
+              await AsyncStorage.setItem('garageNames', JSON.stringify(newGarageNames));
 
-            const emptyGarageCars = [];
-            await AsyncStorage.setItem(`${garageName}_cars`, JSON.stringify(emptyGarageCars));
+              const emptyGarageCars = [];
+              await AsyncStorage.setItem(`${garageName}_cars`, JSON.stringify(emptyGarageCars));
             } catch (error) {
               console.error(error);
             }
@@ -76,16 +76,16 @@ const Garages = () => {
             style={styles.garageListContainer}
           >
             <TouchableOpacity onPress={() => showCarList(garageName)}>
-              <Text style={{color: 'black', fontWeight: 'bold'}}>{garageName}</Text>
+              <Text style={{ color: 'black', fontWeight: 'bold' }}>{garageName}</Text>
             </TouchableOpacity>
 
             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
               <TouchableOpacity style={{ marginRight: 20 }}>
-                <Text style={{color: 'blue'}}>Edit</Text>
+                <Text style={{ color: 'blue' }}>Edit</Text>
               </TouchableOpacity>
 
               <TouchableOpacity onPress={() => deleteGarage(index, garageName)}>
-                <Text style={{color: 'red'}}>Delete</Text>
+                <Text style={{ color: 'red' }}>Delete</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -118,26 +118,26 @@ const Garages = () => {
               onChangeText={setNewGarageName}
               placeholder="Garage Name"
               placeholderTextColor="grey"
-              style= {styles.textInput}
+              style={styles.textInput}
             />
 
             <TouchableOpacity
               onPress={addGarage}
               style={styles.button}
-              >
-              <Text style={{color: 'white'}}>Save</Text>
+            >
+              <Text style={{ color: 'white' }}>Save</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
 
       <Modal
-      animationType="fade"
-      transparent={false}
-      visible={showCarsModalVisible}
-      onRequestClose={() => {
-        setShowCarsModalVisible(false);
-      }}
+        animationType="fade"
+        transparent={false}
+        visible={showCarsModalVisible}
+        onRequestClose={() => {
+          setShowCarsModalVisible(false);
+        }}
       >
         <View style={{ backgroundColor: '#2D640F', justifyContent: 'center', height: 50 }}>
           <Text style={styles.header}>Cars in {lastSelectedGarageName}</Text>
@@ -150,7 +150,7 @@ const Garages = () => {
                 style={styles.carListContainer}
               >
                 <TouchableOpacity>
-                  <Text style={{color: 'black'}}>{carName}</Text>
+                  <Text style={{ color: 'black' }}>{carName}</Text>
                 </TouchableOpacity>
               </View>
             ))}
@@ -160,7 +160,7 @@ const Garages = () => {
               onPress={() => setShowCarsModalVisible(false)}
               style={styles.button}
             >
-              <Text style={{color: 'white'}}>Close</Text>
+              <Text style={{ color: 'white' }}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     color: 'black',
-    borderWidth:0.5,
+    borderWidth: 0.5,
     margin: 10
   }
 });
