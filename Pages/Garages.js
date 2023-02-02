@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, ScrollView, Text, TextInput, TouchableOpacity, StyleSheet, View } from 'react-native';
+import { Alert, Modal, ScrollView, Text, TextInput, TouchableOpacity, StyleSheet, View } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -8,13 +8,14 @@ const Garages = () => {
   const [garageNames, setGarageNames] = useState([]);
   const [carNames, setCarNames] = useState([]);
   const [newGarageName, setNewGarageName] = useState("");
+  const [lastSelectedGarageName, setLastSelectedGarageName] = useState("");
 
   // Modals
   const [addGarageModalVisible, setAddGarageModalVisible] = useState(false);
   const [showCarsModalVisible, setShowCarsModalVisible] = useState(false);
 
   useEffect(() => {
-    // get the list of garage names from local storage
+    // Get the list of garage names from local storage
     const getGarageNames = async () => {
       const names = await retrieveData('garageNames');
       setGarageNames(names);
@@ -23,27 +24,48 @@ const Garages = () => {
   }, []);
 
   const showCarList = async (garageName) => {
-    // get the list of cars for the selected garage from local storage
+    setLastSelectedGarageName(garageName);
+    // Get the list of cars for the selected garage from local storage
     const carNames = await retrieveData(`${garageName}_cars`);
     setCarNames(carNames);
-    console.log(carNames)
     setShowCarsModalVisible(true);
   };
 
-  const addGarage = async (updateGarageNames) => {
+  const addGarage = async () => {
     setAddGarageModalVisible(false);
-    setNewGarageName("");
+    setNewGarageName('');
     garageNames.push(newGarageName);
     setGarageNames([...garageNames]);
-    await AsyncStorage.setItem("garageNames", JSON.stringify(garageNames));
-    updateGarageNames();
+    await AsyncStorage.setItem('garageNames', JSON.stringify(garageNames));
   };
 
-  const deleteGarage = async (index, updateGarageNames) => {
-    const newGarageNames = garageNames.filter((_, i) => i !== index);
-    setGarageNames(newGarageNames);
-    await AsyncStorage.setItem("garageNames", JSON.stringify(newGarageNames));
-    updateGarageNames();
+  const deleteGarage = async (index, garageName) => {
+    Alert.alert(
+      'Delete Garage',
+      'Are you sure you want to remove ' + garageName + '?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: async () => {
+            try {
+            const newGarageNames = garageNames.filter((_, i) => i !== index);
+            setGarageNames(newGarageNames);
+            await AsyncStorage.setItem('garageNames', JSON.stringify(newGarageNames));
+
+            const emptyGarageCars = [];
+            await AsyncStorage.setItem(`${garageName}_cars`, JSON.stringify(emptyGarageCars));
+            } catch (error) {
+              console.error(error);
+            }
+          },
+        },
+      ],
+      { cancelable: false }
+    );
   };
 
   return (
@@ -54,15 +76,18 @@ const Garages = () => {
             style={styles.garageListContainer}
           >
             <TouchableOpacity onPress={() => showCarList(garageName)}>
-              <Text style={{color: 'black'}}>{garageName}</Text>
+              <Text style={{color: 'black', fontWeight: 'bold'}}>{garageName}</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={{ marginLeft: 'auto' }}
-              onPress={() => deleteGarage(index)}
-            >
-              <Text style={{color: 'red'}}>Delete</Text>
-            </TouchableOpacity>
+            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
+              <TouchableOpacity style={{ marginRight: 20 }}>
+                <Text style={{color: 'blue'}}>Edit</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={() => deleteGarage(index, garageName)}>
+                <Text style={{color: 'red'}}>Delete</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         ))}
       </ScrollView>
@@ -71,7 +96,7 @@ const Garages = () => {
         onPress={() => setAddGarageModalVisible(true)}
         style={styles.button}
       >
-        <Text style={{ color: "white" }}>Add Garage</Text>
+        <Text style={{ color: "white" }}>Add New Garage</Text>
       </TouchableOpacity>
 
       <Modal
@@ -82,7 +107,11 @@ const Garages = () => {
           setAddGarageModalVisible(false);
         }}
       >
-        <View style={{ marginTop: 22 }}>
+        <View style={{ backgroundColor: '#2D640F', justifyContent: 'center', height: 50 }}>
+          <Text style={styles.header}>Add New Garage</Text>
+        </View>
+
+        <View style={{ marginTop: 10 }}>
           <View>
             <TextInput
               value={newGarageName}
@@ -103,17 +132,19 @@ const Garages = () => {
       </Modal>
 
       <Modal
-        animationType="slide"
-        transparent={false}
-        visible={showCarsModalVisible}
-        onRequestClose={() => {
-          setShowCarsModalVisible(false);
-        }}
+      animationType="fade"
+      transparent={false}
+      visible={showCarsModalVisible}
+      onRequestClose={() => {
+        setShowCarsModalVisible(false);
+      }}
       >
-        <View style={{ marginTop: 20 }}>
-          <View>
-            <Text style={styles.header}>Cars In This Garage:</Text>
+        <View style={{ backgroundColor: '#2D640F', justifyContent: 'center', height: 50 }}>
+          <Text style={styles.header}>Cars in {lastSelectedGarageName}</Text>
+        </View>
 
+        <View style={{ marginTop: 10 }}>
+          <View>
             <ScrollView>{carNames.map((carName, index) => (
               <View
                 style={styles.carListContainer}
@@ -154,16 +185,10 @@ const retrieveData = async (key) => {
 const styles = StyleSheet.create({
   button: {
     padding: 10,
-    backgroundColor: '#009A44',
+    backgroundColor: '#2D640F',
     alignItems: 'center',
     justifyContent: 'center',
     margin: 10
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
   },
   garageContainer: {
     backgroundColor: "#ddd",
@@ -186,23 +211,15 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ccc'
   },
   header: {
-    fontSize: 15,
-    margin: 10,
-    marginLeft: 15,
-    color: 'black'
+    fontWeight: 'bold',
+    fontSize: 20,
+    padding: 10,
+    color: 'white'
   },
   textInput: {
     color: 'black',
     borderWidth:0.5,
     margin: 10
-  },
-  title: {
-    color:'black',
-    marginLeft: 15
-  },
-  pickerContainer: {
-    width: "100%",
-    marginTop: 20,
   }
 });
 
