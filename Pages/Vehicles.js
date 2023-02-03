@@ -126,20 +126,19 @@ const Vehicles = () => {
             style={styles.vehicleListContainer}
           >
 
-            <View style={{ flex: 1, flexDirection: 'row' }}>
-              <TouchableOpacity>
-                <Text style={{ color: 'black', fontWeight: 'bold' }}>
-                  {vehicleName.substr(vehicleName.indexOf(']') + 2)}
-                </Text>
+            <TouchableOpacity>
+              <Text style={{ color: 'black', fontWeight: 'bold' }}>
+                {vehicleName.substr(vehicleName.indexOf(']') + 2)}
+              </Text>
+            </TouchableOpacity>
+
+            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
+              <TouchableOpacity
+                style={{ marginRight: 20 }}>
+                <Text style={{ color: 'black', fontStyle: 'italic' }}>{'in ' + vehicleName.substr(1, vehicleName.indexOf(']') - 1)}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={{ marginLeft: 'auto' }}>
-                <Text style={{ color: 'black', fontStyle: 'italic' }}>{vehicleName.substr(1, vehicleName.indexOf(']') - 1)}</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={{ marginLeft: 'auto' }}
                 onPress={() => removeVehicle(vehicleName)}>
                 <Text style={{ color: 'red' }}>Remove</Text>
               </TouchableOpacity>
