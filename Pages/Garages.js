@@ -13,7 +13,7 @@ const Garages = () => {
   const [garageVehicleNames, setGarageVehicleNames] = useState([]);             // Used for displaying cars in a garage.
   const [garageObjectIndex, setGarageObjectIndex] = useState("");               // Used when removing the previous car when editing garage.
   const [garageObjectVehicles, setGarageObjectVehicles] = useState("");         // Used for transfering vehicles when editing garage.
-  const [lastSelectedGarageObject, setLastSelectedGarageObject] = useState(""); // Used when showing "Cars in (garage)" header.
+  const [lastSelectedGarageObject, setLastSelectedGarageObject] = useState({}); // Used when showing "Cars in (garage)" header.
 
   // Modals
   const [addGarageModalVisible, setAddGarageModalVisible] = useState(false);
@@ -49,6 +49,15 @@ const Garages = () => {
   };
 
   const addGarageObject = async () => {
+
+    const garageWithSameName = garageObjects.filter(function (garageObj) {
+      return garageObj.name === garageObject.name;
+    });
+
+    if (garageWithSameName.length !== 0) {
+        Alert.alert('Add New Garage', "Garage name already exists.");
+        return;
+    }
 
     garageObjects.push(garageObject);
     garageObjects.sort(compareGarages);
@@ -347,7 +356,7 @@ const Garages = () => {
 
         <View style={{ marginTop: 10 }}>
           <View>
-            <ScrollView>{lastSelectedGarageObject.vehicles.map((vehicleName) => (
+            <ScrollView>{lastSelectedGarageObject.vehicles && lastSelectedGarageObject.vehicles.map((vehicleName) => (
               <View
                 style={styles.vehicleListContainer}
               >
