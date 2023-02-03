@@ -3,12 +3,13 @@ import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View,
 import AsyncStorage from '@react-native-community/async-storage';
 import { Picker } from '@react-native-picker/picker';
 import { GarageContext } from '../Context/GarageContext';
+import { VehicleContext } from '../Context/VehicleContext';
 
-const Cars = () => {
+const Vehicles = () => {
 
   const { garageNames, setGarageNames } = useContext(GarageContext);
-  const [allCars, setAllCars] = useState([]);
-  const [carName, setCarName] = useState('');
+  const { vehicleNames, setVehicleNames } = useContext(VehicleContext);
+  const [newVehicleName, setNewVehicleName] = useState('');
   const [selectedGarage, setSelectedGarage] = useState('');
 
   useEffect(() => {
@@ -21,70 +22,65 @@ const Cars = () => {
   }, []);
 
   useEffect(() => {
-    // Get the list of all cars in all garages from local storage
-    const getCars = async () => {
-      const cars = [];
+    // Get the list of all vehicles in all garages from local storage
+    const getVehicles = async () => {
+      const vehicles = [];
       for (const garageName of garageNames) {
-        const garageCars = await retrieveData(`${garageName}_cars`);
-        cars.push(...garageCars);
+        const garageVehicles = await retrieveData(`${garageName}_vehicles`);
+        vehicles.push(...garageVehicles);
       }
-      cars.sort();
-      setAllCars(cars);
+      vehicles.sort();
+      setVehicleNames(vehicles);
     };
-    getCars();
+    getVehicles();
   }, [garageNames]);
 
-  const updateGarageNames = async () => {
-    const garageNames = await retrieveData('garageNames');
-    setGarageNames(garageNames);
-  };
+  const addNewVehicle = async () => {
 
-  const addNewCar = async () => {
-
-    if (!carName) {
-      Alert.alert('Add New Car', "Car name can not be empty.");
+    if (!newVehicleName) {
+      Alert.alert('Add New Vehicle', "Vehicle name can not be empty.");
       return;
     }
 
-    if (carName.includes(']')) {
-      Alert.alert('Add New Car', 'Car name can not contain " ] " character.');
+    if (newVehicleName.includes(']')) {
+      Alert.alert('Add New Vehicle', 'Vehicle name can not contain " ] " character.');
       return;
     }
 
-    carNameWithGarageName = '[' + selectedGarage + '] ' + carName;
+    vehicleNameWithGarageName = '[' + selectedGarage + '] ' + newVehicleName;
 
     try {
 
-      const garageCars = await retrieveData(`${selectedGarage}_cars`);
-      const updatedGarageCars = [...garageCars, carNameWithGarageName];
-      await AsyncStorage.setItem(`${selectedGarage}_cars`, JSON.stringify(updatedGarageCars));
+      const garageVehicles = await retrieveData(`${selectedGarage}_vehicles`);
+      const updatedGarageVehicles = [...garageVehicles, vehicleNameWithGarageName];
+      await AsyncStorage.setItem(`${selectedGarage}_vehicles`, JSON.stringify(updatedGarageVehicles));
 
-      const allCarNames = [];
+      const allVehicleNames = [];
 
       for (const garageName of garageNames) {
-        const garageCars = await retrieveData(`${garageName}_cars`);
-        allCarNames.push(...garageCars);
+        const garageVehicles = await retrieveData(`${garageName}_vehicles`);
+        allVehicleNames.push(...garageVehicles);
       }
 
-      allCarNames.sort();
-      setAllCars(allCarNames);
+      allVehicleNames.sort();
+      setVehicleNames(allVehicleNames);
 
-      setCarName('');
+      setNewVehicleName('');
 
     } catch (error) {
       console.error(error);
     }
   };
 
-  const removeCar = async (carNameWithGarageName) => {
+  const removeVehicle = async (vehicleNameWithGarageName) => {
 
-    const garageNameEndIndex = carNameWithGarageName.indexOf(']');
-    const nameofTheGarage = carNameWithGarageName.substr(1, garageNameEndIndex - 1);
-    const carToRemove = carNameWithGarageName.substr(garageNameEndIndex + 2);
+    const garageNameEndIndex = vehicleNameWithGarageName.indexOf(']');
+    const nameofTheGarage = vehicleNameWithGarageName.substr(1, garageNameEndIndex - 1);
+    const vehicleToRemove = vehicleNameWithGarageName.substr(garageNameEndIndex + 2);
 
     Alert.alert(
-      'Remove Car',
-      'Are you sure you want to remove ' + carToRemove + ' in ' + nameofTheGarage + '?',
+      'Remove Vehicle',
+      'Are you sure you want to remove ' + vehicleToRemove + ' in ' + nameofTheGarage + '?',
       [
         {
           text: 'Cancel',
@@ -95,22 +91,22 @@ const Cars = () => {
           onPress: async () => {
             try {
 
-              // Find and remove the car from specific garage
-              const garageCars = await retrieveData(`${nameofTheGarage}_cars`);
-              const updatedGarageCars = garageCars.filter(e => e !== carNameWithGarageName);
+              // Find and remove the vehicle from specific garage
+              const garageVehicles = await retrieveData(`${nameofTheGarage}_vehicles`);
+              const updatedGarageVehicles = garageVehicles.filter(e => e !== vehicleNameWithGarageName);
 
-              await AsyncStorage.setItem(`${nameofTheGarage}_cars`, JSON.stringify(updatedGarageCars));
+              await AsyncStorage.setItem(`${nameofTheGarage}_vehicles`, JSON.stringify(updatedGarageVehicles));
 
-              // Update the car list
-              const allCarNames = [];
+              // Update the vehicle list
+              const allVehicleNames = [];
 
               for (const garageName of garageNames) {
-                const garageCars = await retrieveData(`${garageName}_cars`);
-                allCarNames.push(...garageCars);
+                const garageVehicles = await retrieveData(`${garageName}_vehicles`);
+                allVehicleNames.push(...garageVehicles);
               }
 
-              allCarNames.sort();
-              setAllCars(allCarNames);
+              allVehicleNames.sort();
+              setVehicleNames(allVehicleNames);
 
             } catch (error) {
               console.error(error);
@@ -125,26 +121,26 @@ const Cars = () => {
   return (
     <View style={{ flex: 1 }}>
       <ScrollView>
-        {allCars.map((carName, index) => (
+        {vehicleNames.map((vehicleName, index) => (
           <View
-            style={styles.carListContainer}
+            style={styles.vehicleListContainer}
           >
 
             <View style={{ flex: 1, flexDirection: 'row' }}>
               <TouchableOpacity>
                 <Text style={{ color: 'black', fontWeight: 'bold' }}>
-                  {carName.substr(carName.indexOf(']') + 2)}
+                  {vehicleName.substr(vehicleName.indexOf(']') + 2)}
                 </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
                 style={{ marginLeft: 'auto' }}>
-                <Text style={{ color: 'black', fontStyle: 'italic' }}>{carName.substr(1, carName.indexOf(']') - 1)}</Text>
+                <Text style={{ color: 'black', fontStyle: 'italic' }}>{vehicleName.substr(1, vehicleName.indexOf(']') - 1)}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
                 style={{ marginLeft: 'auto' }}
-                onPress={() => removeCar(carName)}>
+                onPress={() => removeVehicle(vehicleName)}>
                 <Text style={{ color: 'red' }}>Remove</Text>
               </TouchableOpacity>
             </View>
@@ -152,12 +148,12 @@ const Cars = () => {
         ))}
       </ScrollView>
 
-      <View style={styles.addNewCarContainer}>
+      <View style={styles.addNewVehicleContainer}>
         <TextInput
-          style={styles.newCarName}
-          onChangeText={text => setCarName(text)}
-          value={carName}
-          placeholder="Car Name"
+          style={styles.newVehicleName}
+          onChangeText={text => setNewVehicleName(text)}
+          value={newVehicleName}
+          placeholder="Vehicle Name"
           placeholderTextColor="grey"
         />
 
@@ -176,10 +172,10 @@ const Cars = () => {
       </View>
 
       <TouchableOpacity
-        onPress={addNewCar}
+        onPress={addNewVehicle}
         style={styles.button}
       >
-        <Text style={{ color: 'white' }}>Add New Car</Text>
+        <Text style={{ color: 'white' }}>Add New Vehicle</Text>
       </TouchableOpacity>
     </View>
   );
@@ -199,7 +195,7 @@ const retrieveData = async key => {
 };
 
 const styles = StyleSheet.create({
-  addNewCarContainer: {
+  addNewVehicleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     margin: 10,
@@ -213,14 +209,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     margin: 10
   },
-  carListContainer: {
+  vehicleListContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc'
   },
-  newCarName: {
+  newVehicleName: {
     height: 40,
     borderColor: 'gray',
     color: 'black',
@@ -240,4 +236,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Cars;
+export default Vehicles;

@@ -3,8 +3,9 @@ import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { GarageContextProvider } from './Context/GarageContext';
+import { VehicleContextProvider } from './Context/VehicleContext';
 import Garages from './Pages/Garages';
-import Cars from './Pages/Cars';
+import Vehicles from './Pages/Vehicles';
 import Other from './Pages/Other';
 
 const Tab = createMaterialTopTabNavigator();
@@ -13,21 +14,23 @@ const OnlineGarageManager = () => {
   return (
     <NavigationContainer>
       <GarageContextProvider>
-        <View style={styles.headerContainer}>
-          <Text style={styles.header}>Garage Manager for GTA Online</Text>
-        </View>
-        <Tab.Navigator
-          initialRouteName="Garages"
-          screenOptions={{
-            "tabBarActiveTintColor": '#FFFFFF',
-            "tabBarInactiveTintColor": '#B3E5FC',
-            "tabBarIndicatorStyle": { backgroundColor: '#FFFFFF' },
-            "tabBarStyle": { backgroundColor: '#2D640F' },
-          }}>
-          <Tab.Screen name="Garages" component={Garages} />
-          <Tab.Screen name="Cars" component={Cars} />
-          <Tab.Screen name="Other" component={Other} />
-        </Tab.Navigator>
+        <VehicleContextProvider>
+          <View style={styles.headerContainer}>
+            <Text style={styles.header}>Garage Manager for GTA Online</Text>
+          </View>
+          <Tab.Navigator
+            initialRouteName="Garages"
+            screenOptions={{
+              "tabBarActiveTintColor": '#FFFFFF',
+              "tabBarInactiveTintColor": '#B3E5FC',
+              "tabBarIndicatorStyle": { backgroundColor: '#FFFFFF' },
+              "tabBarStyle": { backgroundColor: '#2D640F' },
+            }}>
+            <Tab.Screen name="Garages" component={Garages} />
+            <Tab.Screen name="Vehicles" component={Vehicles} />
+            <Tab.Screen name="Other" component={Other} />
+          </Tab.Navigator>
+        </VehicleContextProvider>
       </GarageContextProvider>
     </NavigationContainer>
   );
