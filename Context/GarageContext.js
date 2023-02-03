@@ -4,10 +4,10 @@ const GarageContext = createContext();
 
 const GarageContextProvider = ({ children }) => {
 
-  const [garageNames, setGarageNames] = useState([]);
+  const [garageObjects, setGarageObjects] = useState([]);
 
   return (
-    <GarageContext.Provider value={{ garageNames, setGarageNames }}>
+    <GarageContext.Provider value={{ garageObjects, setGarageObjects }}>
       {children}
     </GarageContext.Provider>
   );

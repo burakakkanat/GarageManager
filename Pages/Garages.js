@@ -7,22 +7,18 @@ import { GarageContext } from '../Context/GarageContext';
 
 const Garages = () => {
 
-  const { garageNames, setGarageNames } = useContext(GarageContext);
+  const { garageObjects, setGarageObjects } = useContext(GarageContext);
   const { vehicleNames, setVehicleNames } = useContext(VehicleContext);
 
-  const [garageVehicleNames, setGarageVehicleNames] = useState([]);
-
-  const [garageObjects, setGarageObjects] = useState([]);
-  const [garageObjectIndex, setGarageObjectIndex] = useState("");
-  const [garageObjectVehicles, setGarageObjectVehicles] = useState("");
-
-  const [lastEditedGarageName, setLastEditedGarageName] = useState("");
-  const [lastSelectedGarageObject, setLastSelectedGarageObject] = useState("");
+  const [garageVehicleNames, setGarageVehicleNames] = useState([]);             // Used for displaying cars in a garage.
+  const [garageObjectIndex, setGarageObjectIndex] = useState("");               // Used when removing the previous car when editing garage.
+  const [garageObjectVehicles, setGarageObjectVehicles] = useState("");         // Used for transfering vehicles when editing garage.
+  const [lastSelectedGarageObject, setLastSelectedGarageObject] = useState(""); // Used when showing "Cars in (garage)" header.
 
   // Modals
   const [addGarageModalVisible, setAddGarageModalVisible] = useState(false);
   const [editGarageModalVisible, setEditGarageModalVisible] = useState(false);
-  const [showVehiclesModalVisible, setShowVehiclesModalVisible] = useState(false);
+  const [showGarageDetailsVisible, setShowGarageDetailsVisible] = useState(false);
 
   const [garageObject, setGarageObject] = useState({
     name: '',
@@ -33,7 +29,6 @@ const Garages = () => {
   });
 
   useEffect(() => {
-    console.log('effect');
     // Get the list of garage names from local storage
     const getGarageObjects = async () => {
       const garages = await retrieveObject('@GarageObjectList');
@@ -44,10 +39,14 @@ const Garages = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      console.log('focus');
       setGarageObject({ ...garageObject, name: '', location: '', availableSpace: '0', disposableVehicles: [], vehicles: [] });
     }, [])
   );
+
+  const openAddNewGarageWindow = async () => {
+    setGarageObject({ ...garageObject, name: '', location: '', availableSpace: '0', disposableVehicles: [] });
+    setAddGarageModalVisible(true);
+  };
 
   const addGarageObject = async () => {
 
@@ -61,6 +60,7 @@ const Garages = () => {
   };
 
   const openEditGarageWindow = async (index, garageObj) => {
+    setGarageObject(garageObj);
     setGarageObjectIndex(index);
     setGarageObjectVehicles(garageObj.vehicles);
     setEditGarageModalVisible(true);
@@ -72,14 +72,20 @@ const Garages = () => {
 
       setEditGarageModalVisible(false);
 
-      // #TODO: Check if this works 
       garageObject.vehicles = garageObjectVehicles;
 
-      // Remove old garageObject, add new garageObject, save to local storage
+      // Remove old garageObject, add new garageObject, sort
       const newGarageObjects = garageObjects.filter((_, i) => i !== garageObjectIndex);
       newGarageObjects.push(garageObject);
       newGarageObjects.sort(compareGarages);
-      await saveObject('@GarageObjectList', garageObjects);
+
+      // Set the new garageObjects to local
+      await saveObject('@GarageObjectList', newGarageObjects);
+
+      // Set new vehicles list for Vehicles page
+      updateAllVehicles(newGarageObjects);
+
+      // Set states
       setGarageObjects(newGarageObjects);
 
       setGarageObject({ ...garageObject, name: '', location: '', availableSpace: '0', disposableVehicles: [] });
@@ -105,7 +111,11 @@ const Garages = () => {
             try {
               const newGarageObjects = garageObjects.filter((_, i) => i !== index);
               setGarageObjects(newGarageObjects);
-              await saveObject('@GarageObjectList', newGarageObjects);;
+              await saveObject('@GarageObjectList', newGarageObjects);
+
+              // Set new vehicles list for Vehicles page
+              updateAllVehicles(newGarageObjects);
+
             } catch (error) {
               console.error(error);
             }
@@ -116,11 +126,22 @@ const Garages = () => {
     );
   };
 
-  const showVehicleList = async (garageObj) => {
+  const showGarageDetails = async (garageObj) => {
     setLastSelectedGarageObject(garageObj);
-    setGarageVehicleNames(garageObj.vehicles);
-    setShowVehiclesModalVisible(true);
+    setShowGarageDetailsVisible(true);
   };
+
+  const updateAllVehicles = (newGarageObjects) => {
+    const vehicles = [];
+    for (const garageObject of newGarageObjects) {
+      for (const garageVehicle of garageObject.vehicles) {
+        const newVehicle = garageObject.name + '_' + garageVehicle;
+        vehicles.push(newVehicle);
+      }
+    }
+    vehicles.sort();
+    setVehicleNames(vehicles);
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -129,7 +150,7 @@ const Garages = () => {
           <View
             style={styles.garageListContainer}
           >
-            <TouchableOpacity onPress={() => showVehicleList(currentGarageObject)}>
+            <TouchableOpacity onPress={() => showGarageDetails(currentGarageObject)}>
               <Text style={{ color: 'black', fontWeight: 'bold' }}>{currentGarageObject.name}</Text>
             </TouchableOpacity>
 
@@ -147,7 +168,7 @@ const Garages = () => {
       </ScrollView>
 
       <TouchableOpacity
-        onPress={() => setAddGarageModalVisible(true)}
+        onPress={openAddNewGarageWindow}
         style={styles.greenButton}>
         <Text style={{ color: "white" }}>Add New Garage</Text>
       </TouchableOpacity>
@@ -164,8 +185,12 @@ const Garages = () => {
           <Text style={styles.header}>Add New Garage</Text>
         </View>
 
-        <View style={{ marginTop: 10 }}>
+        <View style={{ flex: 1, flexDirection: 'column' }}>
           <View>
+
+            <View style={styles.separator} />
+            <Text style={{ color: 'grey', margin: 10 }}>{'Garage Details:'}</Text>
+
             <TextInput
               value={garageObject.name}
               onChangeText={text => setGarageObject({ ...garageObject, name: text })}
@@ -191,6 +216,9 @@ const Garages = () => {
               style={styles.textInput}
             />
 
+            <View style={styles.separator} />
+            <Text style={{ color: 'grey', margin: 10 }}>{'Disposable Vehicles:'}</Text>
+
             {garageObject.disposableVehicles.map((disposableVehicle, index) => (
               <TextInput
                 key={index}
@@ -213,7 +241,9 @@ const Garages = () => {
               <Text style={{ color: 'white' }}>Add Disposable Vehicle</Text>
 
             </TouchableOpacity>
+          </View>
 
+          <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'flex-end' }}>
             <TouchableOpacity
               style={styles.greenButton}
               onPress={addGarageObject}>
@@ -237,9 +267,14 @@ const Garages = () => {
           <Text style={styles.header}>Edit Garage</Text>
         </View>
 
-        <View style={{ marginTop: 10 }}>
+        <View style={{ flex: 1, flexDirection: 'column' }}>
           <View>
+
+            <View style={styles.separator} />
+            <Text style={{ color: 'grey', margin: 10 }}>{'Garage Details:'}</Text>
+
             <TextInput
+              value={garageObject.name}
               onChangeText={text => setGarageObject({ ...garageObject, name: text })}
               placeholder="New Garage Name"
               placeholderTextColor="grey"
@@ -247,6 +282,7 @@ const Garages = () => {
             />
 
             <TextInput
+              value={garageObject.location}
               onChangeText={text => setGarageObject({ ...garageObject, location: text })}
               placeholder="New Garage Location"
               placeholderTextColor="grey"
@@ -254,6 +290,7 @@ const Garages = () => {
             />
 
             <TextInput
+              value={garageObject.availableSpace}
               onChangeText={text => setGarageObject({ ...garageObject, availableSpace: text })}
               keyboardType='number-pad'
               placeholder="New Available Space"
@@ -261,9 +298,13 @@ const Garages = () => {
               style={styles.textInput}
             />
 
+            <View style={styles.separator} />
+            <Text style={{ color: 'grey', margin: 10 }}>{'Disposable Vehicles:'}</Text>
+
             {garageObject.disposableVehicles.map((disposableVehicle, index) => (
               <TextInput
                 key={index}
+                value={disposableVehicle}
                 style={styles.textInput}
                 placeholder="New Disposable Vehicle"
                 placeholderTextColor="grey"
@@ -278,11 +319,11 @@ const Garages = () => {
             <TouchableOpacity
               style={styles.blueButton}
               onPress={() => setGarageObject({ ...garageObject, disposableVehicles: [...garageObject.disposableVehicles, ''] })}>
-
               <Text style={{ color: 'white' }}>Add Disposable Vehicle</Text>
-
             </TouchableOpacity>
+          </View>
 
+          <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'flex-end' }}>
             <TouchableOpacity
               style={styles.greenButton}
               onPress={editGarageObject}>
@@ -295,9 +336,9 @@ const Garages = () => {
       <Modal
         animationType="fade"
         transparent={false}
-        visible={showVehiclesModalVisible}
+        visible={showGarageDetailsVisible}
         onRequestClose={() => {
-          setShowVehiclesModalVisible(false);
+          setShowGarageDetailsVisible(false);
         }}
       >
         <View style={{ backgroundColor: '#2D640F', justifyContent: 'center', height: 50 }}>
@@ -306,7 +347,7 @@ const Garages = () => {
 
         <View style={{ marginTop: 10 }}>
           <View>
-            <ScrollView>{garageVehicleNames.map((vehicleName, index) => (
+            <ScrollView>{lastSelectedGarageObject.vehicles.map((vehicleName) => (
               <View
                 style={styles.vehicleListContainer}
               >
@@ -318,7 +359,7 @@ const Garages = () => {
             </ScrollView>
 
             <TouchableOpacity
-              onPress={() => setShowVehiclesModalVisible(false)}
+              onPress={() => setShowGarageDetailsVisible(false)}
               style={styles.greenButton}
             >
               <Text style={{ color: 'white' }}>Close</Text>
@@ -328,19 +369,6 @@ const Garages = () => {
       </Modal>
     </View>
   );
-};
-
-const retrieveData = async (key) => {
-  try {
-    const value = await AsyncStorage.getItem(key);
-    if (value !== null) {
-      return JSON.parse(value);
-    }
-    return [];
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
 };
 
 const saveObject = async (key, object) => {
@@ -373,16 +401,9 @@ function compareGarages(a, b) {
     return 1;
   }
   return 0;
-}
+};
 
 const styles = StyleSheet.create({
-  greenButton: {
-    padding: 10,
-    backgroundColor: '#2D640F',
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: 10
-  },
   blueButton: {
     padding: 10,
     backgroundColor: 'orange',
@@ -396,6 +417,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 5,
   },
+  header: {
+    fontWeight: 'bold',
+    fontSize: 20,
+    padding: 10,
+    color: 'white'
+  },
   garageListContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -403,23 +430,30 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ccc'
   },
+  greenButton: {
+    padding: 10,
+    backgroundColor: '#2D640F',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 10
+  },
+  separator: {
+    width: '100%',
+    height: 1,
+    backgroundColor: 'black',
+    marginVertical: 5,
+  },
+  textInput: {
+    color: 'black',
+    borderWidth: 0.5,
+    margin: 10
+  },
   vehicleListContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc'
-  },
-  header: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    padding: 10,
-    color: 'white'
-  },
-  textInput: {
-    color: 'black',
-    borderWidth: 0.5,
-    margin: 10
   }
 });
 

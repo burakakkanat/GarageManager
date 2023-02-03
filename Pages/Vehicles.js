@@ -7,63 +7,66 @@ import { VehicleContext } from '../Context/VehicleContext';
 
 const Vehicles = () => {
 
-  const { garageNames, setGarageNames } = useContext(GarageContext);
+  const { garageObjects, setGarageObjects } = useContext(GarageContext);
   const { vehicleNames, setVehicleNames } = useContext(VehicleContext);
+
   const [newVehicleName, setNewVehicleName] = useState('');
-  const [selectedGarage, setSelectedGarage] = useState('');
+  const [selectedGarage, setSelectedGarage] = useState({});
 
   useEffect(() => {
     // Get the list of garage names from local storage
-    const getGarageNames = async () => {
-      const garageNames = await retrieveData('garageNames');
-      setGarageNames(garageNames);
+    const getGarageObjects = async () => {
+      const garages = await retrieveObject('@GarageObjectList');
+      setGarageObjects(garages);
     };
-    getGarageNames();
-  }, []);
 
-  useEffect(() => {
     // Get the list of all vehicles in all garages from local storage
     const getVehicles = async () => {
       const vehicles = [];
-      for (const garageName of garageNames) {
-        const garageVehicles = await retrieveData(`${garageName}_vehicles`);
-        vehicles.push(...garageVehicles);
+      for (const garageObject of garageObjects) {
+        for (const garageVehicle of garageObject.vehicles) {
+          const newVehicle = garageObject.name + '_' + garageVehicle;
+          vehicles.push(newVehicle);
+        }
       }
       vehicles.sort();
       setVehicleNames(vehicles);
     };
+
+    getGarageObjects();
     getVehicles();
-  }, [garageNames]);
+  }, []);
 
   const addNewVehicle = async () => {
-
     if (!newVehicleName) {
       Alert.alert('Add New Vehicle', "Vehicle name can not be empty.");
       return;
     }
 
-    if (newVehicleName.includes(']')) {
-      Alert.alert('Add New Vehicle', 'Vehicle name can not contain " ] " character.');
+    if (newVehicleName.includes('_')) {
+      Alert.alert('Add New Vehicle', 'Vehicle name can not contain "_" character.');
       return;
     }
 
-    vehicleNameWithGarageName = '[' + selectedGarage + '] ' + newVehicleName;
-
     try {
 
-      const garageVehicles = await retrieveData(`${selectedGarage}_vehicles`);
-      const updatedGarageVehicles = [...garageVehicles, vehicleNameWithGarageName];
-      await AsyncStorage.setItem(`${selectedGarage}_vehicles`, JSON.stringify(updatedGarageVehicles));
+      const newGarageObjects = garageObjects.filter(function (garageObj) {
+        return garageObj.name !== selectedGarage.name;
+      });
 
-      const allVehicleNames = [];
+      selectedGarage.vehicles.push(newVehicleName);
+      selectedGarage.vehicles.sort();
 
-      for (const garageName of garageNames) {
-        const garageVehicles = await retrieveData(`${garageName}_vehicles`);
-        allVehicleNames.push(...garageVehicles);
-      }
+      newGarageObjects.push(selectedGarage);
+      newGarageObjects.sort(compareGarages)
 
-      allVehicleNames.sort();
-      setVehicleNames(allVehicleNames);
+      const allVehicles = vehicleNames;
+      allVehicles.push(selectedGarage.name + '_' + newVehicleName);
+      allVehicles.sort();
+
+      await saveObject('@GarageObjectList', newGarageObjects);
+      setGarageObjects(newGarageObjects);
+      setVehicleNames(allVehicles);
 
       setNewVehicleName('');
 
@@ -74,9 +77,9 @@ const Vehicles = () => {
 
   const removeVehicle = async (vehicleNameWithGarageName) => {
 
-    const garageNameEndIndex = vehicleNameWithGarageName.indexOf(']');
-    const nameofTheGarage = vehicleNameWithGarageName.substr(1, garageNameEndIndex - 1);
-    const vehicleToRemove = vehicleNameWithGarageName.substr(garageNameEndIndex + 2);
+    const garageNameEndIndex = vehicleNameWithGarageName.indexOf('_');
+    const nameofTheGarage = vehicleNameWithGarageName.substr(0, garageNameEndIndex);
+    const vehicleToRemove = vehicleNameWithGarageName.substr(garageNameEndIndex + 1);
 
     Alert.alert(
       'Remove Vehicle',
@@ -91,21 +94,25 @@ const Vehicles = () => {
           onPress: async () => {
             try {
 
-              // Find and remove the vehicle from specific garage
-              const garageVehicles = await retrieveData(`${nameofTheGarage}_vehicles`);
-              const updatedGarageVehicles = garageVehicles.filter(e => e !== vehicleNameWithGarageName);
+              // Find the garage, remove the vehicle from found garage, set it to the found garage
+              const garageObj = garageObjects.filter(function (garageObj) {
+                return garageObj.name === nameofTheGarage;
+              }).at(0);
 
-              await AsyncStorage.setItem(`${nameofTheGarage}_vehicles`, JSON.stringify(updatedGarageVehicles));
+              const updatedGarageVehicles = garageObj.vehicles.filter(e => e !== vehicleToRemove);
+              garageObj.vehicles = updatedGarageVehicles;
 
-              // Update the vehicle list
-              const allVehicleNames = [];
+              // Remove previous garage from garegeObjects and push new one into it
+              const newGarageObjects = garageObjects.filter(function (garageObj) {
+                return garageObj.name !== nameofTheGarage;
+              });
+              newGarageObjects.push(garageObj);
+              newGarageObjects.sort(compareGarages);
 
-              for (const garageName of garageNames) {
-                const garageVehicles = await retrieveData(`${garageName}_vehicles`);
-                allVehicleNames.push(...garageVehicles);
-              }
+              // Remove vehicle from all vehicles list
+              const allVehicleNames = vehicleNames.filter(e => e !== vehicleNameWithGarageName);
 
-              allVehicleNames.sort();
+              setGarageObjects(newGarageObjects);
               setVehicleNames(allVehicleNames);
 
             } catch (error) {
@@ -121,21 +128,18 @@ const Vehicles = () => {
   return (
     <View style={{ flex: 1 }}>
       <ScrollView>
-        {vehicleNames.map((vehicleName, index) => (
-          <View
-            style={styles.vehicleListContainer}
-          >
-
+        {vehicleNames.map((vehicleName) => (
+          <View style={styles.vehicleListContainer}>
             <TouchableOpacity>
               <Text style={{ color: 'black', fontWeight: 'bold' }}>
-                {vehicleName.substr(vehicleName.indexOf(']') + 2)}
+                {vehicleName.substr(vehicleName.indexOf('_') + 1)}
               </Text>
             </TouchableOpacity>
 
             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
               <TouchableOpacity
                 style={{ marginRight: 20 }}>
-                <Text style={{ color: 'black', fontStyle: 'italic' }}>{'in ' + vehicleName.substr(1, vehicleName.indexOf(']') - 1)}</Text>
+                <Text style={{ color: 'black', fontStyle: 'italic' }}>{'in ' + vehicleName.substr(0, vehicleName.indexOf('_'))}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -163,8 +167,12 @@ const Vehicles = () => {
           dropdownIconColor='black'
           prompt='Your Garages'>
 
-          {garageNames.map(name => (
-            <Picker.Item label={name} value={name} color='black' />
+          {garageObjects.map(garageObject => (
+            <Picker.Item
+              label={garageObject.name}
+              value={garageObject}
+              color='black'
+            />
           ))}
 
         </Picker>
@@ -192,6 +200,38 @@ const retrieveData = async key => {
     return [];
   }
 };
+
+const saveObject = async (key, object) => {
+  try {
+    const stringifiedObject = JSON.stringify(object);
+    await AsyncStorage.setItem(key, stringifiedObject);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const retrieveObject = async (key) => {
+  try {
+    const stringifiedObject = await AsyncStorage.getItem(key);
+    if (stringifiedObject !== null) {
+      return JSON.parse(stringifiedObject);
+    }
+    return [];
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
+
+function compareGarages(a, b) {
+  if (a.name < b.name) {
+    return -1;
+  }
+  if (a.name > b.name) {
+    return 1;
+  }
+  return 0;
+}
 
 const styles = StyleSheet.create({
   addNewVehicleContainer: {
