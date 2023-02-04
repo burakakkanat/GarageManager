@@ -383,29 +383,29 @@ const Garages = () => {
 
         <View style={{ flex: 1, flexDirection: 'column' }}>
 
-          <Text style={{ color: 'black', margin: 10, marginBottom: 0, fontWeight: 'bold', fontSize: 17.5 }}>{'Garage Details'}</Text>
+          <View style={styles.separatorTop} />
 
-          <View style={{ flexDirection: 'column', margin: 10 }}>
-            <View style={{ flexDirection: 'row' , marginBottom: 10}}>
-              <Text style={{ color: 'grey', fontWeight: 'bold', fontStyle: 'italic' }}>Theme: </Text>
-              <Text style={{ color: 'grey', fontStyle: 'italic' }}>{garageObject.theme}</Text>
-            </View>
+          <Text style={{ color: 'black', margin: 10, fontWeight: 'bold', fontStyle: 'italic', fontSize: 17.5 }}>{'Garage Details'}</Text>
 
-            <View style={{ flexDirection: 'row' }}>
-              <Text style={{ color: 'grey', fontWeight: 'bold', fontStyle: 'italic' }}>Available Space: </Text>
-              <Text style={{ color: 'grey', fontStyle: 'italic' }}>{garageObject.availableSpace}</Text>
-            </View>
+          <View style={{ flexDirection: 'row', margin: 10, marginTop: 0 }}>
+            <Text style={{ color: 'grey', fontWeight: 'bold', fontStyle: 'italic' }}>Theme: </Text>
+            <Text style={{ color: 'grey' }}>{garageObject.theme}</Text>
+          </View>
+
+          <View style={{ flexDirection: 'row', margin: 10, marginTop: 0 }}>
+            <Text style={{ color: 'grey', fontWeight: 'bold', fontStyle: 'italic' }}>Available Space: </Text>
+            <Text style={{ color: 'grey' }}>{garageObject.availableSpace}</Text>
           </View>
 
           <View style={styles.separatorTop} />
 
-          <Text style={{ color: 'black', margin: 10, fontWeight: 'bold', fontSize: 17.5 }}>{'Disposible Vehicles' + ' (' + garageObject.disposableVehicles.length + ')'}</Text>
+          <Text style={{ color: 'black', margin: 10, fontWeight: 'bold', fontStyle: 'italic', fontSize: 17.5 }}>{'Disposible Vehicles' + ' (' + garageObject.disposableVehicles.length + ')'}</Text>
 
           <View>
             <ScrollView>{garageObject.disposableVehicles && garageObject.disposableVehicles.map((disposableVehicle, index) => (
               <View key={index} style={styles.containerForSimpleLists}>
                 <TouchableOpacity>
-                  <Text style={{ color: 'grey', fontStyle: 'italic' }}>{disposableVehicle}</Text>
+                  <Text style={{ color: 'grey' }}>{disposableVehicle}</Text>
                 </TouchableOpacity>
               </View>
             ))}
@@ -414,13 +414,13 @@ const Garages = () => {
 
           <View style={styles.separatorTop} />
 
-          <Text style={{ color: 'black', margin: 10, fontWeight: 'bold', fontSize: 17.5 }}>{'Vehicles in Garage' + ' (' + garageObject.vehicles.length + ')'}</Text>
+          <Text style={{ color: 'black', margin: 10, fontWeight: 'bold', fontStyle: 'italic', fontSize: 17.5 }}>{'Vehicles in Garage' + ' (' + garageObject.vehicles.length + ')'}</Text>
 
           <View>
             <ScrollView>{garageObject.vehicles && garageObject.vehicles.map((vehicleName, index) => (
               <View key={index} style={styles.containerForSimpleLists}>
                 <TouchableOpacity>
-                  <Text style={{ color: 'grey', fontStyle: 'italic' }}>{vehicleName}</Text>
+                  <Text style={{ color: 'grey' }}>{vehicleName}</Text>
                 </TouchableOpacity>
               </View>
             ))}

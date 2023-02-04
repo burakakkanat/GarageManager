@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
         width: 200,
         dropdownIconColor: 'black'
     },
-    containerWhishlistHeader: {
+    containerWishlistHeader: {
         backgroundColor: '#2D640F',
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -96,7 +96,8 @@ const styles = StyleSheet.create({
     textInput: {
         color: 'black',
         borderWidth: 0.5,
-        margin: 10
+        margin: 10,
+        height: 40
     },
     textAddWishlistButton: {
         color: 'white',

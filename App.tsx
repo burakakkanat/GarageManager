@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { GarageContextProvider } from './Context/GarageContext';
@@ -16,7 +16,12 @@ const OnlineGarageManager = () => {
       <GarageContextProvider>
         <VehicleContextProvider>
           <View style={styles.headerContainer}>
-            <Text style={styles.header}>Johnny-On-The-Spot</Text>
+            <Image
+              style={styles.backgroundImage}
+              source={require('./Images/headerBackground.png')}
+              blurRadius={0}
+            />
+            <Text style={styles.header}> Johnny-on-the-Spot  </Text>
           </View>
           <Tab.Navigator
             initialRouteName="Garages"
@@ -38,16 +43,23 @@ const OnlineGarageManager = () => {
 
 const styles = StyleSheet.create({
   header: {
-    fontWeight: 'bold',
-    fontStyle: 'italic',
-    fontSize: 20,
-    color: 'white'
+    marginTop: 5,
+    fontSize: 30,
+    color: 'white',
+    fontFamily: 'SignPainter-HouseScript'
   },
   headerContainer: {
     backgroundColor: '#2D640F',
     justifyContent: 'center',
     height: 50,
-    alignItems: 'center',
+    alignItems: 'center'
+  },
+  backgroundImage: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0
   }
 });
 

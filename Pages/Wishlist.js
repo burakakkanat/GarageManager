@@ -18,8 +18,8 @@ const Wishlist = () => {
   useEffect(() => {
     // Get the list of wishlist items from local storage
     const getWishlistItems = async () => {
-      const whishlistItems = await retrieveObject('@WishlistObjectList');
-      setWishlistObjects(whishlistItems);
+      const wishlistItems = await retrieveObject('@WishlistObjectList');
+      setWishlistObjects(wishlistItems);
     };
 
     getWishlistItems();
@@ -28,12 +28,12 @@ const Wishlist = () => {
   const addWishlistItem = async () => {
 
     if (wishlistObject.tradePrice === '-') {
-      wishlistObject.tradePrice = '         -         ';
+      wishlistObject.tradePrice = '       -       ';
     }
 
     const newWishlistObjects = wishlistObjects;
     newWishlistObjects.push(wishlistObject);
-    newWishlistObjects.sort(compareWhishlistItems);
+    newWishlistObjects.sort(compareWishlistItems);
     await saveObject('@WishlistObjectList', newWishlistObjects);
 
     setWishlistObject({ garage: '', vehicleName: '', price: '0', tradePrice: '-' });
@@ -43,8 +43,8 @@ const Wishlist = () => {
   const removeWishlistObject = async (whislistItemToRemove) => {
 
     Alert.alert(
-      'Remove Whishlist Item',
-      'Are you sure you want to remove this whishlist item?',
+      'Remove Wishlist Item',
+      'Are you sure you want to remove this wishlist item?',
       [
         {
           text: 'Cancel',
@@ -55,7 +55,7 @@ const Wishlist = () => {
           onPress: async () => {
             try {
 
-              const newWishlistObjects = wishlistObjects.filter(whishlistItem => whishlistItem !== whislistItemToRemove);
+              const newWishlistObjects = wishlistObjects.filter(wishlistItem => wishlistItem !== whislistItemToRemove);
 
               setWishlistObjects(newWishlistObjects);
               await saveObject('@WishlistObjectList', newWishlistObjects);
@@ -91,7 +91,7 @@ const Wishlist = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={styles.containerWhishlistHeader}>
+      <View style={styles.containerWishlistHeader}>
         <View style={{ flex: 1 }}>
           <Text>Garage</Text>
         </View>
@@ -132,7 +132,7 @@ const Wishlist = () => {
           <View>
 
             <View style={styles.separator} />
-            <Text style={{ color: 'grey', margin: 10 }}>{'Whishlist Details:'}</Text>
+            <Text style={{ color: 'grey', margin: 10 }}>{'Wishlist Details:'}</Text>
 
             <TextInput
               value={wishlistObject.garage}
@@ -207,11 +207,11 @@ const retrieveObject = async (key) => {
   }
 };
 
-function compareWhishlistItems(whishlistItemA, whishlistItemB) {
-  if (whishlistItemA.garage < whishlistItemB.garage) {
+function compareWishlistItems(wishlistItemA, wishlistItemB) {
+  if (wishlistItemA.garage < wishlistItemB.garage) {
     return -1;
   }
-  if (whishlistItemA.garage > whishlistItemB.garge) {
+  if (wishlistItemA.garage > wishlistItemB.garge) {
     return 1;
   }
   return 0;
