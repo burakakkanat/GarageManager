@@ -1,9 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native';
+
+import { Alert, ScrollView, Text, TextInput, TouchableOpacity, View, } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import { Picker } from '@react-native-picker/picker';
-import { GarageContext } from '../Context/GarageContext';
+import React, { useContext, useEffect, useState } from 'react';
 import { VehicleContext } from '../Context/VehicleContext';
+import { GarageContext } from '../Context/GarageContext';
+import { Picker } from '@react-native-picker/picker';
+import styles from './Styles';
 
 const Vehicles = () => {
 
@@ -128,8 +130,9 @@ const Vehicles = () => {
   return (
     <View style={{ flex: 1 }}>
       <ScrollView>
-        {vehicleNames.map((vehicleName) => (
-          <View style={styles.vehicleListContainer}>
+        <View style={styles.separatorTop} />
+        {vehicleNames.map((vehicleName, index) => (
+          <View key={index} style={styles.containerVehicleList}>
             <TouchableOpacity>
               <Text style={{ color: 'black', fontWeight: 'bold' }}>
                 {vehicleName.substr(vehicleName.indexOf('_') + 1)}
@@ -151,7 +154,7 @@ const Vehicles = () => {
         ))}
       </ScrollView>
 
-      <View style={styles.addNewVehicleContainer}>
+      <View style={styles.containerAddNewVehicle}>
         <TextInput
           style={styles.newVehicleName}
           onChangeText={text => setNewVehicleName(text)}
@@ -162,13 +165,14 @@ const Vehicles = () => {
 
         <Picker
           selectedValue={selectedGarage}
-          style={styles.picketContainer}
+          style={styles.containerPicker}
           onValueChange={itemValue => setSelectedGarage(itemValue)}
           dropdownIconColor='black'
           prompt='Your Garages'>
 
-          {garageObjects.map(garageObject => (
+          {garageObjects.map((garageObject, index) => (
             <Picker.Item
+              key={index}
               label={garageObject.name}
               value={garageObject}
               color='black'
@@ -180,25 +184,12 @@ const Vehicles = () => {
 
       <TouchableOpacity
         onPress={addNewVehicle}
-        style={styles.button}
+        style={styles.buttonGreen}
       >
         <Text style={{ color: 'white' }}>Add New Vehicle</Text>
       </TouchableOpacity>
     </View>
   );
-};
-
-const retrieveData = async key => {
-  try {
-    const value = await AsyncStorage.getItem(key);
-    if (value !== null) {
-      return JSON.parse(value) || [];
-    }
-    return [];
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
 };
 
 const saveObject = async (key, object) => {
@@ -223,56 +214,14 @@ const retrieveObject = async (key) => {
   }
 };
 
-function compareGarages(a, b) {
-  if (a.name < b.name) {
+function compareGarages(garageA, garageB) {
+  if (garageA.name < garageB.name) {
     return -1;
   }
-  if (a.name > b.name) {
+  if (garageA.name > garageB.name) {
     return 1;
   }
   return 0;
 }
-
-const styles = StyleSheet.create({
-  addNewVehicleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    margin: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#ccc'
-  },
-  button: {
-    padding: 10,
-    backgroundColor: '#2D640F',
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: 10
-  },
-  vehicleListContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc'
-  },
-  newVehicleName: {
-    height: 40,
-    borderColor: 'gray',
-    color: 'black',
-    borderWidth: 1,
-    flex: 1,
-    marginRight: 10
-  },
-  picketContainer: {
-    height: 40,
-    width: 200,
-    dropdownIconColor: 'black'
-  },
-  textInput: {
-    color: 'black',
-    borderWidth: 0.5,
-    margin: 10
-  }
-});
 
 export default Vehicles;

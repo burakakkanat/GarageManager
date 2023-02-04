@@ -6,7 +6,7 @@ import { GarageContextProvider } from './Context/GarageContext';
 import { VehicleContextProvider } from './Context/VehicleContext';
 import Garages from './Pages/Garages';
 import Vehicles from './Pages/Vehicles';
-import Other from './Pages/Other';
+import Wishlist from './Pages/Wishlist';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -28,7 +28,7 @@ const OnlineGarageManager = () => {
             }}>
             <Tab.Screen name="Garages" component={Garages} />
             <Tab.Screen name="Vehicles" component={Vehicles} />
-            <Tab.Screen name="Other" component={Other} />
+            <Tab.Screen name="Wishlist" component={Wishlist} />
           </Tab.Navigator>
         </VehicleContextProvider>
       </GarageContextProvider>
