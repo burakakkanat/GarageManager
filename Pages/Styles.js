@@ -8,9 +8,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         margin: 10
     },
-    buttonSmallRed: {
+    buttonRed: {
         padding: 10,
-        backgroundColor: 'red',
+        backgroundColor: '#c70000',
         alignItems: 'center',
         justifyContent: 'center',
         margin: 10
@@ -51,6 +51,12 @@ const styles = StyleSheet.create({
     containerForLists: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        borderBottomWidth: 1,
+        borderColor: 'lightgrey',
+        padding: 8,
+    },
+    containerForGarageList: {
+        flexDirection: 'row',
         borderBottomWidth: 1,
         borderColor: 'lightgrey',
         padding: 8,

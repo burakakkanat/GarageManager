@@ -27,6 +27,10 @@ const Wishlist = () => {
 
   const addWishlistItem = async () => {
 
+    if (wishlistObject.tradePrice === '-') {
+      wishlistObject.tradePrice = '         -         ';
+    }
+
     const newWishlistObjects = wishlistObjects;
     newWishlistObjects.push(wishlistObject);
     newWishlistObjects.sort(compareWhishlistItems);
@@ -69,10 +73,18 @@ const Wishlist = () => {
   const renderWishlistObject = ({ item }) => {
     return (
       <TouchableOpacity style={styles.containerForLists} onPress={() => removeWishlistObject(item)}>
-        <Text style={styles.textWishlistObject}>{item.garage}</Text>
-        <Text style={styles.textWishlistObject}>{item.vehicleName}</Text>
-        <Text style={styles.textWishlistObject}>{item.price}</Text>
-        <Text style={styles.textWishlistObject}>{item.tradePrice}</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.textWishlistObject}>{item.garage}</Text>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.textWishlistObject}>{item.vehicleName}</Text>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.textWishlistObject}>{item.price}</Text>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.textWishlistObject}>{item.tradePrice}</Text>
+        </View>
       </TouchableOpacity>
     );
   };
@@ -80,10 +92,18 @@ const Wishlist = () => {
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.containerWhishlistHeader}>
-        <Text>Garage</Text>
-        <Text>Name</Text>
-        <Text>Price</Text>
-        <Text>Trade Price</Text>
+        <View style={{ flex: 1 }}>
+          <Text>Garage</Text>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text>Vehicle</Text>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text>Price</Text>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text>Trade Price</Text>
+        </View>
       </View>
 
       <FlatList

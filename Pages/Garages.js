@@ -13,7 +13,6 @@ const Garages = () => {
 
   const [garageObjectIndex, setGarageObjectIndex] = useState("");               // Used when removing the previous car when editing garage.
   const [garageObjectVehicles, setGarageObjectVehicles] = useState("");         // Used for transfering vehicles when editing garage.
-  const [lastSelectedGarageObject, setLastSelectedGarageObject] = useState({}); // Used when showing "Cars in (garage)" header.
 
   // Modals
   const [addGarageModalVisible, setAddGarageModalVisible] = useState(false);
@@ -68,9 +67,9 @@ const Garages = () => {
     setAddGarageModalVisible(false);
   };
 
-  const openEditGarageWindow = async (index, garageObj) => {
+  const openEditGarageWindow = async (garageObj) => {
+    setShowGarageDetailsVisible(false);
     setGarageObject(garageObj);
-    setGarageObjectIndex(index);
     setGarageObjectVehicles(garageObj.vehicles);
     setEditGarageModalVisible(true);
   };
@@ -110,11 +109,11 @@ const Garages = () => {
     setGarageObject({ ...garageObject, disposableVehicles: newDisposableVehicles });
   };
 
-  const removeGarageObject = async (index, garageObj) => {
+  const removeGarageObject = async (garageToRemove) => {
 
     Alert.alert(
       'Remove Garage',
-      'Are you sure you want to remove garage at ' + garageObj.location + '?',
+      'Are you sure you want to remove garage at ' + garageToRemove.location + '?',
       [
         {
           text: 'Cancel',
@@ -124,12 +123,17 @@ const Garages = () => {
           text: 'OK',
           onPress: async () => {
             try {
-              const newGarageObjects = garageObjects.filter((_, i) => i !== index);
+              const newGarageObjects = garageObjects.filter(function (garageObj) {
+                return garageObj.location !== garageToRemove.location;
+              });
+
               setGarageObjects(newGarageObjects);
               await saveObject('@GarageObjectList', newGarageObjects);
 
               // Set new vehicles list for Vehicles page
               updateAllVehicles(newGarageObjects);
+
+              setShowGarageDetailsVisible(false);
 
             } catch (error) {
               console.error(error);
@@ -141,8 +145,9 @@ const Garages = () => {
     );
   };
 
-  const showGarageDetails = async (garageObj) => {
-    setLastSelectedGarageObject(garageObj);
+  const showGarageDetails = async (index, garageObj) => {
+    setGarageObjectIndex(index);
+    setGarageObject(garageObj);
     setShowGarageDetailsVisible(true);
   };
 
@@ -163,24 +168,16 @@ const Garages = () => {
       <ScrollView>
         <View style={styles.separatorTop} />
         {garageObjects.map((currentGarageObject, index) => (
-          <View key={index} style={styles.containerForLists}>
-            <TouchableOpacity onPress={() => showGarageDetails(currentGarageObject)}>
-              <Text style={{ color: 'black', fontWeight: 'bold' }}>{currentGarageObject.location}</Text>
-            </TouchableOpacity>
+          <View key={index} style={styles.containerForGarageList}>
+            <View style={{ flex: 1 }}>
+              <TouchableOpacity onPress={() => showGarageDetails(index, currentGarageObject)}>
+                <Text style={{ color: 'black', fontWeight: 'bold' }}>{currentGarageObject.location}</Text>
+              </TouchableOpacity>
+            </View>
 
-            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
-
-              <TouchableOpacity
-                style={{ marginRight: 20 }}>
+            <View style={{ flex: 1 }}>
+              <TouchableOpacity>
                 <Text style={{ color: 'black', fontStyle: 'italic' }}>{currentGarageObject.theme}</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={() => openEditGarageWindow(index, currentGarageObject)} style={{ marginRight: 20 }}>
-                <Text style={{ color: 'blue' }}>Edit</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={() => removeGarageObject(index, currentGarageObject)}>
-                <Text style={{ color: 'red' }}>Remove</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -255,7 +252,7 @@ const Garages = () => {
                   />
                 </View>
                 <TouchableOpacity
-                  style={styles.buttonSmallRed}
+                  style={styles.buttonRed}
                   onPress={() => removeDisposableVehicle(index)}>
                   <Text style={{ color: 'white' }}>Remove</Text>
                 </TouchableOpacity>
@@ -345,7 +342,7 @@ const Garages = () => {
                   />
                 </View>
                 <TouchableOpacity
-                  style={styles.buttonSmallRed}
+                  style={styles.buttonRed}
                   onPress={() => removeDisposableVehicle(index)}>
                   <Text style={{ color: 'white' }}>Remove</Text>
                 </TouchableOpacity>
@@ -370,7 +367,7 @@ const Garages = () => {
       </Modal>
 
       <Modal
-        animationType="fade"
+        animationType="slide"
         transparent={false}
         visible={showGarageDetailsVisible}
         onRequestClose={() => {
@@ -378,28 +375,35 @@ const Garages = () => {
         }}
       >
         <View style={{ backgroundColor: '#2D640F', justifyContent: 'center', height: 50 }}>
-          <Text style={styles.header}>Vehicles at {lastSelectedGarageObject.location}</Text>
+          <Text style={styles.header}>Garage Details - {garageObject.location}</Text>
         </View>
 
-        <View style={{ marginTop: 10 }}>
-          <View>
-            <ScrollView>{lastSelectedGarageObject.vehicles && lastSelectedGarageObject.vehicles.map((vehicleName, index) => (
-              <View key={index} style={styles.containerVehicleList}>
-                <TouchableOpacity>
-                  <Text style={{ color: 'black' }}>{vehicleName}</Text>
-                </TouchableOpacity>
-              </View>
-            ))}
-            </ScrollView>
+        <View style={{ marginTop: 10, flex: 1, flexDirection: 'column' }}>
+            <View>
+              <ScrollView>{garageObject.vehicles && garageObject.vehicles.map((vehicleName, index) => (
+                <View key={index} style={styles.containerForLists}>
+                  <TouchableOpacity>
+                    <Text style={{ color: 'black' }}>{vehicleName}</Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
+              </ScrollView>
+            </View>
 
-            <TouchableOpacity
-              onPress={() => setShowGarageDetailsVisible(false)}
-              style={styles.buttonGreen}
-            >
-              <Text style={{ color: 'white' }}>Close</Text>
-            </TouchableOpacity>
+            <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'flex-end' }}>
+              <TouchableOpacity
+                onPress={() => openEditGarageWindow(garageObject)}
+                style={styles.buttonGreen}>
+                <Text style={{ color: 'white' }}>Edit Garage</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => removeGarageObject(garageObject)}
+                style={styles.buttonRed}>
+                <Text style={{ color: 'white' }}>Remove Garage</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
       </Modal>
     </View>
   );
