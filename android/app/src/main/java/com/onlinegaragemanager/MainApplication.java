@@ -1,4 +1,4 @@
-package com.onlinegaragemanager;
+package com.johnnyonthespot;
 
 import android.app.Application;
 import com.facebook.react.PackageList;

@@ -10,7 +10,7 @@ import Wishlist from './Pages/Wishlist';
 
 const Tab = createMaterialTopTabNavigator();
 
-const OnlineGarageManager = () => {
+const JohnnyOnTheSpot = () => {
   return (
     <NavigationContainer>
       <GarageContextProvider>
@@ -63,4 +63,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default OnlineGarageManager;
+export default JohnnyOnTheSpot;
