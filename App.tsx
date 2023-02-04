@@ -16,7 +16,7 @@ const OnlineGarageManager = () => {
       <GarageContextProvider>
         <VehicleContextProvider>
           <View style={styles.headerContainer}>
-            <Text style={styles.header}>Garage Manager for GTA Online</Text>
+            <Text style={styles.header}>Johnny-On-The-Spot</Text>
           </View>
           <Tab.Navigator
             initialRouteName="Garages"
@@ -39,6 +39,7 @@ const OnlineGarageManager = () => {
 const styles = StyleSheet.create({
   header: {
     fontWeight: 'bold',
+    fontStyle: 'italic',
     fontSize: 20,
     color: 'white'
   },

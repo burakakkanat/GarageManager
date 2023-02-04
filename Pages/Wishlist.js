@@ -40,7 +40,7 @@ const Wishlist = () => {
     setAddWishlistModalVisible(false);
   };
 
-  const removeWishlistObject = async (item) => {
+  const removeWishlistObject = async (whislistItemToRemove) => {
 
     Alert.alert(
       'Remove Whishlist Item',
@@ -55,7 +55,7 @@ const Wishlist = () => {
           onPress: async () => {
             try {
 
-              const newWishlistObjects = wishlistObjects.filter(obj => obj !== item);
+              const newWishlistObjects = wishlistObjects.filter(whishlistItem => whishlistItem !== whislistItemToRemove);
 
               setWishlistObjects(newWishlistObjects);
               await saveObject('@WishlistObjectList', newWishlistObjects);

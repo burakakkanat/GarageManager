@@ -53,7 +53,13 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         borderBottomWidth: 1,
         borderColor: 'lightgrey',
-        padding: 8,
+        padding: 10,
+    },
+    containerForSimpleLists: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        padding: 10,
+        paddingTop: 0
     },
     containerForGarageList: {
         flexDirection: 'row',
@@ -85,7 +91,7 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 1,
         backgroundColor: 'lightgrey',
-        marginTop: 5
+        marginTop: 3
     },
     textInput: {
         color: 'black',

@@ -101,7 +101,9 @@ const Vehicles = () => {
                 return garageObj.location === locationOfTheGarage;
               }).at(0);
 
-              const updatedGarageVehicles = garageObj.vehicles.filter(e => e !== vehicleToRemove);
+              const vehicleIndex = garageObj.vehicles.findIndex(vehicle => vehicle === vehicleToRemove);
+
+              const updatedGarageVehicles = garageObj.vehicles.filter((_, index) => index !== vehicleIndex);
               garageObj.vehicles = updatedGarageVehicles;
 
               // Remove previous garage from garegeObjects and push new one into it
@@ -112,10 +114,7 @@ const Vehicles = () => {
               newGarageObjects.push(garageObj);
               newGarageObjects.sort(compareGarages);
 
-              // Remove vehicle from all vehicles list
-              const allVehicleNames = vehicleNames.filter(e => e !== vehicleNameWithGarageName);
-
-              setVehicleNames(allVehicleNames);
+              updateAllVehicles(newGarageObjects);
               setGarageObjects(newGarageObjects);
               await saveObject('@GarageObjectList', newGarageObjects);
 
@@ -127,6 +126,18 @@ const Vehicles = () => {
       ],
       { cancelable: false }
     );
+  };
+
+  const updateAllVehicles = (newGarageObjects) => {
+    const vehicles = [];
+    for (const garageObject of newGarageObjects) {
+      for (const garageVehicle of garageObject.vehicles) {
+        const newVehicle = garageObject.location + '_' + garageVehicle;
+        vehicles.push(newVehicle);
+      }
+    }
+    vehicles.sort();
+    setVehicleNames(vehicles);
   };
 
   return (
