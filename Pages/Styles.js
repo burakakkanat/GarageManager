@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         margin: 10,
+        marginBottom: 0,
         borderTopWidth: 1,
         borderTopColor: '#ccc'
     },
@@ -35,24 +36,10 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         borderRadius: 5,
     },
-    containerGarageList: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 15,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ccc'
-    },
     containerPicker: {
         height: 40,
         width: 200,
         dropdownIconColor: 'black'
-    },
-    containerVehicleList: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 15,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ccc'
     },
     containerWhishlistHeader: {
         backgroundColor: '#2D640F',
@@ -61,7 +48,7 @@ const styles = StyleSheet.create({
         padding: 10,
         alignItems: 'center',
     },
-    containerWishlistRow: {
+    containerForLists: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         borderBottomWidth: 1,

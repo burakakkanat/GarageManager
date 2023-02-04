@@ -68,7 +68,7 @@ const Wishlist = () => {
 
   const renderWishlistObject = ({ item }) => {
     return (
-      <TouchableOpacity style={styles.containerWishlistRow} onPress={() => removeWishlistObject(item)}>
+      <TouchableOpacity style={styles.containerForLists} onPress={() => removeWishlistObject(item)}>
         <Text style={styles.textWishlistObject}>{item.garage}</Text>
         <Text style={styles.textWishlistObject}>{item.vehicleName}</Text>
         <Text style={styles.textWishlistObject}>{item.price}</Text>

@@ -21,8 +21,8 @@ const Garages = () => {
   const [showGarageDetailsVisible, setShowGarageDetailsVisible] = useState(false);
 
   const [garageObject, setGarageObject] = useState({
-    name: '',
     location: '',
+    theme: '',
     availableSpace: '0',
     disposableVehicles: [],
     vehicles: [],
@@ -39,23 +39,23 @@ const Garages = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      setGarageObject({ ...garageObject, name: '', location: '', availableSpace: '0', disposableVehicles: [], vehicles: [] });
+      setGarageObject({ ...garageObject, location: '', theme: '', availableSpace: '0', disposableVehicles: [], vehicles: [] });
     }, [])
   );
 
   const openAddNewGarageWindow = async () => {
-    setGarageObject({ ...garageObject, name: '', location: '', availableSpace: '0', disposableVehicles: [] });
+    setGarageObject({ ...garageObject, location: '', theme: '', availableSpace: '0', disposableVehicles: [] });
     setAddGarageModalVisible(true);
   };
 
   const addGarageObject = async () => {
 
-    const garageWithSameName = garageObjects.filter(function (garageObj) {
-      return garageObj.name === garageObject.name;
+    const garageWithSameLocation = garageObjects.filter(function (garageObj) {
+      return garageObj.location === garageObject.location;
     });
 
-    if (garageWithSameName.length !== 0) {
-      Alert.alert('Add New Garage', "Garage name already exists.");
+    if (garageWithSameLocation.length !== 0) {
+      Alert.alert('Add New Garage', "Garage at this location already exists.");
       return;
     }
 
@@ -63,7 +63,7 @@ const Garages = () => {
     garageObjects.sort(compareGarages);
     setGarageObjects([...garageObjects]);
 
-    setGarageObject({ ...garageObject, name: '', location: '', availableSpace: '0', disposableVehicles: [] });
+    setGarageObject({ ...garageObject, location: '', theme: '', availableSpace: '0', disposableVehicles: [] });
     await saveObject('@GarageObjectList', garageObjects);
     setAddGarageModalVisible(false);
   };
@@ -97,7 +97,7 @@ const Garages = () => {
       // Set states
       setGarageObjects(newGarageObjects);
 
-      setGarageObject({ ...garageObject, name: '', location: '', availableSpace: '0', disposableVehicles: [] });
+      setGarageObject({ ...garageObject, location: '', theme: '', availableSpace: '0', disposableVehicles: [] });
 
     } catch (error) {
       console.error(error);
@@ -114,7 +114,7 @@ const Garages = () => {
 
     Alert.alert(
       'Remove Garage',
-      'Are you sure you want to remove ' + garageObj.name + '?',
+      'Are you sure you want to remove garage at ' + garageObj.location + '?',
       [
         {
           text: 'Cancel',
@@ -150,7 +150,7 @@ const Garages = () => {
     const vehicles = [];
     for (const garageObject of newGarageObjects) {
       for (const garageVehicle of garageObject.vehicles) {
-        const newVehicle = garageObject.name + '_' + garageVehicle;
+        const newVehicle = garageObject.location + '_' + garageVehicle;
         vehicles.push(newVehicle);
       }
     }
@@ -163,12 +163,18 @@ const Garages = () => {
       <ScrollView>
         <View style={styles.separatorTop} />
         {garageObjects.map((currentGarageObject, index) => (
-          <View key={index} style={styles.containerGarageList}>
+          <View key={index} style={styles.containerForLists}>
             <TouchableOpacity onPress={() => showGarageDetails(currentGarageObject)}>
-              <Text style={{ color: 'black', fontWeight: 'bold' }}>{currentGarageObject.name}</Text>
+              <Text style={{ color: 'black', fontWeight: 'bold' }}>{currentGarageObject.location}</Text>
             </TouchableOpacity>
 
             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
+
+              <TouchableOpacity
+                style={{ marginRight: 20 }}>
+                <Text style={{ color: 'black', fontStyle: 'italic' }}>{currentGarageObject.theme}</Text>
+              </TouchableOpacity>
+
               <TouchableOpacity onPress={() => openEditGarageWindow(index, currentGarageObject)} style={{ marginRight: 20 }}>
                 <Text style={{ color: 'blue' }}>Edit</Text>
               </TouchableOpacity>
@@ -206,17 +212,17 @@ const Garages = () => {
             <Text style={{ color: 'grey', margin: 10 }}>{'Garage Details:'}</Text>
 
             <TextInput
-              value={garageObject.name}
-              onChangeText={text => setGarageObject({ ...garageObject, name: text })}
-              placeholder="Garage Name"
+              value={garageObject.location}
+              onChangeText={text => setGarageObject({ ...garageObject, location: text })}
+              placeholder="Garage Location"
               placeholderTextColor="grey"
               style={styles.textInput}
             />
 
             <TextInput
-              value={garageObject.location}
-              onChangeText={text => setGarageObject({ ...garageObject, location: text })}
-              placeholder="Garage Location"
+              value={garageObject.theme}
+              onChangeText={text => setGarageObject({ ...garageObject, theme: text })}
+              placeholder="Garage Theme"
               placeholderTextColor="grey"
               style={styles.textInput}
             />
@@ -296,16 +302,16 @@ const Garages = () => {
             <Text style={{ color: 'grey', margin: 10 }}>{'Garage Details:'}</Text>
 
             <TextInput
-              value={garageObject.name}
-              onChangeText={text => setGarageObject({ ...garageObject, name: text })}
+              value={garageObject.location}
+              onChangeText={text => setGarageObject({ ...garageObject, location: text })}
               placeholder="New Garage Name"
               placeholderTextColor="grey"
               style={styles.textInput}
             />
 
             <TextInput
-              value={garageObject.location}
-              onChangeText={text => setGarageObject({ ...garageObject, location: text })}
+              value={garageObject.theme}
+              onChangeText={text => setGarageObject({ ...garageObject, theme: text })}
               placeholder="New Garage Location"
               placeholderTextColor="grey"
               style={styles.textInput}
@@ -372,7 +378,7 @@ const Garages = () => {
         }}
       >
         <View style={{ backgroundColor: '#2D640F', justifyContent: 'center', height: 50 }}>
-          <Text style={styles.header}>Vehicles in {lastSelectedGarageObject.name}</Text>
+          <Text style={styles.header}>Vehicles at {lastSelectedGarageObject.location}</Text>
         </View>
 
         <View style={{ marginTop: 10 }}>
@@ -422,10 +428,10 @@ const retrieveObject = async (key) => {
 };
 
 function compareGarages(garageA, garageB) {
-  if (garageA.name < garageB.name) {
+  if (garageA.location < garageB.location) {
     return -1;
   }
-  if (garageA.name > garageB.name) {
+  if (garageA.location > garageB.location) {
     return 1;
   }
   return 0;

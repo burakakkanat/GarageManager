@@ -27,7 +27,7 @@ const Vehicles = () => {
       const vehicles = [];
       for (const garageObject of garageObjects) {
         for (const garageVehicle of garageObject.vehicles) {
-          const newVehicle = garageObject.name + '_' + garageVehicle;
+          const newVehicle = garageObject.location + '_' + garageVehicle;
           vehicles.push(newVehicle);
         }
       }
@@ -53,7 +53,7 @@ const Vehicles = () => {
     try {
 
       const newGarageObjects = garageObjects.filter(function (garageObj) {
-        return garageObj.name !== selectedGarage.name;
+        return garageObj.location !== selectedGarage.location;
       });
 
       selectedGarage.vehicles.push(newVehicleName);
@@ -63,7 +63,7 @@ const Vehicles = () => {
       newGarageObjects.sort(compareGarages)
 
       const allVehicles = vehicleNames;
-      allVehicles.push(selectedGarage.name + '_' + newVehicleName);
+      allVehicles.push(selectedGarage.location + '_' + newVehicleName);
       allVehicles.sort();
 
       await saveObject('@GarageObjectList', newGarageObjects);
@@ -80,12 +80,12 @@ const Vehicles = () => {
   const removeVehicle = async (vehicleNameWithGarageName) => {
 
     const garageNameEndIndex = vehicleNameWithGarageName.indexOf('_');
-    const nameofTheGarage = vehicleNameWithGarageName.substr(0, garageNameEndIndex);
+    const locationOfTheGarage = vehicleNameWithGarageName.substr(0, garageNameEndIndex);
     const vehicleToRemove = vehicleNameWithGarageName.substr(garageNameEndIndex + 1);
 
     Alert.alert(
       'Remove Vehicle',
-      'Are you sure you want to remove ' + vehicleToRemove + ' in ' + nameofTheGarage + '?',
+      'Are you sure you want to remove ' + vehicleToRemove + ' in ' + locationOfTheGarage + '?',
       [
         {
           text: 'Cancel',
@@ -98,7 +98,7 @@ const Vehicles = () => {
 
               // Find the garage, remove the vehicle from found garage, set it to the found garage
               const garageObj = garageObjects.filter(function (garageObj) {
-                return garageObj.name === nameofTheGarage;
+                return garageObj.location === locationOfTheGarage;
               }).at(0);
 
               const updatedGarageVehicles = garageObj.vehicles.filter(e => e !== vehicleToRemove);
@@ -106,16 +106,18 @@ const Vehicles = () => {
 
               // Remove previous garage from garegeObjects and push new one into it
               const newGarageObjects = garageObjects.filter(function (garageObj) {
-                return garageObj.name !== nameofTheGarage;
+                return garageObj.location !== locationOfTheGarage;
               });
+
               newGarageObjects.push(garageObj);
               newGarageObjects.sort(compareGarages);
 
               // Remove vehicle from all vehicles list
               const allVehicleNames = vehicleNames.filter(e => e !== vehicleNameWithGarageName);
 
-              setGarageObjects(newGarageObjects);
               setVehicleNames(allVehicleNames);
+              setGarageObjects(newGarageObjects);
+              await saveObject('@GarageObjectList', newGarageObjects);
 
             } catch (error) {
               console.error(error);
@@ -132,7 +134,7 @@ const Vehicles = () => {
       <ScrollView>
         <View style={styles.separatorTop} />
         {vehicleNames.map((vehicleName, index) => (
-          <View key={index} style={styles.containerVehicleList}>
+          <View key={index} style={styles.containerForLists}>
             <TouchableOpacity>
               <Text style={{ color: 'black', fontWeight: 'bold' }}>
                 {vehicleName.substr(vehicleName.indexOf('_') + 1)}
@@ -173,7 +175,7 @@ const Vehicles = () => {
           {garageObjects.map((garageObject, index) => (
             <Picker.Item
               key={index}
-              label={garageObject.name}
+              label={garageObject.location}
               value={garageObject}
               color='black'
             />
@@ -215,10 +217,10 @@ const retrieveObject = async (key) => {
 };
 
 function compareGarages(garageA, garageB) {
-  if (garageA.name < garageB.name) {
+  if (garageA.location < garageB.location) {
     return -1;
   }
-  if (garageA.name > garageB.name) {
+  if (garageA.location > garageB.location) {
     return 1;
   }
   return 0;
