@@ -179,7 +179,7 @@ const Garages = () => {
             </View>
 
             <View style={{ flex: 1 }}>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => showGarageDetails(index, currentGarageObject)}>
                 <Text style={{ color: 'black', fontStyle: 'italic' }}>{currentGarageObject.theme}</Text>
               </TouchableOpacity>
             </View>

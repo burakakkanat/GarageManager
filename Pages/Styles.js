@@ -30,12 +30,6 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
         borderTopColor: '#ccc'
     },
-    containerGarage: {
-        backgroundColor: "#ddd",
-        padding: 10,
-        marginBottom: 10,
-        borderRadius: 5,
-    },
     containerPicker: {
         height: 40,
         width: 200,
@@ -68,10 +62,11 @@ const styles = StyleSheet.create({
         padding: 8,
     },
     header: {
-        fontWeight: 'bold',
-        fontSize: 20,
-        padding: 10,
-        color: 'white'
+        marginLeft: 10,
+        marginTop: 5,
+        fontSize: 30,
+        color: 'white',
+        fontFamily: 'SignPainter-HouseScript'
     },
     newVehicleName: {
         height: 40,
