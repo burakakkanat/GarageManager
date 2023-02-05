@@ -1,6 +1,6 @@
 {
-  "name": "garagemanager",
-  "version": "0.0.1",
+  "name": "johnny-on-the-spot",
+  "version": "0.1.9",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
