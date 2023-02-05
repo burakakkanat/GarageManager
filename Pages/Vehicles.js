@@ -59,6 +59,8 @@ const Vehicles = () => {
       selectedGarage.vehicles.push(newVehicleName);
       selectedGarage.vehicles.sort();
 
+      setNewVehicleName('');
+
       newGarageObjects.push(selectedGarage);
       newGarageObjects.sort(compareGarages)
 
@@ -69,8 +71,6 @@ const Vehicles = () => {
       await saveObject('@GarageObjectList', newGarageObjects);
       setGarageObjects(newGarageObjects);
       setVehicleNames(allVehicles);
-
-      setNewVehicleName('');
 
     } catch (error) {
       console.error(error);
