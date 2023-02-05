@@ -9,12 +9,11 @@ import styles from './Styles';
 const Garages = () => {
 
   const { garageObjects, setGarageObjects } = useContext(GarageContext);
-  const { vehicleNames, setVehicleNames } = useContext(VehicleContext);
+  const { vehicleObjects, setVehicleObjects } = useContext(VehicleContext);
 
-  const [garageObjectIndex, setGarageObjectIndex] = useState("");               // Used when removing the previous car when editing garage.
-  const [garageObjectVehicles, setGarageObjectVehicles] = useState("");         // Used for transfering vehicles when editing garage.
+  const [ oldGarageLocation, setOldGarageLocation ] = useState('');
 
-  // Modals
+  // Modal visibility
   const [addGarageModalVisible, setAddGarageModalVisible] = useState(false);
   const [editGarageModalVisible, setEditGarageModalVisible] = useState(false);
   const [showGarageDetailsVisible, setShowGarageDetailsVisible] = useState(false);
@@ -24,12 +23,19 @@ const Garages = () => {
     theme: '',
     availableSpace: '0',
     disposableVehicles: [],
-    vehicles: [],
+    vehicles: []
   });
 
   useEffect(() => {
     // Get the list of garage names from local storage
     const getGarageObjects = async () => {
+
+      // #TEST: Activate these two lines to wipe data on restart.
+      // await AsyncStorage.removeItem('@GarageObjectList');
+      // setVehicleObjects([]);
+      // await AsyncStorage.removeItem('@VehicleObjectList');
+      // setGarageObjects([]);
+
       const garages = await retrieveObject('@GarageObjectList');
       setGarageObjects(garages);
     };
@@ -48,6 +54,11 @@ const Garages = () => {
   };
 
   const addGarageObject = async () => {
+      
+    if (!garageObject.location.trim()) {
+      Alert.alert('Add New Garage', "Garage location can not be empty.");
+      return;
+    }
 
     const garageWithSameLocation = garageObjects.filter(function (garageObj) {
       return garageObj.location === garageObject.location;
@@ -62,58 +73,78 @@ const Garages = () => {
     garageObjects.sort(compareGarages);
     setGarageObjects([...garageObjects]);
 
-    setGarageObject({ ...garageObject, location: '', theme: '', availableSpace: '0', disposableVehicles: [] });
     await saveObject('@GarageObjectList', garageObjects);
     setAddGarageModalVisible(false);
   };
 
-  const openEditGarageWindow = async (garageObj) => {
-    setShowGarageDetailsVisible(false);
+  const showGarageDetails = async (garageObj) => {
+    setOldGarageLocation(garageObj.location);
     setGarageObject(garageObj);
-    setGarageObjectVehicles(garageObj.vehicles);
+    setShowGarageDetailsVisible(true);
+  };
+
+  const openEditGarageWindow = async () => {
+    setShowGarageDetailsVisible(false);
     setEditGarageModalVisible(true);
   };
 
   const editGarageObject = async () => {
 
     try {
+      const newGarageObjects = garageObjects.filter(garageObj => garageObj.location !== oldGarageLocation);
+      
+      if (!garageObject.location.trim()) {
+        Alert.alert('Add New Garage', "Garage location can not be empty.");
+        return;
+      }
 
-      setEditGarageModalVisible(false);
+      const garageWithSameLocation = newGarageObjects.filter(function (garageObj) {
+        return garageObj.location === garageObject.location;
+      });
+  
+      if (garageWithSameLocation.length !== 0) {
+        Alert.alert('Add New Garage', "Garage at this location already exists.");
+        return;
+      }
 
-      garageObject.vehicles = garageObjectVehicles;
-
-      // Remove old garageObject, add new garageObject, sort
-      const newGarageObjects = garageObjects.filter((_, index) => index !== garageObjectIndex);
       newGarageObjects.push(garageObject);
       newGarageObjects.sort(compareGarages);
 
-      // Set the new garageObjects to local
+      // Set the new garageObjects to local an state
       await saveObject('@GarageObjectList', newGarageObjects);
-
-      // Set new vehicles list for Vehicles page
-      updateAllVehicles(newGarageObjects);
-
-      // Set states
       setGarageObjects(newGarageObjects);
 
+      // Update vehicleObjects with new garage info
+      await updateVehicleObjects();
+
       setGarageObject({ ...garageObject, location: '', theme: '', availableSpace: '0', disposableVehicles: [] });
+      setEditGarageModalVisible(false);
 
     } catch (error) {
       console.error(error);
     }
   };
 
-  const removeDisposableVehicle = index => {
-    const newDisposableVehicles = [...garageObject.disposableVehicles];
-    newDisposableVehicles.splice(index, 1);
-    setGarageObject({ ...garageObject, disposableVehicles: newDisposableVehicles });
+  const updateVehicleObjects = async () => {
+    const vehicleObjectsToUpdate = Object.assign([],vehicleObjects.filter(vehicleObject => vehicleObject.garageLocation === oldGarageLocation));
+    const newVehicleObjects = vehicleObjects.filter(vehicleObject => vehicleObject.garageLocation !== oldGarageLocation);
+
+    for (const vehicleObject of vehicleObjectsToUpdate) {
+      vehicleObject.garageLocation = garageObject.location;
+      newVehicleObjects.push(vehicleObject);
+    }
+
+    newVehicleObjects.sort(compareVehicles);
+
+    await saveObject('@VehicleObjectList', newVehicleObjects);
+    setVehicleObjects(newVehicleObjects);
   };
 
-  const removeGarageObject = async (garageToRemove) => {
+  const removeGarageObject = async () => {
 
     Alert.alert(
       'Remove Garage',
-      'Are you sure you want to remove garage at ' + garageToRemove.location + '?',
+      'Are you sure you want to remove garage at ' + garageObject.location + '?',
       [
         {
           text: 'Cancel',
@@ -123,15 +154,13 @@ const Garages = () => {
           text: 'OK',
           onPress: async () => {
             try {
-              const newGarageObjects = garageObjects.filter(function (garageObj) {
-                return garageObj.location !== garageToRemove.location;
-              });
+              const newGarageObjects = garageObjects.filter(garageObj => garageObj.location !== garageObject.location);
 
               setGarageObjects(newGarageObjects);
               await saveObject('@GarageObjectList', newGarageObjects);
 
               // Set new vehicles list for Vehicles page
-              updateAllVehicles(newGarageObjects);
+              await removeVehicleObjects();
 
               setShowGarageDetailsVisible(false);
 
@@ -145,22 +174,16 @@ const Garages = () => {
     );
   };
 
-  const showGarageDetails = async (index, garageObj) => {
-    setGarageObjectIndex(index);
-    setGarageObject(garageObj);
-    setShowGarageDetailsVisible(true);
+  const removeVehicleObjects = async () => {
+    const newVehicleObjects = vehicleObjects.filter(vehicleObject => vehicleObject.garageLocation !== garageObject.location);
+    await saveObject('@VehicleObjectList', newVehicleObjects);
+    setVehicleObjects(newVehicleObjects);
   };
 
-  const updateAllVehicles = (newGarageObjects) => {
-    const vehicles = [];
-    for (const garageObject of newGarageObjects) {
-      for (const garageVehicle of garageObject.vehicles) {
-        const newVehicle = garageObject.location + '_' + garageVehicle;
-        vehicles.push(newVehicle);
-      }
-    }
-    vehicles.sort();
-    setVehicleNames(vehicles);
+  const removeDisposableVehicle = index => {
+    const newDisposableVehicles = [...garageObject.disposableVehicles];
+    newDisposableVehicles.splice(index, 1);
+    setGarageObject({ ...garageObject, disposableVehicles: newDisposableVehicles });
   };
 
   return (
@@ -173,13 +196,13 @@ const Garages = () => {
         {garageObjects.map((currentGarageObject, index) => (
           <View key={index} style={styles.containerForGarageList}>
             <View style={{ flex: 1 }}>
-              <TouchableOpacity onPress={() => showGarageDetails(index, currentGarageObject)}>
+              <TouchableOpacity onPress={() => showGarageDetails(currentGarageObject)}>
                 <Text style={{ color: 'black', fontWeight: 'bold' }}>{currentGarageObject.location}</Text>
               </TouchableOpacity>
             </View>
 
             <View style={{ flex: 1 }}>
-              <TouchableOpacity onPress={() => showGarageDetails(index, currentGarageObject)}>
+              <TouchableOpacity onPress={() => showGarageDetails(currentGarageObject)}>
                 <Text style={{ color: 'black', fontStyle: 'italic' }}>{currentGarageObject.theme}</Text>
               </TouchableOpacity>
             </View>
@@ -429,7 +452,7 @@ const Garages = () => {
 
           <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'flex-end' }}>
             <TouchableOpacity
-              onPress={() => openEditGarageWindow(garageObject)}
+              onPress={() => openEditGarageWindow()}
               style={styles.buttonGreen}>
               <Text style={{ color: 'white' }}>Edit Garage</Text>
             </TouchableOpacity>
@@ -467,6 +490,16 @@ const retrieveObject = async (key) => {
     return [];
   }
 };
+
+function compareVehicles(vehicleA, vehicleB) {
+  if (vehicleA.garageLocation < vehicleB.garageLocation) {
+    return -1;
+  }
+  if (vehicleA.garageLocation > vehicleB.garageLocation) {
+    return 1;
+  }
+  return 0;
+}
 
 function compareGarages(garageA, garageB) {
   if (garageA.location < garageB.location) {

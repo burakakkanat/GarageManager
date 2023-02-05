@@ -4,10 +4,10 @@ const VehicleContext = createContext();
 
 const VehicleContextProvider = ({ children }) => {
 
-  const [vehicleNames, setVehicleNames] = useState([]);
+  const [vehicleObjects, setVehicleObjects] = useState([]);
 
   return (
-    <VehicleContext.Provider value={{ vehicleNames, setVehicleNames }}>
+    <VehicleContext.Provider value={{ vehicleObjects, setVehicleObjects }}>
       {children}
     </VehicleContext.Provider>
   );
