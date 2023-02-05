@@ -1,1 +1,1 @@
-App icon by (https://www.flaticon.com/authors/kiranshastry "Kiranshastry") at Flaticon.
+App icon by [Kiranshastry](https://www.flaticon.com/authors/kiranshastry) at Flaticon.
