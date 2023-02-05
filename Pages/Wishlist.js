@@ -73,7 +73,7 @@ const Wishlist = () => {
   const renderWishlistObject = ({ item }) => {
     return (
       <TouchableOpacity style={styles.containerForLists} onPress={() => removeWishlistObject(item)}>
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, marginLeft: 10 }}>
           <Text style={styles.textWishlistObject}>{item.garage}</Text>
         </View>
         <View style={{ flex: 1 }}>
@@ -92,7 +92,7 @@ const Wishlist = () => {
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.containerWishlistHeader}>
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, marginLeft: 10 }}>
           <Text>Garage</Text>
         </View>
         <View style={{ flex: 1 }}>
