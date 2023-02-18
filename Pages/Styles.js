@@ -94,10 +94,6 @@ const styles = StyleSheet.create({
         margin: 10,
         height: 40
     },
-    textAddWishlistButton: {
-        color: 'white',
-        fontWeight: 'bold',
-    },
     textWishlistObject: {
         fontSize: 13,
         color: 'black',

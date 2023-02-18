@@ -115,7 +115,7 @@ const Wishlist = () => {
       <TouchableOpacity
         style={styles.buttonGreen}
         onPress={() => setAddWishlistModalVisible(true)}>
-        <Text style={styles.textAddWishlistButton}>Add Wishlist Item</Text>
+        <Text style={{ color: 'white' }}>Add Wishlist Item</Text>
       </TouchableOpacity>
 
       <Modal
