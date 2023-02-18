@@ -154,7 +154,7 @@ const Vehicles = () => {
             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
               <TouchableOpacity
                 style={{ marginRight: 20 }}>
-                <Text style={{ color: 'black', fontStyle: 'italic' }}>{'in ' + currentVehicleObject.garageLocation}</Text>
+                <Text style={{ color: 'black', fontStyle: 'italic' }}>{'at ' + currentVehicleObject.garageLocation}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
