@@ -1,16 +1,19 @@
 
-import { Alert, ScrollView, Text, TextInput, TouchableOpacity, View, } from 'react-native';
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import React, { useContext, useEffect, useState } from 'react';
 import { VehicleContext } from '../Context/VehicleContext';
 import { GarageContext } from '../Context/GarageContext';
 import { Picker } from '@react-native-picker/picker';
+import { BlurView } from 'react-native-blur';
 import styles from './Styles';
 
 const Vehicles = () => {
 
   const { garageObjects, setGarageObjects } = useContext(GarageContext);
   const { vehicleObjects, setVehicleObjects } = useContext(VehicleContext);
+
+  const [loading, setLoading] = useState(false);
 
   const [vehicleObject, setVehicleObject] = useState({
     vehicleName: '',
@@ -47,13 +50,13 @@ const Vehicles = () => {
     }
 
     try {
-    
+      setLoading(true);
       const selectedGarageIndex = garageObjects.findIndex(garageObj => garageObj.location === vehicleObject.garageLocation);
     
       const newGarageObjects = [...garageObjects];
       const selectedGarageObject = { ...newGarageObjects[selectedGarageIndex] };
 
-      selectedGarageObject.vehicles = [...selectedGarageObject.vehicles, vehicleObject.vehicleName];
+      selectedGarageObject.vehicles = [...selectedGarageObject.vehicles, vehicleObject.vehicleName].sort(compareVehicles);
       newGarageObjects[selectedGarageIndex] = selectedGarageObject;
       newGarageObjects.sort(compareGarages);
     
@@ -69,6 +72,8 @@ const Vehicles = () => {
 
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
     
   };
@@ -87,6 +92,8 @@ const Vehicles = () => {
           text: 'OK',
           onPress: async () => {
             try {
+
+              setLoading(true);
 
               /*
               * Updating the garage of which the vehicle is removed from
@@ -129,6 +136,8 @@ const Vehicles = () => {
 
             } catch (error) {
               console.error(error);
+            } finally {
+              setLoading(false);
             }
           },
         },
@@ -196,10 +205,19 @@ const Vehicles = () => {
 
       <TouchableOpacity
         onPress={addNewVehicle}
+        disabled={loading}
         style={styles.buttonGreen}
       >
         <Text style={{ color: 'white' }}>Add New Vehicle</Text>
       </TouchableOpacity>
+
+      {loading && (
+        <View style={styles.loadingContainer}>
+          <BlurView blurType="light" blurAmount={10} style={StyleSheet.absoluteFill}>
+            <ActivityIndicator size="large" color="#2D640F" />
+          </BlurView>
+        </View>
+      )}
     </View>
   );
 };
