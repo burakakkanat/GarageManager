@@ -140,9 +140,7 @@ const Vehicles = () => {
   return (
     <View style={{ flex: 1 }}>
       <ScrollView>
-
         <View style={styles.separatorTop} />
-
         {vehicleObjects.map((currentVehicleObject, index) => (
           <View key={index} style={styles.containerForLists}>
             <TouchableOpacity>
@@ -187,6 +185,7 @@ const Vehicles = () => {
               key={index}
               label={garageObject.location}
               value={garageObject.location}
+              style={{backgroundColor: '#F2F2F2'}}
               color='black'
             />
           ))}
@@ -257,7 +256,7 @@ function compareVehicles(vehicleA, vehicleB) {
     return 1;
   }
 
-  // Then sort by garage names
+  // Then sort by vehicle names
   if (vehicleA.vehicleName < vehicleB.vehicleName) {
     return -1;
   }

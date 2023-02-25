@@ -23,8 +23,9 @@ const Garages = () => {
     location: '',
     theme: '',
     availableSpace: '',
+    vehicles: [],
     disposableVehicles: [],
-    vehicles: []
+    wishlist: []
   });
 
   useEffect(() => {
@@ -50,7 +51,7 @@ const Garages = () => {
   );
 
   const setEmptyGarageObject = async () => {
-    setGarageObject({ ...garageObject, location: '', theme: '', availableSpace: '', disposableVehicles: [], vehicles: [] });
+    setGarageObject({ ...garageObject, location: '', theme: '', availableSpace: '', disposableVehicles: [], vehicles: [], wishlist: [] });
   }
 
   const openAddNewGarageWindow = async () => {
@@ -433,58 +434,79 @@ const Garages = () => {
           <Text style={styles.header}>{garageObject.location}</Text>
         </View>
 
-        <View style={{ flex: 1, flexDirection: 'column' }}>
+        <View style={{ flex: 1 }}>
 
-          <View style={styles.separatorTop} />
+          <ScrollView>
 
-          <Text style={{ color: 'black', margin: 10, fontWeight: 'bold', fontStyle: 'italic', fontSize: 17.5 }}>{'Garage Details'}</Text>
+            <View style={styles.separatorTop} />
 
-          <View style={{ flexDirection: 'row', margin: 10, marginTop: 0 }}>
-            <Text style={{ color: 'grey', fontWeight: 'bold', fontStyle: 'italic' }}>Theme: </Text>
-            <Text style={{ color: 'grey' }}>{garageObject.theme}</Text>
-          </View>
+            <Text style={{ color: 'black', margin: 10, fontWeight: 'bold', fontStyle: 'italic', fontSize: 17.5 }}>{'Garage Details'}</Text>
 
-          <View style={{ flexDirection: 'row', margin: 10, marginTop: 0 }}>
-            <Text style={{ color: 'grey', fontWeight: 'bold', fontStyle: 'italic' }}>Capacity: </Text>
-            <Text style={{ color: 'grey' }}>{garageObject.availableSpace}</Text>
-          </View>
+            <View style={{ flexDirection: 'row', margin: 10, marginTop: 0 }}>
+              <Text style={{ color: 'grey', fontWeight: 'bold', fontStyle: 'italic' }}>Theme: </Text>
+              <Text style={{ color: 'grey' }}>{garageObject.theme}</Text>
+            </View>
 
-          <View style={{ flexDirection: 'row', margin: 10, marginTop: 0 }}>
-            <Text style={{ color: 'grey', fontWeight: 'bold', fontStyle: 'italic' }}>Available Space: </Text>
-            <Text style={{ color: 'grey' }}>{garageObject.availableSpace - garageObject.vehicles.length}</Text>
-          </View>
+            <View style={{ flexDirection: 'row', margin: 10, marginTop: 0 }}>
+              <Text style={{ color: 'grey', fontWeight: 'bold', fontStyle: 'italic' }}>Capacity: </Text>
+              <Text style={{ color: 'grey' }}>{garageObject.availableSpace}</Text>
+            </View>
 
-          <View style={styles.separatorTop} />
+            <View style={{ flexDirection: 'row', margin: 10, marginTop: 0 }}>
+              <Text style={{ color: 'grey', fontWeight: 'bold', fontStyle: 'italic' }}>Available Space: </Text>
+              <Text style={{ color: 'grey' }}>{garageObject.availableSpace - garageObject.vehicles.length}</Text>
+            </View>
 
-          <Text style={{ color: 'black', margin: 10, fontWeight: 'bold', fontStyle: 'italic', fontSize: 17.5 }}>{'Vehicles in Garage' + ' (' + garageObject.vehicles.length + ')'}</Text>
+            <View style={styles.separatorTop} />
 
-          <View>
-            <ScrollView>{garageObject.vehicles && garageObject.vehicles.map((vehicleName, index) => (
-              <View key={index} style={styles.containerForSimpleLists}>
-                <TouchableOpacity>
-                  <Text style={{ color: 'grey' }}>{vehicleName}</Text>
-                </TouchableOpacity>
-              </View>
-            ))}
-            </ScrollView>
-          </View>
+            <Text style={{ color: 'black', margin: 10, fontWeight: 'bold', fontStyle: 'italic', fontSize: 17.5 }}>{'Vehicles in Garage' + ' (' + garageObject.vehicles.length + ')'}</Text>
 
-          <View style={styles.separatorTop} />
+            <View>
+              {garageObject.vehicles && garageObject.vehicles.map((vehicleName, index) => (
+                <View key={index} style={styles.containerForSimpleLists}>
+                  <TouchableOpacity>
+                    <Text style={{ color: 'grey' }}>{vehicleName}</Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
 
-          <Text style={{ color: 'black', margin: 10, fontWeight: 'bold', fontStyle: 'italic', fontSize: 17.5 }}>{'Disposible Vehicles' + ' (' + garageObject.disposableVehicles.length + ')'}</Text>
+            <View style={styles.separatorTop} />
 
-          <View>
-            <ScrollView>{garageObject.disposableVehicles && garageObject.disposableVehicles.map((disposableVehicle, index) => (
+            <Text style={{ color: 'black', margin: 10, fontWeight: 'bold', fontStyle: 'italic', fontSize: 17.5 }}>{'Disposible Vehicles' + ' (' + garageObject.disposableVehicles.length + ')'}</Text>
+
+            <View>{garageObject.disposableVehicles && garageObject.disposableVehicles.map((disposableVehicle, index) => (
               <View key={index} style={styles.containerForSimpleLists}>
                 <TouchableOpacity>
                   <Text style={{ color: 'grey' }}>{disposableVehicle}</Text>
                 </TouchableOpacity>
               </View>
             ))}
-            </ScrollView>
-          </View>
+            </View>
 
-          <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'flex-end' }}>
+            <View style={styles.separatorTop} />
+
+            <Text style={{ color: 'black', margin: 10, fontWeight: 'bold', fontStyle: 'italic', fontSize: 17.5 }}>{'Wishlist Items for This Garage' + ' (' + garageObject.wishlist.length + ')'}</Text>
+
+            <View>{garageObject.wishlist && garageObject.wishlist.map((wishlist, index) => (
+              <View key={index} style={styles.containerForSimpleLists}>
+                <TouchableOpacity>
+                  <Text style={{ color: 'grey' }}>{wishlist}</Text>
+                </TouchableOpacity>
+              </View>
+            ))}
+            </View>
+
+          </ScrollView>
+
+          <View style={{
+            flexDirection: 'column',
+            margin: 5,
+            marginTop: 0,
+            marginBottom: 0,
+            borderTopWidth: 1,
+            borderTopColor: '#black'
+          }}>
             <TouchableOpacity
               onPress={() => openEditGarageWindow()}
               style={styles.buttonGreen}>
@@ -535,7 +557,7 @@ function compareVehicles(vehicleA, vehicleB) {
     return 1;
   }
 
-  // Then sort by garage names
+  // Then sort by vehicle names
   if (vehicleA.vehicleName < vehicleB.vehicleName) {
     return -1;
   }

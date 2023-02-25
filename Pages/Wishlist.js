@@ -1,9 +1,13 @@
 import { Alert, FlatList, Modal, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useState } from 'react';
+import { GarageContext } from '../Context/GarageContext';
+import { Picker } from '@react-native-picker/picker';
+import React, { useContext, useEffect, useState } from 'react';
 import styles from './Styles';
 
 const Wishlist = () => {
+
+  const { garageObjects, setGarageObjects } = useContext(GarageContext);
 
   const [wishlistObjects, setWishlistObjects] = useState([]);
   const [addWishlistModalVisible, setAddWishlistModalVisible] = useState(false);
@@ -11,7 +15,7 @@ const Wishlist = () => {
   const [wishlistObject, setWishlistObject] = useState({
     garage: '',
     vehicleName: '',
-    price: '0',
+    price: '',
     tradePrice: '-'
   });
 
@@ -36,7 +40,7 @@ const Wishlist = () => {
     newWishlistObjects.sort(compareWishlistItems);
     await saveObject('@WishlistObjectList', newWishlistObjects);
 
-    setWishlistObject({ garage: '', vehicleName: '', price: '0', tradePrice: '-' });
+    setWishlistObject({ garage: '', vehicleName: '', price: '', tradePrice: '-' });
     setAddWishlistModalVisible(false);
   };
 
@@ -96,7 +100,7 @@ const Wishlist = () => {
           <Text>Vehicle</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text>Garage</Text>
+          <Text>Theme</Text>
         </View>
         <View style={{ flex: 1 }}>
           <Text>Price</Text>
@@ -135,20 +139,31 @@ const Wishlist = () => {
             <Text style={{ color: 'grey', margin: 10 }}>{'Wishlist Details:'}</Text>
 
             <TextInput
-              value={wishlistObject.garage}
-              onChangeText={text => setWishlistObject({ ...wishlistObject, garage: text })}
-              placeholder="Garage"
-              placeholderTextColor="grey"
-              style={styles.textInput}
-            />
-
-            <TextInput
               value={wishlistObject.vehicleName}
               onChangeText={text => setWishlistObject({ ...wishlistObject, vehicleName: text })}
               placeholder="Vehicle Name"
               placeholderTextColor="grey"
               style={styles.textInput}
             />
+
+            <Picker
+              selectedValue={wishlistObject.garage}
+              onValueChange={text => setWishlistObject({ ...wishlistObject, garage: text })}
+              style={styles.containerPicker}
+              dropdownIconColor='black'
+              prompt='Your Garage Themes'>
+
+              {garageObjects.map((garageObject, index) => (
+                <Picker.Item
+                  key={index}
+                  label={garageObject.theme}
+                  value={garageObject.theme}
+                  style={{backgroundColor: 'white'}}
+                  color='black'
+                />
+              ))}
+
+            </Picker>
 
             <TextInput
               value={wishlistObject.price}
@@ -208,12 +223,23 @@ const retrieveObject = async (key) => {
 };
 
 function compareWishlistItems(wishlistItemA, wishlistItemB) {
+
+  // First sort by garage themes
   if (wishlistItemA.garage < wishlistItemB.garage) {
     return -1;
   }
-  if (wishlistItemA.garage > wishlistItemB.garge) {
+  if (wishlistItemA.garage > wishlistItemB.garage) {
     return 1;
   }
+
+  // Then sort by vehicle names
+  if (wishlistItemA.vehicleName < wishlistItemB.vehicleName) {
+    return -1;
+  }
+  if (wishlistItemA.vehicleName > wishlistItemB.vehicleName) {
+    return 1;
+  }
+
   return 0;
 }
 
