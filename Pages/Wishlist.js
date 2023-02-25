@@ -93,10 +93,10 @@ const Wishlist = () => {
     <View style={{ flex: 1 }}>
       <View style={styles.containerWishlistHeader}>
         <View style={{ flex: 1, marginLeft: 10 }}>
-          <Text>Garage</Text>
+          <Text>Vehicle</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text>Vehicle</Text>
+          <Text>Garage</Text>
         </View>
         <View style={{ flex: 1 }}>
           <Text>Price</Text>
