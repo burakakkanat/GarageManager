@@ -72,6 +72,11 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.5)', // semi-transparent black background
         zIndex: 999 // ensure the loading indicator is on top of everything else
     },
+    loadingIndicator: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
     header: {
         marginLeft: 10,
         marginTop: 5,
@@ -108,6 +113,11 @@ const styles = StyleSheet.create({
     textWishlistObject: {
         fontSize: 13,
         color: 'black',
+    },
+    textWishlistObjectBold: {
+        fontSize: 13,
+        color: 'black',
+        fontWeight: 'bold'
     },
 });
 

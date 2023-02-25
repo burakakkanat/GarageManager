@@ -1,11 +1,11 @@
 
 import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useContext, useEffect, useState } from 'react';
 import { VehicleContext } from '../Context/VehicleContext';
 import { GarageContext } from '../Context/GarageContext';
+import { BlurView } from '@react-native-community/blur';
 import { Picker } from '@react-native-picker/picker';
-import { BlurView } from 'react-native-blur';
 import styles from './Styles';
 
 const Vehicles = () => {
@@ -59,15 +59,15 @@ const Vehicles = () => {
       selectedGarageObject.vehicles = [...selectedGarageObject.vehicles, vehicleObject.vehicleName].sort(compareVehicles);
       newGarageObjects[selectedGarageIndex] = selectedGarageObject;
       newGarageObjects.sort(compareGarages);
-    
+
       setGarageObjects(newGarageObjects);
       await saveObject('@GarageObjectList', newGarageObjects);
-    
+
       const newVehicleObjects = [...vehicleObjects, vehicleObject];
       newVehicleObjects.sort(compareVehicles);
       setVehicleObjects(newVehicleObjects);
       await saveObject('@VehicleObjectList', newVehicleObjects);
-    
+
       setVehicleObject({ ...vehicleObject, vehicleName: '' });
 
     } catch (error) {
@@ -75,7 +75,7 @@ const Vehicles = () => {
     } finally {
       setLoading(false);
     }
-    
+
   };
 
   const removeVehicle = async (vehicleObjectToRemove) => {
@@ -100,9 +100,9 @@ const Vehicles = () => {
               */
 
               // Find the garage, 
-              const garageObject = Object.assign({}, garageObjects.filter(function (garageObj) {
+              const garageObject = garageObjects.filter(function (garageObj) {
                 return garageObj.location === vehicleObjectToRemove.garageLocation;
-              }).at(0));
+              }).at(0);
 
               // Remove the vehicle from garage's vehicle list
               // We use index so that we remove only the first occurance
@@ -110,16 +110,7 @@ const Vehicles = () => {
               const newVehicleList = garageObject.vehicles.filter((_, index) => index !== vehicleIndex);
               garageObject.vehicles = newVehicleList;
 
-              // Remove the garage from garegeObjects and push new one into it
-              const newGarageObjects = garageObjects.filter(function (garageObj) {
-                return garageObj.location !== vehicleObjectToRemove.garageLocation;
-              });
-
-              newGarageObjects.push(garageObject);
-              newGarageObjects.sort(compareGarages);
-
-              await saveObject('@GarageObjectList', newGarageObjects);
-              setGarageObjects(newGarageObjects);
+              await saveObject('@GarageObjectList', garageObjects);
 
               /*
               * Updating the vehicleObjects
@@ -213,8 +204,10 @@ const Vehicles = () => {
 
       {loading && (
         <View style={styles.loadingContainer}>
-          <BlurView blurType="light" blurAmount={10} style={StyleSheet.absoluteFill}>
-            <ActivityIndicator size="large" color="#2D640F" />
+          <BlurView blurType="light" blurAmount={5} style={StyleSheet.absoluteFill}>
+            <View style={styles.loadingIndicator}>
+              <ActivityIndicator size="large" color="#2D640F" />
+            </View>
           </BlurView>
         </View>
       )}
