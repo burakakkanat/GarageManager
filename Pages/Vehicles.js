@@ -52,11 +52,11 @@ const Vehicles = () => {
     try {
       setLoading(true);
       const selectedGarageIndex = garageObjects.findIndex(garageObj => garageObj.location === vehicleObject.garageLocation);
-    
+
       const newGarageObjects = [...garageObjects];
       const selectedGarageObject = { ...newGarageObjects[selectedGarageIndex] };
 
-      selectedGarageObject.vehicles = [...selectedGarageObject.vehicles, vehicleObject.vehicleName].sort(compareVehicles);
+      selectedGarageObject.vehicles = [...selectedGarageObject.vehicles, vehicleObject.vehicleName].sort();
       newGarageObjects[selectedGarageIndex] = selectedGarageObject;
       newGarageObjects.sort(compareGarages);
 
@@ -68,11 +68,10 @@ const Vehicles = () => {
       setVehicleObjects(newVehicleObjects);
       await saveObject('@VehicleObjectList', newVehicleObjects);
 
-      setVehicleObject({ ...vehicleObject, vehicleName: '' });
-
     } catch (error) {
       console.error(error);
     } finally {
+      setVehicleObject({ ...vehicleObject, vehicleName: '' });
       setLoading(false);
     }
 
@@ -128,6 +127,7 @@ const Vehicles = () => {
             } catch (error) {
               console.error(error);
             } finally {
+              setVehicleObject({ ...vehicleObject, vehicleName: '' });
               setLoading(false);
             }
           },
@@ -248,12 +248,23 @@ function compareGarages(garageA, garageB) {
 }
 
 function compareVehicles(vehicleA, vehicleB) {
+
+  // First sort by garage locations
   if (vehicleA.garageLocation < vehicleB.garageLocation) {
     return -1;
   }
   if (vehicleA.garageLocation > vehicleB.garageLocation) {
     return 1;
   }
+
+  // Then sort by garage names
+  if (vehicleA.vehicleName < vehicleB.vehicleName) {
+    return -1;
+  }
+  if (vehicleA.vehicleName > vehicleB.vehicleName) {
+    return 1;
+  }
+
   return 0;
 }
 

@@ -12,6 +12,7 @@ const Garages = () => {
   const { vehicleObjects, setVehicleObjects } = useContext(VehicleContext);
 
   const [oldGarageLocation, setOldGarageLocation] = useState('');
+  const [inProgress, setInProgress] = useState(false);
 
   // Modal visibility
   const [addGarageModalVisible, setAddGarageModalVisible] = useState(false);
@@ -21,7 +22,7 @@ const Garages = () => {
   const [garageObject, setGarageObject] = useState({
     location: '',
     theme: '',
-    availableSpace: '0',
+    availableSpace: '',
     disposableVehicles: [],
     vehicles: []
   });
@@ -59,6 +60,8 @@ const Garages = () => {
 
   const addGarageObject = async () => {
     try {
+      setInProgress(true);
+
       if (!garageObject.location.trim()) {
         Alert.alert('Add New Garage', "Garage location can not be empty.");
         return;
@@ -83,6 +86,7 @@ const Garages = () => {
       console.error(error);
     } finally {
       await setEmptyGarageObject();
+      setInProgress(false);
       setAddGarageModalVisible(false);
     }
   };
@@ -101,6 +105,8 @@ const Garages = () => {
   const editGarageObject = async () => {
 
     try {
+
+      setInProgress(true);
 
       if (!garageObject.location.trim()) {
         Alert.alert('Add New Garage', "Garage location can not be empty.");
@@ -132,6 +138,7 @@ const Garages = () => {
       console.error(error);
     } finally {
       await setEmptyGarageObject();
+      setInProgress(false);
       setEditGarageModalVisible(false);
     }
   };
@@ -165,6 +172,8 @@ const Garages = () => {
           text: 'OK',
           onPress: async () => {
             try {
+              setInProgress(true);
+
               const newGarageObjects = garageObjects.filter(garageObj => garageObj.location !== oldGarageLocation);
 
               setGarageObjects(newGarageObjects);
@@ -177,6 +186,7 @@ const Garages = () => {
               console.error(error);
             } finally {
               await setEmptyGarageObject();
+              setInProgress(false);
               setShowGarageDetailsVisible(false);
             }
           },
@@ -516,12 +526,23 @@ const retrieveObject = async (key) => {
 };
 
 function compareVehicles(vehicleA, vehicleB) {
+
+  // First sort by garage locations
   if (vehicleA.garageLocation < vehicleB.garageLocation) {
     return -1;
   }
   if (vehicleA.garageLocation > vehicleB.garageLocation) {
     return 1;
   }
+
+  // Then sort by garage names
+  if (vehicleA.vehicleName < vehicleB.vehicleName) {
+    return -1;
+  }
+  if (vehicleA.vehicleName > vehicleB.vehicleName) {
+    return 1;
+  }
+
   return 0;
 }
 
