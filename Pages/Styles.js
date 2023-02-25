@@ -61,6 +61,22 @@ const styles = StyleSheet.create({
         borderColor: 'lightgrey',
         padding: 8,
     },
+    loadingContainer: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        bottom: 0,
+        right: 0,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // semi-transparent black background
+        zIndex: 999 // ensure the loading indicator is on top of everything else
+    },
+    loadingIndicator: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
     header: {
         marginLeft: 10,
         marginTop: 5,
@@ -97,6 +113,11 @@ const styles = StyleSheet.create({
     textWishlistObject: {
         fontSize: 13,
         color: 'black',
+    },
+    textWishlistObjectBold: {
+        fontSize: 13,
+        color: 'black',
+        fontWeight: 'bold'
     },
 });
 

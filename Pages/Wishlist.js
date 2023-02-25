@@ -1,5 +1,5 @@
 import { Alert, FlatList, Modal, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import styles from './Styles';
 
@@ -74,10 +74,10 @@ const Wishlist = () => {
     return (
       <TouchableOpacity style={styles.containerForLists} onPress={() => removeWishlistObject(item)}>
         <View style={{ flex: 1, marginLeft: 10 }}>
-          <Text style={styles.textWishlistObject}>{item.garage}</Text>
+          <Text style={styles.textWishlistObjectBold}>{item.vehicleName}</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={styles.textWishlistObject}>{item.vehicleName}</Text>
+          <Text style={styles.textWishlistObject}>{item.garage}</Text>
         </View>
         <View style={{ flex: 1 }}>
           <Text style={styles.textWishlistObject}>{item.price}</Text>
