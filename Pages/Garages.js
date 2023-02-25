@@ -11,7 +11,7 @@ const Garages = () => {
   const { garageObjects, setGarageObjects } = useContext(GarageContext);
   const { vehicleObjects, setVehicleObjects } = useContext(VehicleContext);
 
-  const [ oldGarageLocation, setOldGarageLocation ] = useState('');
+  const [oldGarageLocation, setOldGarageLocation] = useState('');
 
   // Modal visibility
   const [addGarageModalVisible, setAddGarageModalVisible] = useState(false);
@@ -44,12 +44,16 @@ const Garages = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      setGarageObject({ ...garageObject, location: '', theme: '', availableSpace: '0', disposableVehicles: [], vehicles: [] });
+      setEmptyGarageObject();
     }, [])
   );
 
+  const setEmptyGarageObject = async () => {
+    setGarageObject({ ...garageObject, location: '', theme: '', availableSpace: '', disposableVehicles: [], vehicles: [] });
+  }
+
   const openAddNewGarageWindow = async () => {
-    setGarageObject({ ...garageObject, location: '', theme: '', availableSpace: '0', disposableVehicles: [] });
+    await setEmptyGarageObject();
     setAddGarageModalVisible(true);
   };
 
@@ -75,10 +79,10 @@ const Garages = () => {
 
       await saveObject('@GarageObjectList', garageObjects);
 
-
     } catch (error) {
       console.error(error);
     } finally {
+      await setEmptyGarageObject();
       setAddGarageModalVisible(false);
     }
   };
@@ -124,11 +128,10 @@ const Garages = () => {
       // Update vehicleObjects with new garage info
       await updateVehicleObjects();
 
-      setGarageObject({ ...garageObject, location: '', theme: '', availableSpace: '0', disposableVehicles: [] });
-
     } catch (error) {
       console.error(error);
     } finally {
+      await setEmptyGarageObject();
       setEditGarageModalVisible(false);
     }
   };
@@ -152,7 +155,7 @@ const Garages = () => {
 
     Alert.alert(
       'Remove Garage',
-      'Are you sure you want to remove garage at ' + garageObject.location + '?',
+      'Are you sure you want to remove garage at ' + oldGarageLocation + '?',
       [
         {
           text: 'Cancel',
@@ -162,17 +165,18 @@ const Garages = () => {
           text: 'OK',
           onPress: async () => {
             try {
-              const newGarageObjects = garageObjects.filter(garageObj => garageObj.location !== garageObject.location);
+              const newGarageObjects = garageObjects.filter(garageObj => garageObj.location !== oldGarageLocation);
 
               setGarageObjects(newGarageObjects);
               await saveObject('@GarageObjectList', newGarageObjects);
 
               // Set new vehicles list for Vehicles page
-              await removeVehicleObjects();
+              await removeVehicleObjects(oldGarageLocation);
 
             } catch (error) {
               console.error(error);
             } finally {
+              await setEmptyGarageObject();
               setShowGarageDetailsVisible(false);
             }
           },
@@ -182,10 +186,14 @@ const Garages = () => {
     );
   };
 
-  const removeVehicleObjects = async () => {
-    const newVehicleObjects = vehicleObjects.filter(vehicleObject => vehicleObject.garageLocation !== garageObject.location);
-    await saveObject('@VehicleObjectList', newVehicleObjects);
-    setVehicleObjects(newVehicleObjects);
+  const removeVehicleObjects = async (garageLocationToRemove) => {
+    try {
+      const newVehicleObjects = vehicleObjects.filter(vehicleObject => vehicleObject.garageLocation !== garageLocationToRemove);
+      setVehicleObjects(newVehicleObjects);
+      await saveObject('@VehicleObjectList', newVehicleObjects);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const removeDisposableVehicle = index => {
@@ -229,6 +237,7 @@ const Garages = () => {
         transparent={false}
         visible={addGarageModalVisible}
         onRequestClose={() => {
+          setEmptyGarageObject();
           setAddGarageModalVisible(false);
         }}
       >
@@ -319,6 +328,7 @@ const Garages = () => {
         transparent={false}
         visible={editGarageModalVisible}
         onRequestClose={() => {
+          setEmptyGarageObject();
           setEditGarageModalVisible(false);
         }}
       >
@@ -405,6 +415,7 @@ const Garages = () => {
         transparent={false}
         visible={showGarageDetailsVisible}
         onRequestClose={() => {
+          setEmptyGarageObject();
           setShowGarageDetailsVisible(false);
         }}
       >
