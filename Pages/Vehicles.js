@@ -235,16 +235,6 @@ const retrieveObject = async (key) => {
   }
 };
 
-function compareGarages(garageA, garageB) {
-  if (garageA.location < garageB.location) {
-    return -1;
-  }
-  if (garageA.location > garageB.location) {
-    return 1;
-  }
-  return 0;
-}
-
 function compareVehicles(vehicleA, vehicleB) {
 
   // First sort by garage locations
@@ -264,6 +254,6 @@ function compareVehicles(vehicleA, vehicleB) {
   }
 
   return 0;
-}
+};
 
 export default Vehicles;

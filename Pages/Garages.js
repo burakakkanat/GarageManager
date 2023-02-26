@@ -48,22 +48,36 @@ const Garages = () => {
     const getGarageObjects = async () => {
       const garages = await retrieveObject('@GarageObjectList');
       setGarageObjects(garages);
-
-      // #TEST: Activate these to wipe all data at the start.
-      // saveObject('@GarageObjectList', []);
-      // setGarageObjects([]);
-      // saveObject('@VehicleObjectList', []);
-      // setVehicleObjects([]);
-      // saveObject('@WishlistObjectList', []);
-      // setWishlistObjects([]);
-
-      // #TEST: Activate these lines to reimport vehicles and wishlists from local storage into garage objects
-      // refillGarageVehicles(garages);
-      // refillGarageWishlist(garages);
-
     };
     getGarageObjects();
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setEmptyGarageObject();
+    }, [])
+  );
+
+  // Last executed: 26.02.2023 16:50
+  const backupData = async () => {
+    const garages = await retrieveObject('@GarageObjectList');
+    const vehicles = await retrieveObject('@VehicleObjectList');
+    const wishlists = await retrieveObject('@WishlistObjectList');
+
+    await saveObject('@GarageObjectListBackup', garages);
+    await saveObject('@VehicleObjectListBackup', vehicles);
+    await saveObject('@WishlistObjectListBackup', wishlists);
+  };
+
+  const retreiveFromBackup = async () => {
+    const garagesBackup = await retrieveObject('@GarageObjectListBackup');
+    const vehiclesBackup = await retrieveObject('@VehicleObjectListBackup');
+    const wishlistsBackup = await retrieveObject('@WishlistObjectListBackup');
+
+    await saveObject('@GarageObjectList', garagesBackup);
+    await saveObject('@VehicleObjectList', vehiclesBackup);
+    await saveObject('@WishlistObjectList', wishlistsBackup);
+  };
 
   const refillGarageVehicles = async (garages) => {
 
@@ -84,7 +98,7 @@ const Garages = () => {
 
     await saveObject('@GarageObjectList', newGarageObjects);
     setGarageObjects(newGarageObjects);
-  }
+  };
 
   const refillGarageWishlist = async (garages) => {
 
@@ -105,17 +119,20 @@ const Garages = () => {
 
     await saveObject('@GarageObjectList', newGarageObjects);
     setGarageObjects(newGarageObjects);
-  }
+  };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      setEmptyGarageObject();
-    }, [])
-  );
+  const wipeAllData = async () => {
+    setGarageObjects([]);
+    await saveObject('@GarageObjectList', []);
+    setVehicleObjects([]);
+    await saveObject('@VehicleObjectList', []);
+    setWishlistObjects([]);
+    await saveObject('@WishlistObjectList', []);
+  }
 
   const setEmptyGarageObject = async () => {
     setGarageObject({ ...garageObject, location: '', theme: '', capacity: '', disposableVehicles: [], vehicles: [], wishlist: [] });
-  }
+  };
 
   const openAddNewGarageWindow = async () => {
     await setEmptyGarageObject();
@@ -224,7 +241,6 @@ const Garages = () => {
 
     return true;
   };
-
 
   const updateVehicleObjects = async () => {
     const vehicleObjectsToUpdate = Object.assign([], vehicleObjects.filter(vehicleObject => vehicleObject.garageLocation === oldGarageLocation));
@@ -656,6 +672,16 @@ const retrieveObject = async (key) => {
   }
 };
 
+function compareGarages(garageA, garageB) {
+  if (garageA.location < garageB.location) {
+    return -1;
+  }
+  if (garageA.location > garageB.location) {
+    return 1;
+  }
+  return 0;
+};
+
 function compareVehicles(vehicleA, vehicleB) {
 
   // First sort by garage locations
@@ -675,17 +701,7 @@ function compareVehicles(vehicleA, vehicleB) {
   }
 
   return 0;
-}
-
-function compareGarages(garageA, garageB) {
-  if (garageA.location < garageB.location) {
-    return -1;
-  }
-  if (garageA.location > garageB.location) {
-    return 1;
-  }
-  return 0;
-}
+};
 
 function compareWishlistItems(wishlistItemA, wishlistItemB) {
 
@@ -706,6 +722,6 @@ function compareWishlistItems(wishlistItemA, wishlistItemB) {
   }
 
   return 0;
-}
+};
 
 export default Garages;

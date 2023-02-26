@@ -273,6 +273,6 @@ function compareWishlistItems(wishlistItemA, wishlistItemB) {
   }
 
   return 0;
-}
+};
 
 export default Wishlist;
