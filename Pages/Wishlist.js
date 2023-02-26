@@ -1,5 +1,6 @@
 import { Alert, FlatList, Modal, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { WishlistContext } from '../Context/WishlistContext';
 import { GarageContext } from '../Context/GarageContext';
 import { Picker } from '@react-native-picker/picker';
 import React, { useContext, useEffect, useState } from 'react';
@@ -7,9 +8,9 @@ import styles from './Styles';
 
 const Wishlist = () => {
 
+  const { wishlistObjects, setWishlistObjects } = useContext(WishlistContext);
   const { garageObjects, setGarageObjects } = useContext(GarageContext);
 
-  const [wishlistObjects, setWishlistObjects] = useState([]);
   const [addWishlistModalVisible, setAddWishlistModalVisible] = useState(false);
 
   const [wishlistObject, setWishlistObject] = useState({
@@ -35,6 +36,21 @@ const Wishlist = () => {
       wishlistObject.tradePrice = '       -       ';
     }
 
+    // First, update the garage's wishlist items
+
+    const selectedGarageIndex = garageObjects.findIndex(garageObj => garageObj.theme === wishlistObject.garageTheme);
+
+    const newGarageObjects = [...garageObjects];
+    const selectedGarageObject = { ...newGarageObjects[selectedGarageIndex] };
+
+    selectedGarageObject.wishlist = [...selectedGarageObject.wishlist, wishlistObject].sort(compareWishlistItems);
+    newGarageObjects[selectedGarageIndex] = selectedGarageObject;
+
+    setGarageObjects(newGarageObjects);
+    await saveObject('@GarageObjectList', newGarageObjects);
+
+    // Then update the wishlistObjects
+
     const newWishlistObjects = wishlistObjects;
     newWishlistObjects.push(wishlistObject);
     newWishlistObjects.sort(compareWishlistItems);
@@ -58,6 +74,22 @@ const Wishlist = () => {
           text: 'OK',
           onPress: async () => {
             try {
+
+              /*
+              * Updating the garage which the wishlist item is removed from
+              */
+
+              // Find the garage, 
+              const garageObject = garageObjects.filter(function (garageObj) {
+                return garageObj.theme === whislistItemToRemove.garageTheme;
+              }).at(0);
+
+              // Remove the wishlist item from garage's wishlist
+              // We use index so that we remove only the first occurance
+              const wishlistIndex = garageObject.wishlist.findIndex(wishlistItem => wishlistItem.vehicleName === whislistItemToRemove.vehicleName);
+              const newWishlistItems = garageObject.wishlist.filter((_, index) => index !== wishlistIndex);
+              garageObject.wishlist = newWishlistItems;
+              await saveObject('@GarageObjectList', garageObjects);
 
               const newWishlistObjects = wishlistObjects.filter(wishlistItem => wishlistItem !== whislistItemToRemove);
 
@@ -149,7 +181,7 @@ const Wishlist = () => {
             <Picker
               selectedValue={wishlistObject.garageTheme}
               onValueChange={text => setWishlistObject({ ...wishlistObject, garageTheme: text })}
-              style={styles.containerPicker}
+              style={styles.containerPickerWishlist}
               dropdownIconColor='black'
               prompt='Your Garage Themes'>
 

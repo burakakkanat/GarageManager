@@ -1,6 +1,7 @@
 import { Alert, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useContext, useEffect, useState } from 'react';
+import { WishlistContext } from '../Context/WishlistContext';
 import { VehicleContext } from '../Context/VehicleContext';
 import { useFocusEffect } from '@react-navigation/native';
 import { GarageContext } from '../Context/GarageContext';
@@ -8,10 +9,12 @@ import styles from './Styles';
 
 const Garages = () => {
 
+  const { wishlistObjects, setWishlistObjects } = useContext(WishlistContext);
   const { vehicleObjects, setVehicleObjects } = useContext(VehicleContext);
   const { garageObjects, setGarageObjects } = useContext(GarageContext);
 
   const [oldGarageLocation, setOldGarageLocation] = useState('');
+  const [oldGarageTheme, setOldGarageTheme] = useState('');
   const [inProgress, setInProgress] = useState(false);
 
   // Modal visibility
@@ -37,7 +40,7 @@ const Garages = () => {
     capacity: '',
     vehicles: [],
     disposableVehicles: [],
-    wishlist: []
+    wishlist: [wishlistObject]
   });
 
   useEffect(() => {
@@ -106,6 +109,7 @@ const Garages = () => {
 
   const showGarageDetails = async (garageObj) => {
     setOldGarageLocation(garageObj.location);
+    setOldGarageTheme(garageObj.theme);
     setGarageObject(garageObj);
     setShowGarageDetailsVisible(true);
   };
@@ -194,6 +198,7 @@ const Garages = () => {
 
               // Set new vehicles list for Vehicles page
               await removeVehicleObjects(oldGarageLocation);
+              await removeWishlistObjects(oldGarageTheme);
 
             } catch (error) {
               console.error(error);
@@ -214,6 +219,16 @@ const Garages = () => {
       const newVehicleObjects = vehicleObjects.filter(vehicleObject => vehicleObject.garageLocation !== garageLocationToRemove);
       setVehicleObjects(newVehicleObjects);
       await saveObject('@VehicleObjectList', newVehicleObjects);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const removeWishlistObjects = async (garageThemeToRemove) => {
+    try {
+      const newWishlistObjects = wishlistObjects.filter(wishlistObject => wishlistObject.garageTheme !== garageThemeToRemove);
+      setWishlistObjects(newWishlistObjects);
+      await saveObject('@WishlistObjectList', newWishlistObjects);
     } catch (error) {
       console.error(error);
     }
@@ -500,10 +515,10 @@ const Garages = () => {
 
             <Text style={{ color: 'black', margin: 10, fontWeight: 'bold', fontStyle: 'italic', fontSize: 17.5 }}>{'Wishlist for This Garage' + ' (' + garageObject.wishlist.length + ')'}</Text>
 
-            <View>{garageObject.wishlist && garageObject.wishlist.map((wishlist, index) => (
+            <View>{garageObject.wishlist && garageObject.wishlist.map((wishlistObj, index) => (
               <View key={index} style={styles.containerForSimpleLists}>
                 <TouchableOpacity>
-                  <Text style={{ color: 'grey' }}>{wishlist}</Text>
+                  <Text style={{ color: 'grey' }}>{wishlistObj.vehicleName}</Text>
                 </TouchableOpacity>
               </View>
             ))}
