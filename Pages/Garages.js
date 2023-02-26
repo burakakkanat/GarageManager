@@ -8,8 +8,8 @@ import styles from './Styles';
 
 const Garages = () => {
 
-  const { garageObjects, setGarageObjects } = useContext(GarageContext);
   const { vehicleObjects, setVehicleObjects } = useContext(VehicleContext);
+  const { garageObjects, setGarageObjects } = useContext(GarageContext);
 
   const [oldGarageLocation, setOldGarageLocation] = useState('');
   const [inProgress, setInProgress] = useState(false);
@@ -19,10 +19,22 @@ const Garages = () => {
   const [editGarageModalVisible, setEditGarageModalVisible] = useState(false);
   const [showGarageDetailsVisible, setShowGarageDetailsVisible] = useState(false);
 
+  const [vehicleObject, setVehicleObject] = useState({
+    vehicleName: '',
+    garageLocation: ''
+  });
+
+  const [wishlistObject, setWishlistObject] = useState({
+    garageTheme: '',
+    vehicleName: '',
+    price: '',
+    tradePrice: ''
+  });
+
   const [garageObject, setGarageObject] = useState({
     location: '',
     theme: '',
-    availableSpace: '',
+    capacity: '',
     vehicles: [],
     disposableVehicles: [],
     wishlist: []
@@ -51,7 +63,7 @@ const Garages = () => {
   );
 
   const setEmptyGarageObject = async () => {
-    setGarageObject({ ...garageObject, location: '', theme: '', availableSpace: '', disposableVehicles: [], vehicles: [], wishlist: [] });
+    setGarageObject({ ...garageObject, location: '', theme: '', capacity: '', disposableVehicles: [], vehicles: [], wishlist: [] });
   }
 
   const openAddNewGarageWindow = async () => {
@@ -279,8 +291,8 @@ const Garages = () => {
             />
 
             <TextInput
-              value={garageObject.availableSpace}
-              onChangeText={text => setGarageObject({ ...garageObject, availableSpace: text })}
+              value={garageObject.capacity}
+              onChangeText={text => setGarageObject({ ...garageObject, capacity: text })}
               keyboardType='number-pad'
               placeholder="Capacity"
               placeholderTextColor="grey"
@@ -370,8 +382,8 @@ const Garages = () => {
             />
 
             <TextInput
-              value={garageObject.availableSpace}
-              onChangeText={text => setGarageObject({ ...garageObject, availableSpace: text })}
+              value={garageObject.capacity}
+              onChangeText={text => setGarageObject({ ...garageObject, capacity: text })}
               keyboardType='number-pad'
               placeholder="New Capacity"
               placeholderTextColor="grey"
@@ -449,12 +461,12 @@ const Garages = () => {
 
             <View style={{ flexDirection: 'row', margin: 10, marginTop: 0 }}>
               <Text style={{ color: 'grey', fontWeight: 'bold', fontStyle: 'italic' }}>Capacity: </Text>
-              <Text style={{ color: 'grey' }}>{garageObject.availableSpace}</Text>
+              <Text style={{ color: 'grey' }}>{garageObject.capacity}</Text>
             </View>
 
             <View style={{ flexDirection: 'row', margin: 10, marginTop: 0 }}>
               <Text style={{ color: 'grey', fontWeight: 'bold', fontStyle: 'italic' }}>Available Space: </Text>
-              <Text style={{ color: 'grey' }}>{garageObject.availableSpace - garageObject.vehicles.length}</Text>
+              <Text style={{ color: 'grey' }}>{garageObject.capacity - garageObject.vehicles.length}</Text>
             </View>
 
             <View style={styles.separatorTop} />
@@ -486,7 +498,7 @@ const Garages = () => {
 
             <View style={styles.separatorTop} />
 
-            <Text style={{ color: 'black', margin: 10, fontWeight: 'bold', fontStyle: 'italic', fontSize: 17.5 }}>{'Wishlist Items for This Garage' + ' (' + garageObject.wishlist.length + ')'}</Text>
+            <Text style={{ color: 'black', margin: 10, fontWeight: 'bold', fontStyle: 'italic', fontSize: 17.5 }}>{'Wishlist for This Garage' + ' (' + garageObject.wishlist.length + ')'}</Text>
 
             <View>{garageObject.wishlist && garageObject.wishlist.map((wishlist, index) => (
               <View key={index} style={styles.containerForSimpleLists}>

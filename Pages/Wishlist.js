@@ -13,7 +13,7 @@ const Wishlist = () => {
   const [addWishlistModalVisible, setAddWishlistModalVisible] = useState(false);
 
   const [wishlistObject, setWishlistObject] = useState({
-    garage: '',
+    garageTheme: '',
     vehicleName: '',
     price: '',
     tradePrice: '-'
@@ -40,7 +40,7 @@ const Wishlist = () => {
     newWishlistObjects.sort(compareWishlistItems);
     await saveObject('@WishlistObjectList', newWishlistObjects);
 
-    setWishlistObject({ garage: '', vehicleName: '', price: '', tradePrice: '-' });
+    setWishlistObject({ garageTheme: '', vehicleName: '', price: '', tradePrice: '-' });
     setAddWishlistModalVisible(false);
   };
 
@@ -81,7 +81,7 @@ const Wishlist = () => {
           <Text style={styles.textWishlistObjectBold}>{item.vehicleName}</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={styles.textWishlistObject}>{item.garage}</Text>
+          <Text style={styles.textWishlistObject}>{item.garageTheme}</Text>
         </View>
         <View style={{ flex: 1 }}>
           <Text style={styles.textWishlistObject}>{item.price}</Text>
@@ -147,8 +147,8 @@ const Wishlist = () => {
             />
 
             <Picker
-              selectedValue={wishlistObject.garage}
-              onValueChange={text => setWishlistObject({ ...wishlistObject, garage: text })}
+              selectedValue={wishlistObject.garageTheme}
+              onValueChange={text => setWishlistObject({ ...wishlistObject, garageTheme: text })}
               style={styles.containerPicker}
               dropdownIconColor='black'
               prompt='Your Garage Themes'>
@@ -158,7 +158,7 @@ const Wishlist = () => {
                   key={index}
                   label={garageObject.theme}
                   value={garageObject.theme}
-                  style={{backgroundColor: 'white'}}
+                  style={{ backgroundColor: 'white' }}
                   color='black'
                 />
               ))}
@@ -225,10 +225,10 @@ const retrieveObject = async (key) => {
 function compareWishlistItems(wishlistItemA, wishlistItemB) {
 
   // First sort by garage themes
-  if (wishlistItemA.garage < wishlistItemB.garage) {
+  if (wishlistItemA.garageTheme < wishlistItemB.garageTheme) {
     return -1;
   }
-  if (wishlistItemA.garage > wishlistItemB.garage) {
+  if (wishlistItemA.garageTheme > wishlistItemB.garageTheme) {
     return 1;
   }
 
