@@ -1,17 +1,21 @@
 import { Alert, FlatList, Modal, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useState } from 'react';
+import { GarageContext } from '../Context/GarageContext';
+import { Picker } from '@react-native-picker/picker';
+import React, { useContext, useEffect, useState } from 'react';
 import styles from './Styles';
 
 const Wishlist = () => {
+
+  const { garageObjects, setGarageObjects } = useContext(GarageContext);
 
   const [wishlistObjects, setWishlistObjects] = useState([]);
   const [addWishlistModalVisible, setAddWishlistModalVisible] = useState(false);
 
   const [wishlistObject, setWishlistObject] = useState({
-    garage: '',
+    garageTheme: '',
     vehicleName: '',
-    price: '0',
+    price: '',
     tradePrice: '-'
   });
 
@@ -36,7 +40,7 @@ const Wishlist = () => {
     newWishlistObjects.sort(compareWishlistItems);
     await saveObject('@WishlistObjectList', newWishlistObjects);
 
-    setWishlistObject({ garage: '', vehicleName: '', price: '0', tradePrice: '-' });
+    setWishlistObject({ garageTheme: '', vehicleName: '', price: '', tradePrice: '-' });
     setAddWishlistModalVisible(false);
   };
 
@@ -77,7 +81,7 @@ const Wishlist = () => {
           <Text style={styles.textWishlistObjectBold}>{item.vehicleName}</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={styles.textWishlistObject}>{item.garage}</Text>
+          <Text style={styles.textWishlistObject}>{item.garageTheme}</Text>
         </View>
         <View style={{ flex: 1 }}>
           <Text style={styles.textWishlistObject}>{item.price}</Text>
@@ -93,10 +97,10 @@ const Wishlist = () => {
     <View style={{ flex: 1 }}>
       <View style={styles.containerWishlistHeader}>
         <View style={{ flex: 1, marginLeft: 10 }}>
-          <Text>Garage</Text>
+          <Text>Vehicle</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text>Vehicle</Text>
+          <Text>Theme</Text>
         </View>
         <View style={{ flex: 1 }}>
           <Text>Price</Text>
@@ -135,20 +139,31 @@ const Wishlist = () => {
             <Text style={{ color: 'grey', margin: 10 }}>{'Wishlist Details:'}</Text>
 
             <TextInput
-              value={wishlistObject.garage}
-              onChangeText={text => setWishlistObject({ ...wishlistObject, garage: text })}
-              placeholder="Garage"
-              placeholderTextColor="grey"
-              style={styles.textInput}
-            />
-
-            <TextInput
               value={wishlistObject.vehicleName}
               onChangeText={text => setWishlistObject({ ...wishlistObject, vehicleName: text })}
               placeholder="Vehicle Name"
               placeholderTextColor="grey"
               style={styles.textInput}
             />
+
+            <Picker
+              selectedValue={wishlistObject.garageTheme}
+              onValueChange={text => setWishlistObject({ ...wishlistObject, garageTheme: text })}
+              style={styles.containerPicker}
+              dropdownIconColor='black'
+              prompt='Your Garage Themes'>
+
+              {garageObjects.map((garageObject, index) => (
+                <Picker.Item
+                  key={index}
+                  label={garageObject.theme}
+                  value={garageObject.theme}
+                  style={{ backgroundColor: 'white' }}
+                  color='black'
+                />
+              ))}
+
+            </Picker>
 
             <TextInput
               value={wishlistObject.price}
@@ -208,12 +223,23 @@ const retrieveObject = async (key) => {
 };
 
 function compareWishlistItems(wishlistItemA, wishlistItemB) {
-  if (wishlistItemA.garage < wishlistItemB.garage) {
+
+  // First sort by garage themes
+  if (wishlistItemA.garageTheme < wishlistItemB.garageTheme) {
     return -1;
   }
-  if (wishlistItemA.garage > wishlistItemB.garge) {
+  if (wishlistItemA.garageTheme > wishlistItemB.garageTheme) {
     return 1;
   }
+
+  // Then sort by vehicle names
+  if (wishlistItemA.vehicleName < wishlistItemB.vehicleName) {
+    return -1;
+  }
+  if (wishlistItemA.vehicleName > wishlistItemB.vehicleName) {
+    return 1;
+  }
+
   return 0;
 }
 
