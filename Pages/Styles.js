@@ -31,10 +31,15 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
         borderTopColor: '#ccc'
     },
-    containerPicker: {
+    containerPickerAddVehicle: {
         height: 40,
         width: 200,
         dropdownIconColor: 'black'
+    },
+    containerPickerWishlist: {
+        dropdownIconColor: 'black',
+        margin: 10,
+        height: 40
     },
     containerWishlistHeader: {
         backgroundColor: '#2D640F',

@@ -58,7 +58,6 @@ const Vehicles = () => {
 
       selectedGarageObject.vehicles = [...selectedGarageObject.vehicles, vehicleObject.vehicleName].sort();
       newGarageObjects[selectedGarageIndex] = selectedGarageObject;
-      newGarageObjects.sort(compareGarages);
 
       setGarageObjects(newGarageObjects);
       await saveObject('@GarageObjectList', newGarageObjects);
@@ -95,7 +94,7 @@ const Vehicles = () => {
               setLoading(true);
 
               /*
-              * Updating the garage of which the vehicle is removed from
+              * Updating the garage which the vehicle is removed from
               */
 
               // Find the garage, 
@@ -176,7 +175,7 @@ const Vehicles = () => {
         <Picker
           selectedValue={vehicleObject.garageLocation}
           onValueChange={text => setVehicleObject({ ...vehicleObject, garageLocation: text })}
-          style={styles.containerPicker}
+          style={styles.containerPickerAddVehicle}
           dropdownIconColor='black'
           prompt='Your Garages'>
 
@@ -236,16 +235,6 @@ const retrieveObject = async (key) => {
   }
 };
 
-function compareGarages(garageA, garageB) {
-  if (garageA.location < garageB.location) {
-    return -1;
-  }
-  if (garageA.location > garageB.location) {
-    return 1;
-  }
-  return 0;
-}
-
 function compareVehicles(vehicleA, vehicleB) {
 
   // First sort by garage locations
@@ -265,6 +254,6 @@ function compareVehicles(vehicleA, vehicleB) {
   }
 
   return 0;
-}
+};
 
 export default Vehicles;
