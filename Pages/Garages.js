@@ -46,15 +46,17 @@ const Garages = () => {
   useEffect(() => {
     // Get the list of garage names from local storage
     const getGarageObjects = async () => {
-
-      // #TEST: Activate these two lines to wipe data on restart.
-      // await AsyncStorage.removeItem('@GarageObjectList');
-      // setVehicleObjects([]);
-      // await AsyncStorage.removeItem('@VehicleObjectList');
-      // setGarageObjects([]);
-
       const garages = await retrieveObject('@GarageObjectList');
       setGarageObjects(garages);
+
+      // #TEST: Activate these to wipe all data at the start.
+      // saveObject('@GarageObjectList', []);
+      // setGarageObjects([]);
+      // saveObject('@VehicleObjectList', []);
+      // setVehicleObjects([]);
+      // saveObject('@WishlistObjectList', []);
+      // setWishlistObjects([]);
+
     };
     getGarageObjects();
   }, []);
@@ -89,6 +91,15 @@ const Garages = () => {
 
       if (garageWithSameLocation.length !== 0) {
         Alert.alert('Add New Garage', "Garage at this location already exists.");
+        return;
+      }
+
+      const garageWithSameTheme = garageObjects.filter(function (garageObj) {
+        return garageObj.theme === garageObject.theme;
+      });
+
+      if (garageWithSameTheme.length !== 0) {
+        Alert.alert('Add New Garage', "Garage with this theme already exists.");
         return;
       }
 
@@ -141,6 +152,15 @@ const Garages = () => {
         return;
       }
 
+      const garageWithSameTheme = newGarageObjects.filter(function (garageObj) {
+        return garageObj.theme === garageObject.theme;
+      });
+
+      if (garageWithSameTheme.length !== 0) {
+        Alert.alert('Add New Garage', "Garage with this theme already exists.");
+        return;
+      }
+
       newGarageObjects.push(garageObject);
       newGarageObjects.sort(compareGarages);
 
@@ -148,8 +168,13 @@ const Garages = () => {
       await saveObject('@GarageObjectList', newGarageObjects);
       setGarageObjects(newGarageObjects);
 
-      // Update vehicleObjects with new garage info
-      await updateVehicleObjects();
+      // Update vehicleObjects and wishlistObjects with new garage info
+      if (oldGarageLocation !== garageObject.location) {
+        await updateVehicleObjects();
+      }
+      if (oldGarageTheme !== garageObject.theme) {
+        await updateWishlistObjects();
+      }
 
     } catch (error) {
       console.error(error);
@@ -173,6 +198,21 @@ const Garages = () => {
 
     await saveObject('@VehicleObjectList', newVehicleObjects);
     setVehicleObjects(newVehicleObjects);
+  };
+
+  const updateWishlistObjects = async () => {
+    const wishlistObjectsToUpdate = Object.assign([], wishlistObjects.filter(wishlistItem => wishlistItem.garageTheme === oldGarageTheme));
+    const newWishlistObjects = wishlistObjects.filter(wishlistItem => wishlistItem.garageTheme !== oldGarageTheme);
+
+    for (const wishlistObj of wishlistObjectsToUpdate) {
+      wishlistObj.garageTheme = garageObject.theme;
+      newWishlistObjects.push(wishlistObj);
+    }
+
+    newWishlistObjects.sort(compareWishlistItems);
+
+    await saveObject('@WishlistObjectList', newWishlistObjects);
+    setWishlistObjects(newWishlistObjects);
   };
 
   const removeGarageObject = async () => {
@@ -602,6 +642,27 @@ function compareGarages(garageA, garageB) {
   if (garageA.location > garageB.location) {
     return 1;
   }
+  return 0;
+}
+
+function compareWishlistItems(wishlistItemA, wishlistItemB) {
+
+  // First sort by garage themes
+  if (wishlistItemA.garageTheme < wishlistItemB.garageTheme) {
+    return -1;
+  }
+  if (wishlistItemA.garageTheme > wishlistItemB.garageTheme) {
+    return 1;
+  }
+
+  // Then sort by vehicle names
+  if (wishlistItemA.vehicleName < wishlistItemB.vehicleName) {
+    return -1;
+  }
+  if (wishlistItemA.vehicleName > wishlistItemB.vehicleName) {
+    return 1;
+  }
+
   return 0;
 }
 
