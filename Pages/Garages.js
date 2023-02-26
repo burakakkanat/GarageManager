@@ -143,7 +143,7 @@ const Garages = () => {
     try {
       setInProgress(true);
 
-      if (!verifyGarageFields('Edit Garage', garageObjects)) {
+      if (!verifyGarageFields('Add New Garage', garageObjects)) {
         return;
       }
 
