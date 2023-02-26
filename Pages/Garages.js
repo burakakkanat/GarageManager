@@ -57,9 +57,55 @@ const Garages = () => {
       // saveObject('@WishlistObjectList', []);
       // setWishlistObjects([]);
 
+      // #TEST: Activate these lines to reimport vehicles and wishlists from local storage into garage objects
+      // refillGarageVehicles(garages);
+      // refillGarageWishlist(garages);
+
     };
     getGarageObjects();
   }, []);
+
+  const refillGarageVehicles = async (garages) => {
+
+    for (const go of garages) {
+      go.vehicles = [];
+    }
+
+    const vehicles = await retrieveObject('@VehicleObjectList');
+
+    const newGarageObjects = [...garages];
+    
+    for (const vehicle of vehicles) {
+      const selectedGarageIndex = garages.findIndex(garageObj => garageObj.location === vehicle.garageLocation);
+      const selectedGarageObject = { ...newGarageObjects[selectedGarageIndex] };
+      selectedGarageObject.vehicles = [...selectedGarageObject.vehicles, vehicle.vehicleName].sort();
+      newGarageObjects[selectedGarageIndex] = selectedGarageObject;
+    }
+
+    await saveObject('@GarageObjectList', newGarageObjects);
+    setGarageObjects(newGarageObjects);
+  }
+
+  const refillGarageWishlist = async (garages) => {
+
+    for (const go of garages) {
+      go.wishlist = [];
+    }
+
+    const wishlists = await retrieveObject('@WishlistObjectList');
+
+    const newGarageObjects = [...garages];
+    
+    for (const wishlist of wishlists) {
+      const selectedGarageIndex = garages.findIndex(garageObj => garageObj.theme === wishlist.garageTheme);
+      const selectedGarageObject = { ...newGarageObjects[selectedGarageIndex] };
+      selectedGarageObject.wishlist = [...selectedGarageObject.wishlist, wishlist].sort(compareWishlistItems);
+      newGarageObjects[selectedGarageIndex] = selectedGarageObject;
+    }
+
+    await saveObject('@GarageObjectList', newGarageObjects);
+    setGarageObjects(newGarageObjects);
+  }
 
   useFocusEffect(
     React.useCallback(() => {
@@ -80,26 +126,7 @@ const Garages = () => {
     try {
       setInProgress(true);
 
-      if (!garageObject.location.trim()) {
-        Alert.alert('Add New Garage', "Garage location can not be empty.");
-        return;
-      }
-
-      const garageWithSameLocation = garageObjects.filter(function (garageObj) {
-        return garageObj.location === garageObject.location;
-      });
-
-      if (garageWithSameLocation.length !== 0) {
-        Alert.alert('Add New Garage', "Garage at this location already exists.");
-        return;
-      }
-
-      const garageWithSameTheme = garageObjects.filter(function (garageObj) {
-        return garageObj.theme === garageObject.theme;
-      });
-
-      if (garageWithSameTheme.length !== 0) {
-        Alert.alert('Add New Garage', "Garage with this theme already exists.");
+      if (!verifyGarageFields('Edit Garage', garageObjects)) {
         return;
       }
 
@@ -109,12 +136,13 @@ const Garages = () => {
 
       await saveObject('@GarageObjectList', garageObjects);
 
+      await setEmptyGarageObject();
+      setAddGarageModalVisible(false);
+
     } catch (error) {
       console.error(error);
     } finally {
-      await setEmptyGarageObject();
       setInProgress(false);
-      setAddGarageModalVisible(false);
     }
   };
 
@@ -133,31 +161,11 @@ const Garages = () => {
   const editGarageObject = async () => {
 
     try {
-
       setInProgress(true);
-
-      if (!garageObject.location.trim()) {
-        Alert.alert('Add New Garage', "Garage location can not be empty.");
-        return;
-      }
 
       const newGarageObjects = garageObjects.filter(garageObj => garageObj.location !== oldGarageLocation);
 
-      const garageWithSameLocation = newGarageObjects.filter(function (garageObj) {
-        return garageObj.location === garageObject.location;
-      });
-
-      if (garageWithSameLocation.length !== 0) {
-        Alert.alert('Add New Garage', "Garage at this location already exists.");
-        return;
-      }
-
-      const garageWithSameTheme = newGarageObjects.filter(function (garageObj) {
-        return garageObj.theme === garageObject.theme;
-      });
-
-      if (garageWithSameTheme.length !== 0) {
-        Alert.alert('Add New Garage', "Garage with this theme already exists.");
+      if (!verifyGarageFields('Edit Garage', newGarageObjects)) {
         return;
       }
 
@@ -176,14 +184,47 @@ const Garages = () => {
         await updateWishlistObjects();
       }
 
+      await setEmptyGarageObject();
+      setEditGarageModalVisible(false);
+
     } catch (error) {
       console.error(error);
     } finally {
-      await setEmptyGarageObject();
       setInProgress(false);
-      setEditGarageModalVisible(false);
     }
   };
+
+  const verifyGarageFields = (alertTitle, garageObjects) => {
+
+    if (!garageObject.location.trim()) {
+      Alert.alert(alertTitle, "Garage location can not be empty.");
+      return;
+    }
+
+    if (!garageObject.theme.trim()) {
+      Alert.alert(alertTitle, "Garage theme can not be empty.");
+      return;
+    }
+
+    const garageWithSameLocation = garageObjects.filter(
+      (garageObj) => garageObj.location === garageObject.location
+    );
+    if (garageWithSameLocation.length !== 0) {
+      Alert.alert(alertTitle, "Garage at this location already exists.");
+      return false;
+    }
+
+    const garageWithSameTheme = garageObjects.filter(
+      (garageObj) => garageObj.theme === garageObject.theme
+    );
+    if (garageWithSameTheme.length !== 0) {
+      Alert.alert(alertTitle, "Garage with this theme already exists.");
+      return false;
+    }
+
+    return true;
+  };
+
 
   const updateVehicleObjects = async () => {
     const vehicleObjectsToUpdate = Object.assign([], vehicleObjects.filter(vehicleObject => vehicleObject.garageLocation === oldGarageLocation));
@@ -240,12 +281,13 @@ const Garages = () => {
               await removeVehicleObjects(oldGarageLocation);
               await removeWishlistObjects(oldGarageTheme);
 
+              await setEmptyGarageObject();
+              setShowGarageDetailsVisible(false);
+
             } catch (error) {
               console.error(error);
             } finally {
-              await setEmptyGarageObject();
               setInProgress(false);
-              setShowGarageDetailsVisible(false);
             }
           },
         },
