@@ -1,4 +1,3 @@
-
 import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
 import { VehicleContext } from '../Context/VehicleContext';
