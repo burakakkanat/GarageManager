@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { WishlistContextProvider } from './Context/WishlistContext';
 import { VehicleContextProvider } from './Context/VehicleContext';

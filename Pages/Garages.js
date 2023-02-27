@@ -1,11 +1,11 @@
 import { Alert, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useContext, useEffect, useState } from 'react';
 import { WishlistContext } from '../Context/WishlistContext';
 import { VehicleContext } from '../Context/VehicleContext';
 import { useFocusEffect } from '@react-navigation/native';
 import { GarageContext } from '../Context/GarageContext';
 import styles from './Styles';
+import util from './Util';
 
 const Garages = () => {
 
@@ -46,7 +46,7 @@ const Garages = () => {
   useEffect(() => {
     // Get the list of garage names from local storage
     const getGarageObjects = async () => {
-      const garages = await retrieveObject('@GarageObjectList');
+      const garages = await util.retrieveObject('@GarageObjectList');
       setGarageObjects(garages);
     };
     getGarageObjects();
@@ -60,23 +60,23 @@ const Garages = () => {
 
   // Last executed: 26.02.2023 16:50
   const backupData = async () => {
-    const garages = await retrieveObject('@GarageObjectList');
-    const vehicles = await retrieveObject('@VehicleObjectList');
-    const wishlists = await retrieveObject('@WishlistObjectList');
+    const garages = await util.retrieveObject('@GarageObjectList');
+    const vehicles = await util.retrieveObject('@VehicleObjectList');
+    const wishlists = await util.retrieveObject('@WishlistObjectList');
 
-    await saveObject('@GarageObjectListBackup', garages);
-    await saveObject('@VehicleObjectListBackup', vehicles);
-    await saveObject('@WishlistObjectListBackup', wishlists);
+    await util.saveObject('@GarageObjectListBackup', garages);
+    await util.saveObject('@VehicleObjectListBackup', vehicles);
+    await util.saveObject('@WishlistObjectListBackup', wishlists);
   };
 
   const retreiveFromBackup = async () => {
-    const garagesBackup = await retrieveObject('@GarageObjectListBackup');
-    const vehiclesBackup = await retrieveObject('@VehicleObjectListBackup');
-    const wishlistsBackup = await retrieveObject('@WishlistObjectListBackup');
+    const garagesBackup = await util.retrieveObject('@GarageObjectListBackup');
+    const vehiclesBackup = await util.retrieveObject('@VehicleObjectListBackup');
+    const wishlistsBackup = await util.retrieveObject('@WishlistObjectListBackup');
 
-    await saveObject('@GarageObjectList', garagesBackup);
-    await saveObject('@VehicleObjectList', vehiclesBackup);
-    await saveObject('@WishlistObjectList', wishlistsBackup);
+    await util.saveObject('@GarageObjectList', garagesBackup);
+    await util.saveObject('@VehicleObjectList', vehiclesBackup);
+    await util.saveObject('@WishlistObjectList', wishlistsBackup);
   };
 
   const refillGarageVehicles = async (garages) => {
@@ -85,7 +85,7 @@ const Garages = () => {
       go.vehicles = [];
     }
 
-    const vehicles = await retrieveObject('@VehicleObjectList');
+    const vehicles = await util.retrieveObject('@VehicleObjectList');
 
     const newGarageObjects = [...garages];
 
@@ -96,7 +96,7 @@ const Garages = () => {
       newGarageObjects[selectedGarageIndex] = selectedGarageObject;
     }
 
-    await saveObject('@GarageObjectList', newGarageObjects);
+    await util.saveObject('@GarageObjectList', newGarageObjects);
     setGarageObjects(newGarageObjects);
   };
 
@@ -106,28 +106,28 @@ const Garages = () => {
       go.wishlist = [];
     }
 
-    const wishlists = await retrieveObject('@WishlistObjectList');
+    const wishlists = await util.retrieveObject('@WishlistObjectList');
 
     const newGarageObjects = [...garages];
 
     for (const wishlist of wishlists) {
       const selectedGarageIndex = garages.findIndex(garageObj => garageObj.theme === wishlist.garageTheme);
       const selectedGarageObject = { ...newGarageObjects[selectedGarageIndex] };
-      selectedGarageObject.wishlist = [...selectedGarageObject.wishlist, wishlist].sort(compareWishlistItems);
+      selectedGarageObject.wishlist = [...selectedGarageObject.wishlist, wishlist].sort(util.compareWishlistItems);
       newGarageObjects[selectedGarageIndex] = selectedGarageObject;
     }
 
-    await saveObject('@GarageObjectList', newGarageObjects);
+    await util.saveObject('@GarageObjectList', newGarageObjects);
     setGarageObjects(newGarageObjects);
   };
 
   const wipeAllData = async () => {
     setGarageObjects([]);
-    await saveObject('@GarageObjectList', []);
+    await util.saveObject('@GarageObjectList', []);
     setVehicleObjects([]);
-    await saveObject('@VehicleObjectList', []);
+    await util.saveObject('@VehicleObjectList', []);
     setWishlistObjects([]);
-    await saveObject('@WishlistObjectList', []);
+    await util.saveObject('@WishlistObjectList', []);
   }
 
   const setEmptyGarageObject = async () => {
@@ -148,10 +148,10 @@ const Garages = () => {
       }
 
       garageObjects.push(garageObject);
-      garageObjects.sort(compareGarages);
+      garageObjects.sort(util.compareGarages);
       setGarageObjects([...garageObjects]);
 
-      await saveObject('@GarageObjectList', garageObjects);
+      await util.saveObject('@GarageObjectList', garageObjects);
 
       await setEmptyGarageObject();
       setAddGarageModalVisible(false);
@@ -187,10 +187,10 @@ const Garages = () => {
       }
 
       newGarageObjects.push(garageObject);
-      newGarageObjects.sort(compareGarages);
+      newGarageObjects.sort(util.compareGarages);
 
       // Set the new garageObjects to local an state
-      await saveObject('@GarageObjectList', newGarageObjects);
+      await util.saveObject('@GarageObjectList', newGarageObjects);
       setGarageObjects(newGarageObjects);
 
       // Update vehicleObjects and wishlistObjects with new garage info
@@ -251,9 +251,9 @@ const Garages = () => {
       newVehicleObjects.push(vehicleObject);
     }
 
-    newVehicleObjects.sort(compareVehicles);
+    newVehicleObjects.sort(util.compareVehicles);
 
-    await saveObject('@VehicleObjectList', newVehicleObjects);
+    await util.saveObject('@VehicleObjectList', newVehicleObjects);
     setVehicleObjects(newVehicleObjects);
   };
 
@@ -266,9 +266,9 @@ const Garages = () => {
       newWishlistObjects.push(wishlistObj);
     }
 
-    newWishlistObjects.sort(compareWishlistItems);
+    newWishlistObjects.sort(util.compareWishlistItems);
 
-    await saveObject('@WishlistObjectList', newWishlistObjects);
+    await util.saveObject('@WishlistObjectList', newWishlistObjects);
     setWishlistObjects(newWishlistObjects);
   };
 
@@ -291,7 +291,7 @@ const Garages = () => {
               const newGarageObjects = garageObjects.filter(garageObj => garageObj.location !== oldGarageLocation);
 
               setGarageObjects(newGarageObjects);
-              await saveObject('@GarageObjectList', newGarageObjects);
+              await util.saveObject('@GarageObjectList', newGarageObjects);
 
               // Set new vehicles list for Vehicles page
               await removeVehicleObjects(oldGarageLocation);
@@ -316,7 +316,7 @@ const Garages = () => {
     try {
       const newVehicleObjects = vehicleObjects.filter(vehicleObject => vehicleObject.garageLocation !== garageLocationToRemove);
       setVehicleObjects(newVehicleObjects);
-      await saveObject('@VehicleObjectList', newVehicleObjects);
+      await util.saveObject('@VehicleObjectList', newVehicleObjects);
     } catch (error) {
       console.error(error);
     }
@@ -326,7 +326,7 @@ const Garages = () => {
     try {
       const newWishlistObjects = wishlistObjects.filter(wishlistObject => wishlistObject.garageTheme !== garageThemeToRemove);
       setWishlistObjects(newWishlistObjects);
-      await saveObject('@WishlistObjectList', newWishlistObjects);
+      await util.saveObject('@WishlistObjectList', newWishlistObjects);
     } catch (error) {
       console.error(error);
     }
@@ -648,80 +648,6 @@ const Garages = () => {
       </Modal>
     </View>
   );
-};
-
-const saveObject = async (key, object) => {
-  try {
-    const stringifiedObject = JSON.stringify(object);
-    await AsyncStorage.setItem(key, stringifiedObject);
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-const retrieveObject = async (key) => {
-  try {
-    const stringifiedObject = await AsyncStorage.getItem(key);
-    if (stringifiedObject !== null) {
-      return JSON.parse(stringifiedObject);
-    }
-    return [];
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-};
-
-function compareGarages(garageA, garageB) {
-  if (garageA.location < garageB.location) {
-    return -1;
-  }
-  if (garageA.location > garageB.location) {
-    return 1;
-  }
-  return 0;
-};
-
-function compareVehicles(vehicleA, vehicleB) {
-
-  // First sort by garage locations
-  if (vehicleA.garageLocation < vehicleB.garageLocation) {
-    return -1;
-  }
-  if (vehicleA.garageLocation > vehicleB.garageLocation) {
-    return 1;
-  }
-
-  // Then sort by vehicle names
-  if (vehicleA.vehicleName < vehicleB.vehicleName) {
-    return -1;
-  }
-  if (vehicleA.vehicleName > vehicleB.vehicleName) {
-    return 1;
-  }
-
-  return 0;
-};
-
-function compareWishlistItems(wishlistItemA, wishlistItemB) {
-
-  // First sort by garage themes
-  if (wishlistItemA.garageTheme < wishlistItemB.garageTheme) {
-    return -1;
-  }
-  if (wishlistItemA.garageTheme > wishlistItemB.garageTheme) {
-    return 1;
-  }
-
-  // Then sort by vehicle names
-  if (wishlistItemA.vehicleName < wishlistItemB.vehicleName) {
-    return -1;
-  }
-  if (wishlistItemA.vehicleName > wishlistItemB.vehicleName) {
-    return 1;
-  }
-
-  return 0;
 };
 
 export default Garages;

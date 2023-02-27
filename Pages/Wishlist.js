@@ -1,11 +1,11 @@
 import { Alert, FlatList, Modal, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useContext, useEffect, useState } from 'react';
 import { WishlistContext } from '../Context/WishlistContext';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useFocusEffect } from '@react-navigation/native';
 import { GarageContext } from '../Context/GarageContext';
 import styles from './Styles';
+import util from './Util';
 
 const Wishlist = () => {
 
@@ -26,7 +26,7 @@ const Wishlist = () => {
   useEffect(() => {
     // Get the list of wishlist items from local storage
     const getWishlistItems = async () => {
-      const wishlistItems = await retrieveObject('@WishlistObjectList');
+      const wishlistItems = await util.retrieveObject('@WishlistObjectList');
       setWishlistObjects(wishlistItems);
     };
 
@@ -56,18 +56,18 @@ const Wishlist = () => {
     const newGarageObjects = [...garageObjects];
     const selectedGarageObject = { ...newGarageObjects[selectedGarageIndex] };
 
-    selectedGarageObject.wishlist = [...selectedGarageObject.wishlist, wishlistObject].sort(compareWishlistItems);
+    selectedGarageObject.wishlist = [...selectedGarageObject.wishlist, wishlistObject].sort(util.compareWishlistItems);
     newGarageObjects[selectedGarageIndex] = selectedGarageObject;
 
     setGarageObjects(newGarageObjects);
-    await saveObject('@GarageObjectList', newGarageObjects);
+    await util.saveObject('@GarageObjectList', newGarageObjects);
 
     // Then update the wishlistObjects
 
     const newWishlistObjects = wishlistObjects;
     newWishlistObjects.push(wishlistObject);
-    newWishlistObjects.sort(compareWishlistItems);
-    await saveObject('@WishlistObjectList', newWishlistObjects);
+    newWishlistObjects.sort(util.compareWishlistItems);
+    await util.saveObject('@WishlistObjectList', newWishlistObjects);
 
     setEmptyWishlistObject();
     setAddWishlistModalVisible(false);
@@ -102,12 +102,12 @@ const Wishlist = () => {
               const wishlistIndex = garageObject.wishlist.findIndex(wishlistItem => wishlistItem.vehicleName === whislistItemToRemove.vehicleName);
               const newWishlistItems = garageObject.wishlist.filter((_, index) => index !== wishlistIndex);
               garageObject.wishlist = newWishlistItems;
-              await saveObject('@GarageObjectList', garageObjects);
+              await util.saveObject('@GarageObjectList', garageObjects);
 
               const newWishlistObjects = wishlistObjects.filter(wishlistItem => wishlistItem !== whislistItemToRemove);
 
               setWishlistObjects(newWishlistObjects);
-              await saveObject('@WishlistObjectList', newWishlistObjects);
+              await util.saveObject('@WishlistObjectList', newWishlistObjects);
 
             } catch (error) {
               console.error(error);
@@ -279,49 +279,6 @@ const Wishlist = () => {
       </Modal>
     </View>
   );
-};
-
-const saveObject = async (key, object) => {
-  try {
-    const stringifiedObject = JSON.stringify(object);
-    await AsyncStorage.setItem(key, stringifiedObject);
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-const retrieveObject = async (key) => {
-  try {
-    const stringifiedObject = await AsyncStorage.getItem(key);
-    if (stringifiedObject !== null) {
-      return JSON.parse(stringifiedObject);
-    }
-    return [];
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-};
-
-function compareWishlistItems(wishlistItemA, wishlistItemB) {
-
-  // First sort by garage themes
-  if (wishlistItemA.garageTheme < wishlistItemB.garageTheme) {
-    return -1;
-  }
-  if (wishlistItemA.garageTheme > wishlistItemB.garageTheme) {
-    return 1;
-  }
-
-  // Then sort by vehicle names
-  if (wishlistItemA.vehicleName < wishlistItemB.vehicleName) {
-    return -1;
-  }
-  if (wishlistItemA.vehicleName > wishlistItemB.vehicleName) {
-    return 1;
-  }
-
-  return 0;
 };
 
 export default Wishlist;

@@ -1,12 +1,12 @@
 
 import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useContext, useEffect, useState } from 'react';
 import { VehicleContext } from '../Context/VehicleContext';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { GarageContext } from '../Context/GarageContext';
 import { BlurView } from '@react-native-community/blur';
 import styles from './Styles';
+import util from './Util';
 
 const Vehicles = () => {
 
@@ -26,7 +26,7 @@ const Vehicles = () => {
   useEffect(() => {
     // Get the list of garage names from local storage
     const getGarageObjects = async () => {
-      const garages = await retrieveObject('@GarageObjectList');
+      const garages = await util.retrieveObject('@GarageObjectList');
       setGarageObjects(garages);
     };
     getGarageObjects();
@@ -35,7 +35,7 @@ const Vehicles = () => {
   useEffect(() => {
     // Get the list of all vehicles in all garages from local storage
     const getVehicles = async () => {
-      const vehicles = await retrieveObject('@VehicleObjectList');
+      const vehicles = await util.retrieveObject('@VehicleObjectList');
       setVehicleObjects(vehicles);
     };
     getVehicles();
@@ -63,12 +63,12 @@ const Vehicles = () => {
       newGarageObjects[selectedGarageIndex] = selectedGarageObject;
 
       setGarageObjects(newGarageObjects);
-      await saveObject('@GarageObjectList', newGarageObjects);
+      await util.saveObject('@GarageObjectList', newGarageObjects);
 
       const newVehicleObjects = [...vehicleObjects, vehicleObject];
-      newVehicleObjects.sort(compareVehicles);
+      newVehicleObjects.sort(util.compareVehicles);
       setVehicleObjects(newVehicleObjects);
-      await saveObject('@VehicleObjectList', newVehicleObjects);
+      await util.saveObject('@VehicleObjectList', newVehicleObjects);
 
     } catch (error) {
       console.error(error);
@@ -111,7 +111,7 @@ const Vehicles = () => {
               const newVehicleList = garageObject.vehicles.filter((_, index) => index !== vehicleIndex);
               garageObject.vehicles = newVehicleList;
 
-              await saveObject('@GarageObjectList', garageObjects);
+              await util.saveObject('@GarageObjectList', garageObjects);
 
               /*
               * Updating the vehicleObjects
@@ -123,7 +123,7 @@ const Vehicles = () => {
                 vehicleObj.vehicleName === vehicleObjectToRemove.vehicleName
               );
               const newVehicleObjects = vehicleObjects.filter((_, index) => index !== vehicleObjectIndex);
-              await saveObject('@VehicleObjectList', newVehicleObjects);
+              await util.saveObject('@VehicleObjectList', newVehicleObjects);
               setVehicleObjects(newVehicleObjects);
 
             } catch (error) {
@@ -243,49 +243,6 @@ const Vehicles = () => {
       )}
     </View>
   );
-};
-
-const saveObject = async (key, object) => {
-  try {
-    const stringifiedObject = JSON.stringify(object);
-    await AsyncStorage.setItem(key, stringifiedObject);
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-const retrieveObject = async (key) => {
-  try {
-    const stringifiedObject = await AsyncStorage.getItem(key);
-    if (stringifiedObject !== null) {
-      return JSON.parse(stringifiedObject);
-    }
-    return [];
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-};
-
-function compareVehicles(vehicleA, vehicleB) {
-
-  // First sort by garage locations
-  if (vehicleA.garageLocation < vehicleB.garageLocation) {
-    return -1;
-  }
-  if (vehicleA.garageLocation > vehicleB.garageLocation) {
-    return 1;
-  }
-
-  // Then sort by vehicle names
-  if (vehicleA.vehicleName < vehicleB.vehicleName) {
-    return -1;
-  }
-  if (vehicleA.vehicleName > vehicleB.vehicleName) {
-    return 1;
-  }
-
-  return 0;
 };
 
 export default Vehicles;
