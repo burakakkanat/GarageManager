@@ -216,6 +216,7 @@ const Wishlist = () => {
             />
 
             <DropDownPicker
+              closeOnBackPressed={true}
               setOpen={setPickerOpen}
               open={pickerOpen}
 
@@ -232,13 +233,13 @@ const Wishlist = () => {
               }
 
               listMode='MODAL'
-              modalTitle="Your Garage Themes"
+              modalTitle='Your Garage Themes'
               modalTitleStyle={{
                 fontFamily: 'FOTNewRodin Pro B', // Not working
                 fontSize: 15 // Not working
               }}
               modalContentContainerStyle={{
-                backgroundColor: "#fffcc" // Not working
+                backgroundColor: '#fffcc' // Not working
               }}
               modalProps={{
                 presentationStyle: 'pageSheet',
@@ -255,7 +256,7 @@ const Wishlist = () => {
                 fontFamily: 'FOTNewRodin Pro M',
                 fontSize: 12
               }}
-              placeholder='Theme'
+              placeholder='Choose a theme'
               placeholderStyle={{
                 fontFamily: 'FOTNewRodin Pro M',
                 fontSize: 12,

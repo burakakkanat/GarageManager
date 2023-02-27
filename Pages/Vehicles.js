@@ -43,7 +43,7 @@ const Vehicles = () => {
 
   const addNewVehicle = async () => {
     if (!vehicleObject.vehicleName.trim()) {
-      Alert.alert('Add New Vehicle', "Vehicle name can not be empty.");
+      Alert.alert('Add New Vehicle', 'Vehicle name can not be empty.');
       return;
     }
 
@@ -141,6 +141,7 @@ const Vehicles = () => {
 
   return (
     <View style={{ flex: 1 }}>
+
       <ScrollView>
         <View style={styles.separatorTop} />
         {vehicleObjects.map((currentVehicleObject, index) => (
@@ -173,11 +174,12 @@ const Vehicles = () => {
           value={vehicleObject.vehicleName}
           onChangeText={text => setVehicleObject({ ...vehicleObject, vehicleName: text })}
           style={styles.textInputNewVehicleName}
-          placeholder=" Vehicle Name"
-          placeholderTextColor="grey"
+          placeholder=' Vehicle Name'
+          placeholderTextColor='grey'
         />
         <DropDownPicker
           loading={pickerItemsLoading}
+          closeOnBackPressed={true}
           dropDownDirection='TOP'
           setOpen={setPickerOpen}
           open={pickerOpen}
@@ -201,6 +203,10 @@ const Vehicles = () => {
           }}
 
           containerStyle={styles.containerPickerAddVehicle}
+          dropDownContainerStyle={{
+            backgroundColor: '#F2F2F2',
+            height: 500
+          }}
           style={{ backgroundColor: '#F2F2F2' }}
           itemStyle={{ justifyContent: 'flex-start' }}
 
@@ -208,12 +214,8 @@ const Vehicles = () => {
             fontFamily: 'FOTNewRodin Pro M',
             fontSize: 10
           }}
-          dropDownStyle={{
-            backgroundColor: '#F2F2F2',
-            height: 200
-          }}
 
-          placeholder="Garage"
+          placeholder='Choose a garage'
           placeholderStyle={{
             fontFamily: 'FOTNewRodin Pro M',
             fontSize: 12,
@@ -232,9 +234,9 @@ const Vehicles = () => {
 
       {loading && (
         <View style={styles.loadingContainer}>
-          <BlurView blurType="light" blurAmount={5} style={StyleSheet.absoluteFill}>
+          <BlurView blurType='light' blurAmount={5} style={StyleSheet.absoluteFill}>
             <View style={styles.loadingIndicator}>
-              <ActivityIndicator size="large" color="#2D640F" />
+              <ActivityIndicator size='large' color='#2D640F' />
             </View>
           </BlurView>
         </View>

@@ -33,17 +33,17 @@ const JohnnyOnTheSpot = () => {
               <Text style={styles.headerMain}> Johnny-on-the-Spot  </Text>
             </View>
             <Tab.Navigator
-              initialRouteName="Garages"
+              initialRouteName='Garages'
               screenOptions={{
                 tabBarLabelStyle: { fontFamily: 'FOTNewRodin Pro B', fontSize: 12 },
-                "tabBarActiveTintColor": '#FFFFFF',
-                "tabBarInactiveTintColor": '#B3E5FC',
-                "tabBarIndicatorStyle": { backgroundColor: '#FFFFFF' },
-                "tabBarStyle": { backgroundColor: '#2D640F' },
+                'tabBarActiveTintColor': '#FFFFFF',
+                'tabBarInactiveTintColor': '#B3E5FC',
+                'tabBarIndicatorStyle': { backgroundColor: '#FFFFFF' },
+                'tabBarStyle': { backgroundColor: '#2D640F' },
               }}>
-              <Tab.Screen name="Garages" component={Garages} />
-              <Tab.Screen name="Vehicles" component={Vehicles} />
-              <Tab.Screen name="Wishlist" component={Wishlist} />
+              <Tab.Screen name='Garages' component={Garages} />
+              <Tab.Screen name='Vehicles' component={Vehicles} />
+              <Tab.Screen name='Wishlist' component={Wishlist} />
             </Tab.Navigator>
           </WishlistContextProvider>
         </VehicleContextProvider>

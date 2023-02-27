@@ -214,12 +214,12 @@ const Garages = () => {
   const verifyGarageFields = (alertTitle, garageObjects) => {
 
     if (!garageObject.location.trim()) {
-      Alert.alert(alertTitle, "Garage location can not be empty.");
+      Alert.alert(alertTitle, 'Garage location can not be empty.');
       return;
     }
 
     if (!garageObject.theme.trim()) {
-      Alert.alert(alertTitle, "Garage theme can not be empty.");
+      Alert.alert(alertTitle, 'Garage theme can not be empty.');
       return;
     }
 
@@ -227,7 +227,7 @@ const Garages = () => {
       (garageObj) => garageObj.location === garageObject.location
     );
     if (garageWithSameLocation.length !== 0) {
-      Alert.alert(alertTitle, "Garage at this location already exists.");
+      Alert.alert(alertTitle, 'Garage at this location already exists.');
       return false;
     }
 
@@ -235,7 +235,7 @@ const Garages = () => {
       (garageObj) => garageObj.theme === garageObject.theme
     );
     if (garageWithSameTheme.length !== 0) {
-      Alert.alert(alertTitle, "Garage with this theme already exists.");
+      Alert.alert(alertTitle, 'Garage with this theme already exists.');
       return false;
     }
 
@@ -369,7 +369,7 @@ const Garages = () => {
       </TouchableOpacity>
 
       <Modal
-        animationType="slide"
+        animationType='slide'
         transparent={false}
         visible={showGarageDetailsVisible}
         onRequestClose={() => {
@@ -470,7 +470,7 @@ const Garages = () => {
       </Modal>
 
       <Modal
-        animationType="slide"
+        animationType='slide'
         transparent={false}
         visible={addGarageModalVisible}
         onRequestClose={() => {
@@ -491,16 +491,16 @@ const Garages = () => {
             <TextInput
               value={garageObject.location}
               onChangeText={text => setGarageObject({ ...garageObject, location: text })}
-              placeholder="Garage Location"
-              placeholderTextColor="grey"
+              placeholder='Garage Location'
+              placeholderTextColor='grey'
               style={styles.textInput}
             />
 
             <TextInput
               value={garageObject.theme}
               onChangeText={text => setGarageObject({ ...garageObject, theme: text })}
-              placeholder="Garage Theme"
-              placeholderTextColor="grey"
+              placeholder='Garage Theme'
+              placeholderTextColor='grey'
               style={styles.textInput}
             />
 
@@ -508,8 +508,8 @@ const Garages = () => {
               value={garageObject.capacity}
               onChangeText={text => setGarageObject({ ...garageObject, capacity: text })}
               keyboardType='number-pad'
-              placeholder="Capacity"
-              placeholderTextColor="grey"
+              placeholder='Capacity'
+              placeholderTextColor='grey'
               style={styles.textInput}
             />
 
@@ -522,8 +522,8 @@ const Garages = () => {
                   <TextInput
                     value={disposableVehicle}
                     style={styles.textInput}
-                    placeholder="New Disposable Vehicle"
-                    placeholderTextColor="grey"
+                    placeholder='New Disposable Vehicle'
+                    placeholderTextColor='grey'
                     onChangeText={text => {
                       const newDisposableVehicles = [...garageObject.disposableVehicles];
                       newDisposableVehicles[index] = text;
@@ -561,7 +561,7 @@ const Garages = () => {
       </Modal>
 
       <Modal
-        animationType="slide"
+        animationType='slide'
         transparent={false}
         visible={editGarageModalVisible}
         onRequestClose={() => {
@@ -582,16 +582,16 @@ const Garages = () => {
             <TextInput
               value={garageObject.location}
               onChangeText={text => setGarageObject({ ...garageObject, location: text })}
-              placeholder="New Garage Location"
-              placeholderTextColor="grey"
+              placeholder='New Garage Location'
+              placeholderTextColor='grey'
               style={styles.textInput}
             />
 
             <TextInput
               value={garageObject.theme}
               onChangeText={text => setGarageObject({ ...garageObject, theme: text })}
-              placeholder="New Garage Theme"
-              placeholderTextColor="grey"
+              placeholder='New Garage Theme'
+              placeholderTextColor='grey'
               style={styles.textInput}
             />
 
@@ -599,8 +599,8 @@ const Garages = () => {
               value={garageObject.capacity}
               onChangeText={text => setGarageObject({ ...garageObject, capacity: text })}
               keyboardType='number-pad'
-              placeholder="New Capacity"
-              placeholderTextColor="grey"
+              placeholder='New Capacity'
+              placeholderTextColor='grey'
               style={styles.textInput}
             />
 
@@ -613,8 +613,8 @@ const Garages = () => {
                   <TextInput
                     value={disposableVehicle}
                     style={styles.textInput}
-                    placeholder="New Disposable Vehicle"
-                    placeholderTextColor="grey"
+                    placeholder='New Disposable Vehicle'
+                    placeholderTextColor='grey'
                     onChangeText={text => {
                       const newDisposableVehicles = [...garageObject.disposableVehicles];
                       newDisposableVehicles[index] = text;
