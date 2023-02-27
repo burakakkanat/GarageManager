@@ -54,6 +54,8 @@
 	<key>UIAppFonts</key>
 	<array>
 		<string>SignPainter-HouseScript.ttf</string>
+		<string>FOTNewRodin Pro B.otf</string>
+		<string>FOTNewRodin Pro M.otf</string>
 	</array>
 </dict>
 </plist>

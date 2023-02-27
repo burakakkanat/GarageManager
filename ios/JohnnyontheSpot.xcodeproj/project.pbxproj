@@ -15,6 +15,8 @@
 		7699B88040F8A987B510C191 /* libPods-JohnnyontheSpot-JohnnyontheSpotTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-JohnnyontheSpot-JohnnyontheSpotTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		3895650830284D35BE41D451 /* SignPainter-HouseScript.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DE6D3181969146D68541DD56 /* SignPainter-HouseScript.ttf */; };
+		7BF9C0F740F74D958165E08D /* FOTNewRodin Pro B.otf in Resources */ = {isa = PBXBuildFile; fileRef = 149D7D7C1A1D4FC6BD1A3E8E /* FOTNewRodin Pro B.otf */; };
+		66E209CB75914D45B7AEDD04 /* FOTNewRodin Pro M.otf in Resources */ = {isa = PBXBuildFile; fileRef = 33AF8CC618D841D9A8339C17 /* FOTNewRodin Pro M.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +48,8 @@
 		89C6BE57DB24E9ADA2F236DE /* Pods-JohnnyontheSpot-JohnnyontheSpotTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JohnnyontheSpot-JohnnyontheSpotTests.release.xcconfig"; path = "Target Support Files/Pods-JohnnyontheSpot-JohnnyontheSpotTests/Pods-JohnnyontheSpot-JohnnyontheSpotTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		DE6D3181969146D68541DD56 /* SignPainter-HouseScript.ttf */ = {isa = PBXFileReference; name = "SignPainter-HouseScript.ttf"; path = "../assets/fonts/SignPainter-HouseScript.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		149D7D7C1A1D4FC6BD1A3E8E /* FOTNewRodin Pro B.otf */ = {isa = PBXFileReference; name = "FOTNewRodin Pro B.otf"; path = "../assets/fonts/FOTNewRodin Pro B.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		33AF8CC618D841D9A8339C17 /* FOTNewRodin Pro M.otf */ = {isa = PBXFileReference; name = "FOTNewRodin Pro M.otf"; path = "../assets/fonts/FOTNewRodin Pro M.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -155,6 +159,8 @@
 			isa = "PBXGroup";
 			children = (
 				DE6D3181969146D68541DD56 /* SignPainter-HouseScript.ttf */,
+				149D7D7C1A1D4FC6BD1A3E8E /* FOTNewRodin Pro B.otf */,
+				33AF8CC618D841D9A8339C17 /* FOTNewRodin Pro M.otf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -257,6 +263,8 @@
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3895650830284D35BE41D451 /* SignPainter-HouseScript.ttf in Resources */,
+				7BF9C0F740F74D958165E08D /* FOTNewRodin Pro B.otf in Resources */,
+				66E209CB75914D45B7AEDD04 /* FOTNewRodin Pro M.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

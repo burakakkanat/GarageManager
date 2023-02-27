@@ -3,9 +3,9 @@ import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, Touc
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useContext, useEffect, useState } from 'react';
 import { VehicleContext } from '../Context/VehicleContext';
+import DropDownPicker from 'react-native-dropdown-picker';
 import { GarageContext } from '../Context/GarageContext';
 import { BlurView } from '@react-native-community/blur';
-import { Picker } from '@react-native-picker/picker';
 import styles from './Styles';
 
 const Vehicles = () => {
@@ -13,6 +13,9 @@ const Vehicles = () => {
   const { garageObjects, setGarageObjects } = useContext(GarageContext);
   const { vehicleObjects, setVehicleObjects } = useContext(VehicleContext);
 
+  const [selectedGarageLocation, setSelectedGarageLocation] = useState('');
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [pickerItemsLoading, setPickerItemsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [vehicleObject, setVehicleObject] = useState({
@@ -143,7 +146,7 @@ const Vehicles = () => {
         {vehicleObjects.map((currentVehicleObject, index) => (
           <View key={index} style={styles.containerForLists}>
             <TouchableOpacity>
-              <Text style={{ color: 'black', fontWeight: 'bold' }}>
+              <Text style={styles.textListItemVehicleB}>
                 {currentVehicleObject.vehicleName}
               </Text>
             </TouchableOpacity>
@@ -151,12 +154,14 @@ const Vehicles = () => {
             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
               <TouchableOpacity
                 style={{ marginRight: 20 }}>
-                <Text style={{ color: 'black', fontStyle: 'italic' }}>{'at ' + currentVehicleObject.garageLocation}</Text>
+                <Text style={styles.textListItemVehicleM}>
+                  {'at ' + currentVehicleObject.garageLocation}
+                </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
                 onPress={() => removeVehicle(currentVehicleObject)}>
-                <Text style={{ color: 'red' }}>Remove</Text>
+                <Text style={{ color: 'red', fontFamily: 'FOTNewRodin Pro M', fontSize: 12 }}>Remove</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -167,29 +172,54 @@ const Vehicles = () => {
         <TextInput
           value={vehicleObject.vehicleName}
           onChangeText={text => setVehicleObject({ ...vehicleObject, vehicleName: text })}
-          style={styles.newVehicleName}
-          placeholder="Vehicle Name"
+          style={styles.textInputNewVehicleName}
+          placeholder=" Vehicle Name"
           placeholderTextColor="grey"
         />
+        <DropDownPicker
+          loading={pickerItemsLoading}
+          dropDownDirection='TOP'
+          setOpen={setPickerOpen}
+          open={pickerOpen}
 
-        <Picker
-          selectedValue={vehicleObject.garageLocation}
-          onValueChange={text => setVehicleObject({ ...vehicleObject, garageLocation: text })}
-          style={styles.containerPickerAddVehicle}
-          dropdownIconColor='black'
-          prompt='Your Garages'>
+          items={garageObjects.map((garageObject, index) => ({
+            label: garageObject.location,
+            value: garageObject.location,
+          }))}
 
-          {garageObjects.map((garageObject, index) => (
-            <Picker.Item
-              key={index}
-              label={garageObject.location}
-              value={garageObject.location}
-              style={{backgroundColor: '#F2F2F2'}}
-              color='black'
-            />
-          ))}
+          value={selectedGarageLocation}
+          setValue={setSelectedGarageLocation}
 
-        </Picker>
+          onSelectItem={(item) => {
+            setVehicleObject({ ...vehicleObject, garageLocation: item.value })
+          }}
+
+          listMode='SCROLLVIEW'
+          scrollViewProps={{
+            scrollEnabled: true,
+            nestedScrollEnabled: true
+          }}
+
+          containerStyle={styles.containerPickerAddVehicle}
+          style={{ backgroundColor: '#F2F2F2' }}
+          itemStyle={{ justifyContent: 'flex-start' }}
+
+          textStyle={{
+            fontFamily: 'FOTNewRodin Pro M',
+            fontSize: 10
+          }}
+          dropDownStyle={{
+            backgroundColor: '#F2F2F2',
+            height: 200
+          }}
+
+          placeholder="Garage"
+          placeholderStyle={{
+            fontFamily: 'FOTNewRodin Pro M',
+            fontSize: 12,
+            color: 'grey'
+          }}
+        />
       </View>
 
       <TouchableOpacity
@@ -197,7 +227,7 @@ const Vehicles = () => {
         disabled={loading}
         style={styles.buttonGreen}
       >
-        <Text style={{ color: 'white' }}>Add New Vehicle</Text>
+        <Text style={styles.textButton}>Add New Vehicle</Text>
       </TouchableOpacity>
 
       {loading && (

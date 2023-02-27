@@ -88,7 +88,7 @@ const Garages = () => {
     const vehicles = await retrieveObject('@VehicleObjectList');
 
     const newGarageObjects = [...garages];
-    
+
     for (const vehicle of vehicles) {
       const selectedGarageIndex = garages.findIndex(garageObj => garageObj.location === vehicle.garageLocation);
       const selectedGarageObject = { ...newGarageObjects[selectedGarageIndex] };
@@ -109,7 +109,7 @@ const Garages = () => {
     const wishlists = await retrieveObject('@WishlistObjectList');
 
     const newGarageObjects = [...garages];
-    
+
     for (const wishlist of wishlists) {
       const selectedGarageIndex = garages.findIndex(garageObj => garageObj.theme === wishlist.garageTheme);
       const selectedGarageObject = { ...newGarageObjects[selectedGarageIndex] };
@@ -349,13 +349,13 @@ const Garages = () => {
           <View key={index} style={styles.containerForGarageList}>
             <View style={{ flex: 1 }}>
               <TouchableOpacity onPress={() => showGarageDetails(currentGarageObject)}>
-                <Text style={{ color: 'black', fontWeight: 'bold' }}>{currentGarageObject.location}</Text>
+                <Text style={styles.textListItemGarageB}>{currentGarageObject.location}</Text>
               </TouchableOpacity>
             </View>
 
             <View style={{ flex: 1 }}>
               <TouchableOpacity onPress={() => showGarageDetails(currentGarageObject)}>
-                <Text style={{ color: 'black', fontStyle: 'italic' }}>{currentGarageObject.theme}</Text>
+                <Text style={styles.textListItemGarageM}>{currentGarageObject.theme}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -365,8 +365,109 @@ const Garages = () => {
       <TouchableOpacity
         onPress={openAddNewGarageWindow}
         style={styles.buttonGreen}>
-        <Text style={{ color: "white" }}>Add New Garage</Text>
+        <Text style={styles.textButton}>Add New Garage</Text>
       </TouchableOpacity>
+
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={showGarageDetailsVisible}
+        onRequestClose={() => {
+          setEmptyGarageObject();
+          setShowGarageDetailsVisible(false);
+        }}
+      >
+        <View style={ styles.headerContainer }>
+          <Text style={styles.header}>{garageObject.location}</Text>
+        </View>
+
+        <View style={{ flex: 1 }}>
+
+          <ScrollView>
+
+            <View style={styles.separatorTop} />
+
+            <Text style={styles.textGarageDetailsTitle}>{'Garage Details'}</Text>
+
+            <View style={{ flexDirection: 'row', margin: 10, marginTop: 0 }}>
+              <Text style={styles.textGarageDetailsSoftTitle}>Theme: </Text>
+              <Text style={styles.textGarageDetails}>{garageObject.theme}</Text>
+            </View>
+
+            <View style={{ flexDirection: 'row', margin: 10, marginTop: 0 }}>
+              <Text style={styles.textGarageDetailsSoftTitle}>Capacity: </Text>
+              <Text style={styles.textGarageDetails}>{garageObject.capacity}</Text>
+            </View>
+
+            <View style={{ flexDirection: 'row', margin: 10, marginTop: 0 }}>
+              <Text style={styles.textGarageDetailsSoftTitle}>Available Space: </Text>
+              <Text style={styles.textGarageDetails}>{garageObject.capacity - garageObject.vehicles.length}</Text>
+            </View>
+
+            <View style={styles.separatorTop} />
+
+            <Text style={styles.textGarageDetailsTitle}>{'Vehicles in Garage' + ' (' + garageObject.vehicles.length + ')'}</Text>
+
+            <View>
+              {garageObject.vehicles && garageObject.vehicles.map((vehicleName, index) => (
+                <View key={index} style={styles.containerForSimpleLists}>
+                  <TouchableOpacity>
+                    <Text style={styles.textGarageDetails}>{vehicleName}</Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+
+            <View style={styles.separatorTop} />
+
+            <Text style={styles.textGarageDetailsTitle}>{'Disposible Vehicles' + ' (' + garageObject.disposableVehicles.length + ')'}</Text>
+
+            <View>{garageObject.disposableVehicles && garageObject.disposableVehicles.map((disposableVehicle, index) => (
+              <View key={index} style={styles.containerForSimpleLists}>
+                <TouchableOpacity>
+                  <Text style={styles.textGarageDetails}>{disposableVehicle}</Text>
+                </TouchableOpacity>
+              </View>
+            ))}
+            </View>
+
+            <View style={styles.separatorTop} />
+
+            <Text style={styles.textGarageDetailsTitle}>{'Wishlist for This Garage' + ' (' + garageObject.wishlist.length + ')'}</Text>
+
+            <View>{garageObject.wishlist && garageObject.wishlist.map((wishlistObj, index) => (
+              <View key={index} style={styles.containerForSimpleLists}>
+                <TouchableOpacity>
+                  <Text style={styles.textGarageDetails}>{wishlistObj.vehicleName}</Text>
+                </TouchableOpacity>
+              </View>
+            ))}
+            </View>
+
+          </ScrollView>
+
+          <View style={{
+            flexDirection: 'column',
+            margin: 5,
+            marginTop: 0,
+            marginBottom: 0,
+            borderTopWidth: 1,
+            borderTopColor: '#black'
+          }}>
+            <TouchableOpacity
+              onPress={() => openEditGarageWindow()}
+              style={styles.buttonGreen}>
+              <Text style={styles.textButton}>Edit Garage</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => removeGarageObject()}
+              style={styles.buttonRed}>
+              <Text style={styles.textButton}>Remove Garage</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       <Modal
         animationType="slide"
@@ -377,7 +478,7 @@ const Garages = () => {
           setAddGarageModalVisible(false);
         }}
       >
-        <View style={{ backgroundColor: '#2D640F', justifyContent: 'center', height: 50 }}>
+        <View style={ styles.headerContainer }>
           <Text style={styles.header}>Add New Garage</Text>
         </View>
 
@@ -385,7 +486,7 @@ const Garages = () => {
           <View>
 
             <View style={styles.separator} />
-            <Text style={{ color: 'grey', margin: 10 }}>{'Garage Details:'}</Text>
+            <Text style={styles.textSoftTitle}>{'Garage Details:'}</Text>
 
             <TextInput
               value={garageObject.location}
@@ -413,7 +514,7 @@ const Garages = () => {
             />
 
             <View style={styles.separator} />
-            <Text style={{ color: 'grey', margin: 10 }}>{'Disposable Vehicles:'}</Text>
+            <Text style={styles.textSoftTitle}>{'Disposable Vehicles:'}</Text>
 
             {garageObject.disposableVehicles.map((disposableVehicle, index) => (
               <View key={index} style={{ flexDirection: 'row' }}>
@@ -442,7 +543,7 @@ const Garages = () => {
               style={styles.buttonYellow}
               onPress={() => setGarageObject({ ...garageObject, disposableVehicles: [...garageObject.disposableVehicles, ''] })}>
 
-              <Text style={{ color: 'white' }}>Add Disposable Vehicle</Text>
+              <Text style={styles.textButton}>Add Disposable Vehicle</Text>
 
             </TouchableOpacity>
           </View>
@@ -452,7 +553,7 @@ const Garages = () => {
               style={styles.buttonGreen}
               onPress={addGarageObject}>
 
-              <Text style={{ color: 'white' }}>Add</Text>
+              <Text style={styles.textButton}>Add</Text>
 
             </TouchableOpacity>
           </View>
@@ -468,7 +569,7 @@ const Garages = () => {
           setEditGarageModalVisible(false);
         }}
       >
-        <View style={{ backgroundColor: '#2D640F', justifyContent: 'center', height: 50 }}>
+        <View style={ styles.headerContainer }>
           <Text style={styles.header}>Edit Garage</Text>
         </View>
 
@@ -476,7 +577,7 @@ const Garages = () => {
           <View>
 
             <View style={styles.separator} />
-            <Text style={{ color: 'grey', margin: 10 }}>{'Garage Details:'}</Text>
+            <Text style={styles.textSoftTitle}>{'Garage Details:'}</Text>
 
             <TextInput
               value={garageObject.location}
@@ -504,7 +605,7 @@ const Garages = () => {
             />
 
             <View style={styles.separator} />
-            <Text style={{ color: 'grey', margin: 10 }}>{'Disposable Vehicles:'}</Text>
+            <Text style={styles.textSoftTitle}>{'Disposable Vehicles:'}</Text>
 
             {garageObject.disposableVehicles.map((disposableVehicle, index) => (
               <View key={index} style={{ flexDirection: 'row' }}>
@@ -524,7 +625,7 @@ const Garages = () => {
                 <TouchableOpacity
                   style={styles.buttonRed}
                   onPress={() => removeDisposableVehicle(index)}>
-                  <Text style={{ color: 'white' }}>Remove</Text>
+                  <Text style={styles.textButton}>Remove</Text>
                 </TouchableOpacity>
               </View>
             ))}
@@ -532,7 +633,7 @@ const Garages = () => {
             <TouchableOpacity
               style={styles.buttonYellow}
               onPress={() => setGarageObject({ ...garageObject, disposableVehicles: [...garageObject.disposableVehicles, ''] })}>
-              <Text style={{ color: 'white' }}>Add Disposable Vehicle</Text>
+              <Text style={styles.textButton}>Add Disposable Vehicle</Text>
             </TouchableOpacity>
           </View>
 
@@ -540,108 +641,7 @@ const Garages = () => {
             <TouchableOpacity
               style={styles.buttonGreen}
               onPress={editGarageObject}>
-              <Text style={{ color: 'white' }}>Save</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
-      <Modal
-        animationType="slide"
-        transparent={false}
-        visible={showGarageDetailsVisible}
-        onRequestClose={() => {
-          setEmptyGarageObject();
-          setShowGarageDetailsVisible(false);
-        }}
-      >
-        <View style={{ backgroundColor: '#2D640F', justifyContent: 'center', height: 50 }}>
-          <Text style={styles.header}>{garageObject.location}</Text>
-        </View>
-
-        <View style={{ flex: 1 }}>
-
-          <ScrollView>
-
-            <View style={styles.separatorTop} />
-
-            <Text style={{ color: 'black', margin: 10, fontWeight: 'bold', fontStyle: 'italic', fontSize: 17.5 }}>{'Garage Details'}</Text>
-
-            <View style={{ flexDirection: 'row', margin: 10, marginTop: 0 }}>
-              <Text style={{ color: 'grey', fontWeight: 'bold', fontStyle: 'italic' }}>Theme: </Text>
-              <Text style={{ color: 'grey' }}>{garageObject.theme}</Text>
-            </View>
-
-            <View style={{ flexDirection: 'row', margin: 10, marginTop: 0 }}>
-              <Text style={{ color: 'grey', fontWeight: 'bold', fontStyle: 'italic' }}>Capacity: </Text>
-              <Text style={{ color: 'grey' }}>{garageObject.capacity}</Text>
-            </View>
-
-            <View style={{ flexDirection: 'row', margin: 10, marginTop: 0 }}>
-              <Text style={{ color: 'grey', fontWeight: 'bold', fontStyle: 'italic' }}>Available Space: </Text>
-              <Text style={{ color: 'grey' }}>{garageObject.capacity - garageObject.vehicles.length}</Text>
-            </View>
-
-            <View style={styles.separatorTop} />
-
-            <Text style={{ color: 'black', margin: 10, fontWeight: 'bold', fontStyle: 'italic', fontSize: 17.5 }}>{'Vehicles in Garage' + ' (' + garageObject.vehicles.length + ')'}</Text>
-
-            <View>
-              {garageObject.vehicles && garageObject.vehicles.map((vehicleName, index) => (
-                <View key={index} style={styles.containerForSimpleLists}>
-                  <TouchableOpacity>
-                    <Text style={{ color: 'grey' }}>{vehicleName}</Text>
-                  </TouchableOpacity>
-                </View>
-              ))}
-            </View>
-
-            <View style={styles.separatorTop} />
-
-            <Text style={{ color: 'black', margin: 10, fontWeight: 'bold', fontStyle: 'italic', fontSize: 17.5 }}>{'Disposible Vehicles' + ' (' + garageObject.disposableVehicles.length + ')'}</Text>
-
-            <View>{garageObject.disposableVehicles && garageObject.disposableVehicles.map((disposableVehicle, index) => (
-              <View key={index} style={styles.containerForSimpleLists}>
-                <TouchableOpacity>
-                  <Text style={{ color: 'grey' }}>{disposableVehicle}</Text>
-                </TouchableOpacity>
-              </View>
-            ))}
-            </View>
-
-            <View style={styles.separatorTop} />
-
-            <Text style={{ color: 'black', margin: 10, fontWeight: 'bold', fontStyle: 'italic', fontSize: 17.5 }}>{'Wishlist for This Garage' + ' (' + garageObject.wishlist.length + ')'}</Text>
-
-            <View>{garageObject.wishlist && garageObject.wishlist.map((wishlistObj, index) => (
-              <View key={index} style={styles.containerForSimpleLists}>
-                <TouchableOpacity>
-                  <Text style={{ color: 'grey' }}>{wishlistObj.vehicleName}</Text>
-                </TouchableOpacity>
-              </View>
-            ))}
-            </View>
-
-          </ScrollView>
-
-          <View style={{
-            flexDirection: 'column',
-            margin: 5,
-            marginTop: 0,
-            marginBottom: 0,
-            borderTopWidth: 1,
-            borderTopColor: '#black'
-          }}>
-            <TouchableOpacity
-              onPress={() => openEditGarageWindow()}
-              style={styles.buttonGreen}>
-              <Text style={{ color: 'white' }}>Edit Garage</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => removeGarageObject()}
-              style={styles.buttonRed}>
-              <Text style={{ color: 'white' }}>Remove Garage</Text>
+              <Text style={styles.textButton}>Save</Text>
             </TouchableOpacity>
           </View>
         </View>

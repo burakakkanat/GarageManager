@@ -1,9 +1,10 @@
 import { Alert, FlatList, Modal, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { WishlistContext } from '../Context/WishlistContext';
-import { GarageContext } from '../Context/GarageContext';
-import { Picker } from '@react-native-picker/picker';
 import React, { useContext, useEffect, useState } from 'react';
+import { WishlistContext } from '../Context/WishlistContext';
+import DropDownPicker from 'react-native-dropdown-picker';
+import { useFocusEffect } from '@react-navigation/native';
+import { GarageContext } from '../Context/GarageContext';
 import styles from './Styles';
 
 const Wishlist = () => {
@@ -12,12 +13,14 @@ const Wishlist = () => {
   const { garageObjects, setGarageObjects } = useContext(GarageContext);
 
   const [addWishlistModalVisible, setAddWishlistModalVisible] = useState(false);
+  const [selectedGarageTheme, setSelectedGarageTheme] = useState('');
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   const [wishlistObject, setWishlistObject] = useState({
     garageTheme: '',
     vehicleName: '',
     price: '',
-    tradePrice: '-'
+    tradePrice: ''
   });
 
   useEffect(() => {
@@ -30,9 +33,19 @@ const Wishlist = () => {
     getWishlistItems();
   }, []);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      setPickerOpen(false);
+    }, [])
+  );
+
+  const setEmptyWishlistObject = async () => {
+    setWishlistObject({ garageTheme: '', vehicleName: '', price: '', tradePrice: '' });
+  }
+
   const addWishlistItem = async () => {
 
-    if (wishlistObject.tradePrice === '-') {
+    if (wishlistObject.tradePrice === '') {
       wishlistObject.tradePrice = '       -       ';
     }
 
@@ -56,7 +69,7 @@ const Wishlist = () => {
     newWishlistObjects.sort(compareWishlistItems);
     await saveObject('@WishlistObjectList', newWishlistObjects);
 
-    setWishlistObject({ garageTheme: '', vehicleName: '', price: '', tradePrice: '-' });
+    setEmptyWishlistObject();
     setAddWishlistModalVisible(false);
   };
 
@@ -109,17 +122,17 @@ const Wishlist = () => {
   const renderWishlistObject = ({ item }) => {
     return (
       <TouchableOpacity style={styles.containerForLists} onPress={() => removeWishlistObject(item)}>
-        <View style={{ flex: 1, marginLeft: 10 }}>
-          <Text style={styles.textWishlistObjectBold}>{item.vehicleName}</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.textWishlistObjectB}>{item.vehicleName}</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={styles.textWishlistObject}>{item.garageTheme}</Text>
+          <Text style={styles.textWishlistObjectM}>{item.garageTheme}</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={styles.textWishlistObject}>{item.price}</Text>
+          <Text style={styles.textWishlistObjectB}>{item.price}</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={styles.textWishlistObject}>{item.tradePrice}</Text>
+          <Text style={styles.textWishlistObjectM}>{item.tradePrice}</Text>
         </View>
       </TouchableOpacity>
     );
@@ -127,18 +140,19 @@ const Wishlist = () => {
 
   return (
     <View style={{ flex: 1 }}>
+
       <View style={styles.containerWishlistHeader}>
-        <View style={{ flex: 1, marginLeft: 10 }}>
-          <Text>Vehicle</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.textHeaderWishlist}>Vehicle</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text>Theme</Text>
+          <Text style={styles.textHeaderWishlist}>Theme</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text>Price</Text>
+          <Text style={styles.textHeaderWishlist}>Price</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text>Trade Price</Text>
+          <Text style={styles.textHeaderWishlist}>Trade Price</Text>
         </View>
       </View>
 
@@ -151,16 +165,21 @@ const Wishlist = () => {
       <TouchableOpacity
         style={styles.buttonGreen}
         onPress={() => setAddWishlistModalVisible(true)}>
-        <Text style={{ color: 'white' }}>Add Wishlist Item</Text>
+        <Text style={styles.textButton}>Add Wishlist Item</Text>
       </TouchableOpacity>
 
       <Modal
-        animationType="slide"
+        animationType='slide'
         transparent={false}
         visible={addWishlistModalVisible}
-        onRequestClose={() => setAddWishlistModalVisible(false)}>
+        onRequestClose={() => {
+          setAddWishlistModalVisible(false);
+          setEmptyWishlistObject();
+          setSelectedGarageTheme('');
+          setPickerOpen(false);
+        }}>
 
-        <View style={{ backgroundColor: '#2D640F', justifyContent: 'center', height: 50 }}>
+        <View style={styles.headerContainer}>
           <Text style={styles.header}>Add New Wishlist Item</Text>
         </View>
 
@@ -168,41 +187,22 @@ const Wishlist = () => {
           <View>
 
             <View style={styles.separator} />
-            <Text style={{ color: 'grey', margin: 10 }}>{'Wishlist Details:'}</Text>
+            <Text style={styles.textSoftTitle}>{'Wishlist Details:'}</Text>
 
             <TextInput
               value={wishlistObject.vehicleName}
               onChangeText={text => setWishlistObject({ ...wishlistObject, vehicleName: text })}
-              placeholder="Vehicle Name"
-              placeholderTextColor="grey"
+              placeholder='Vehicle Name'
+              placeholderTextColor='grey'
               style={styles.textInput}
             />
-
-            <Picker
-              selectedValue={wishlistObject.garageTheme}
-              onValueChange={text => setWishlistObject({ ...wishlistObject, garageTheme: text })}
-              style={styles.containerPickerWishlist}
-              dropdownIconColor='black'
-              prompt='Your Garage Themes'>
-
-              {garageObjects.map((garageObject, index) => (
-                <Picker.Item
-                  key={index}
-                  label={garageObject.theme}
-                  value={garageObject.theme}
-                  style={{ backgroundColor: 'white' }}
-                  color='black'
-                />
-              ))}
-
-            </Picker>
 
             <TextInput
               value={wishlistObject.price}
               onChangeText={text => setWishlistObject({ ...wishlistObject, price: text })}
               keyboardType='number-pad'
-              placeholder="Price"
-              placeholderTextColor="grey"
+              placeholder='Price'
+              placeholderTextColor='grey'
               style={styles.textInput}
             />
 
@@ -210,9 +210,57 @@ const Wishlist = () => {
               value={wishlistObject.tradePrice}
               onChangeText={text => setWishlistObject({ ...wishlistObject, tradePrice: text })}
               keyboardType='number-pad'
-              placeholder="Trade Price"
-              placeholderTextColor="grey"
+              placeholder='Trade Price'
+              placeholderTextColor='grey'
               style={styles.textInput}
+            />
+
+            <DropDownPicker
+              setOpen={setPickerOpen}
+              open={pickerOpen}
+
+              items={garageObjects.map((garageObject, index) => ({
+                label: garageObject.theme,
+                value: garageObject.theme,
+              }))}
+
+              value={selectedGarageTheme}
+              setValue={setSelectedGarageTheme}
+
+              onSelectItem={(item) =>
+                setWishlistObject({ ...wishlistObject, garageTheme: item.value })
+              }
+
+              listMode='MODAL'
+              modalTitle="Your Garage Themes"
+              modalTitleStyle={{
+                fontFamily: 'FOTNewRodin Pro B', // Not working
+                fontSize: 15 // Not working
+              }}
+              modalContentContainerStyle={{
+                backgroundColor: "#fffcc" // Not working
+              }}
+              modalProps={{
+                presentationStyle: 'pageSheet',
+                animationType: 'fade',
+                hardwareAccelerated: true,
+              }}
+              
+              containerStyle={styles.containerPickerWishlist}
+              itemStyle={{
+                justifyContent: 'flex-start'
+              }}
+
+              textStyle={{
+                fontFamily: 'FOTNewRodin Pro M',
+                fontSize: 12
+              }}
+              placeholder='Theme'
+              placeholderStyle={{
+                fontFamily: 'FOTNewRodin Pro M',
+                fontSize: 12,
+                color: 'grey'
+              }}
             />
 
           </View>
@@ -222,7 +270,7 @@ const Wishlist = () => {
               style={styles.buttonGreen}
               onPress={addWishlistItem}>
 
-              <Text style={{ color: 'white' }}>Add</Text>
+              <Text style={styles.textButton}>Add</Text>
 
             </TouchableOpacity>
           </View>
