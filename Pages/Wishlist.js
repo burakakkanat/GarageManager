@@ -17,6 +17,7 @@ const Wishlist = () => {
   const [pickerOpen, setPickerOpen] = useState(false);
 
   const [wishlistObject, setWishlistObject] = useState({
+    uuid: '',
     garageTheme: '',
     vehicleName: '',
     price: '',

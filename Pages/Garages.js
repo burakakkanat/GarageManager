@@ -4,6 +4,7 @@ import { WishlistContext } from '../Context/WishlistContext';
 import { VehicleContext } from '../Context/VehicleContext';
 import { useFocusEffect } from '@react-navigation/native';
 import { GarageContext } from '../Context/GarageContext';
+import uuid from 'react-native-uuid';
 import styles from './Styles';
 import util from './Util';
 
@@ -23,11 +24,13 @@ const Garages = () => {
   const [showGarageDetailsVisible, setShowGarageDetailsVisible] = useState(false);
 
   const [vehicleObject, setVehicleObject] = useState({
+    uuid: '',
     vehicleName: '',
     garageLocation: ''
   });
 
   const [wishlistObject, setWishlistObject] = useState({
+    uuid: '',
     garageTheme: '',
     vehicleName: '',
     price: '',
@@ -35,6 +38,7 @@ const Garages = () => {
   });
 
   const [garageObject, setGarageObject] = useState({
+    uuid: '',
     location: '',
     theme: '',
     capacity: '',

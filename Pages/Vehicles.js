@@ -18,6 +18,7 @@ const Vehicles = () => {
   const [loading, setLoading] = useState(false);
 
   const [vehicleObject, setVehicleObject] = useState({
+    uuid: '',
     vehicleName: '',
     garageLocation: ''
   });
