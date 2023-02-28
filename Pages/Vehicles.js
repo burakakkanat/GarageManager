@@ -198,7 +198,7 @@ const Vehicles = () => {
           }}
 
           listMode='MODAL'  // #TODO: Change when dropdown bug is fixed
-          modalTitle='Your Garage Location' //#TODO: Change when dropdown bug is fixed
+          modalTitle='Your Garage Locations' //#TODO: Change when dropdown bug is fixed
 
           scrollViewProps={{
             nestedScrollEnabled: true
