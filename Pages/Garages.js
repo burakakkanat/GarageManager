@@ -1,11 +1,11 @@
 import { Alert, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useContext, useEffect, useState } from 'react';
 import { WishlistContext } from '../Context/WishlistContext';
 import { VehicleContext } from '../Context/VehicleContext';
 import { useFocusEffect } from '@react-navigation/native';
 import { GarageContext } from '../Context/GarageContext';
 import styles from './Styles';
+import util from './Util';
 
 const Garages = () => {
 
@@ -46,7 +46,7 @@ const Garages = () => {
   useEffect(() => {
     // Get the list of garage names from local storage
     const getGarageObjects = async () => {
-      const garages = await retrieveObject('@GarageObjectList');
+      const garages = await util.retrieveObject('@GarageObjectList');
       setGarageObjects(garages);
     };
     getGarageObjects();
@@ -60,23 +60,23 @@ const Garages = () => {
 
   // Last executed: 26.02.2023 16:50
   const backupData = async () => {
-    const garages = await retrieveObject('@GarageObjectList');
-    const vehicles = await retrieveObject('@VehicleObjectList');
-    const wishlists = await retrieveObject('@WishlistObjectList');
+    const garages = await util.retrieveObject('@GarageObjectList');
+    const vehicles = await util.retrieveObject('@VehicleObjectList');
+    const wishlists = await util.retrieveObject('@WishlistObjectList');
 
-    await saveObject('@GarageObjectListBackup', garages);
-    await saveObject('@VehicleObjectListBackup', vehicles);
-    await saveObject('@WishlistObjectListBackup', wishlists);
+    await util.saveObject('@GarageObjectListBackup', garages);
+    await util.saveObject('@VehicleObjectListBackup', vehicles);
+    await util.saveObject('@WishlistObjectListBackup', wishlists);
   };
 
   const retreiveFromBackup = async () => {
-    const garagesBackup = await retrieveObject('@GarageObjectListBackup');
-    const vehiclesBackup = await retrieveObject('@VehicleObjectListBackup');
-    const wishlistsBackup = await retrieveObject('@WishlistObjectListBackup');
+    const garagesBackup = await util.retrieveObject('@GarageObjectListBackup');
+    const vehiclesBackup = await util.retrieveObject('@VehicleObjectListBackup');
+    const wishlistsBackup = await util.retrieveObject('@WishlistObjectListBackup');
 
-    await saveObject('@GarageObjectList', garagesBackup);
-    await saveObject('@VehicleObjectList', vehiclesBackup);
-    await saveObject('@WishlistObjectList', wishlistsBackup);
+    await util.saveObject('@GarageObjectList', garagesBackup);
+    await util.saveObject('@VehicleObjectList', vehiclesBackup);
+    await util.saveObject('@WishlistObjectList', wishlistsBackup);
   };
 
   const refillGarageVehicles = async (garages) => {
@@ -85,10 +85,10 @@ const Garages = () => {
       go.vehicles = [];
     }
 
-    const vehicles = await retrieveObject('@VehicleObjectList');
+    const vehicles = await util.retrieveObject('@VehicleObjectList');
 
     const newGarageObjects = [...garages];
-    
+
     for (const vehicle of vehicles) {
       const selectedGarageIndex = garages.findIndex(garageObj => garageObj.location === vehicle.garageLocation);
       const selectedGarageObject = { ...newGarageObjects[selectedGarageIndex] };
@@ -96,7 +96,7 @@ const Garages = () => {
       newGarageObjects[selectedGarageIndex] = selectedGarageObject;
     }
 
-    await saveObject('@GarageObjectList', newGarageObjects);
+    await util.saveObject('@GarageObjectList', newGarageObjects);
     setGarageObjects(newGarageObjects);
   };
 
@@ -106,28 +106,28 @@ const Garages = () => {
       go.wishlist = [];
     }
 
-    const wishlists = await retrieveObject('@WishlistObjectList');
+    const wishlists = await util.retrieveObject('@WishlistObjectList');
 
     const newGarageObjects = [...garages];
-    
+
     for (const wishlist of wishlists) {
       const selectedGarageIndex = garages.findIndex(garageObj => garageObj.theme === wishlist.garageTheme);
       const selectedGarageObject = { ...newGarageObjects[selectedGarageIndex] };
-      selectedGarageObject.wishlist = [...selectedGarageObject.wishlist, wishlist].sort(compareWishlistItems);
+      selectedGarageObject.wishlist = [...selectedGarageObject.wishlist, wishlist].sort(util.compareWishlistItems);
       newGarageObjects[selectedGarageIndex] = selectedGarageObject;
     }
 
-    await saveObject('@GarageObjectList', newGarageObjects);
+    await util.saveObject('@GarageObjectList', newGarageObjects);
     setGarageObjects(newGarageObjects);
   };
 
   const wipeAllData = async () => {
     setGarageObjects([]);
-    await saveObject('@GarageObjectList', []);
+    await util.saveObject('@GarageObjectList', []);
     setVehicleObjects([]);
-    await saveObject('@VehicleObjectList', []);
+    await util.saveObject('@VehicleObjectList', []);
     setWishlistObjects([]);
-    await saveObject('@WishlistObjectList', []);
+    await util.saveObject('@WishlistObjectList', []);
   }
 
   const setEmptyGarageObject = async () => {
@@ -148,10 +148,10 @@ const Garages = () => {
       }
 
       garageObjects.push(garageObject);
-      garageObjects.sort(compareGarages);
+      garageObjects.sort(util.compareGarages);
       setGarageObjects([...garageObjects]);
 
-      await saveObject('@GarageObjectList', garageObjects);
+      await util.saveObject('@GarageObjectList', garageObjects);
 
       await setEmptyGarageObject();
       setAddGarageModalVisible(false);
@@ -187,10 +187,10 @@ const Garages = () => {
       }
 
       newGarageObjects.push(garageObject);
-      newGarageObjects.sort(compareGarages);
+      newGarageObjects.sort(util.compareGarages);
 
       // Set the new garageObjects to local an state
-      await saveObject('@GarageObjectList', newGarageObjects);
+      await util.saveObject('@GarageObjectList', newGarageObjects);
       setGarageObjects(newGarageObjects);
 
       // Update vehicleObjects and wishlistObjects with new garage info
@@ -214,12 +214,12 @@ const Garages = () => {
   const verifyGarageFields = (alertTitle, garageObjects) => {
 
     if (!garageObject.location.trim()) {
-      Alert.alert(alertTitle, "Garage location can not be empty.");
+      Alert.alert(alertTitle, 'Garage location can not be empty.');
       return;
     }
 
     if (!garageObject.theme.trim()) {
-      Alert.alert(alertTitle, "Garage theme can not be empty.");
+      Alert.alert(alertTitle, 'Garage theme can not be empty.');
       return;
     }
 
@@ -227,7 +227,7 @@ const Garages = () => {
       (garageObj) => garageObj.location === garageObject.location
     );
     if (garageWithSameLocation.length !== 0) {
-      Alert.alert(alertTitle, "Garage at this location already exists.");
+      Alert.alert(alertTitle, 'Garage at this location already exists.');
       return false;
     }
 
@@ -235,7 +235,7 @@ const Garages = () => {
       (garageObj) => garageObj.theme === garageObject.theme
     );
     if (garageWithSameTheme.length !== 0) {
-      Alert.alert(alertTitle, "Garage with this theme already exists.");
+      Alert.alert(alertTitle, 'Garage with this theme already exists.');
       return false;
     }
 
@@ -251,9 +251,9 @@ const Garages = () => {
       newVehicleObjects.push(vehicleObject);
     }
 
-    newVehicleObjects.sort(compareVehicles);
+    newVehicleObjects.sort(util.compareVehicles);
 
-    await saveObject('@VehicleObjectList', newVehicleObjects);
+    await util.saveObject('@VehicleObjectList', newVehicleObjects);
     setVehicleObjects(newVehicleObjects);
   };
 
@@ -266,9 +266,9 @@ const Garages = () => {
       newWishlistObjects.push(wishlistObj);
     }
 
-    newWishlistObjects.sort(compareWishlistItems);
+    newWishlistObjects.sort(util.compareWishlistItems);
 
-    await saveObject('@WishlistObjectList', newWishlistObjects);
+    await util.saveObject('@WishlistObjectList', newWishlistObjects);
     setWishlistObjects(newWishlistObjects);
   };
 
@@ -291,7 +291,7 @@ const Garages = () => {
               const newGarageObjects = garageObjects.filter(garageObj => garageObj.location !== oldGarageLocation);
 
               setGarageObjects(newGarageObjects);
-              await saveObject('@GarageObjectList', newGarageObjects);
+              await util.saveObject('@GarageObjectList', newGarageObjects);
 
               // Set new vehicles list for Vehicles page
               await removeVehicleObjects(oldGarageLocation);
@@ -316,7 +316,7 @@ const Garages = () => {
     try {
       const newVehicleObjects = vehicleObjects.filter(vehicleObject => vehicleObject.garageLocation !== garageLocationToRemove);
       setVehicleObjects(newVehicleObjects);
-      await saveObject('@VehicleObjectList', newVehicleObjects);
+      await util.saveObject('@VehicleObjectList', newVehicleObjects);
     } catch (error) {
       console.error(error);
     }
@@ -326,7 +326,7 @@ const Garages = () => {
     try {
       const newWishlistObjects = wishlistObjects.filter(wishlistObject => wishlistObject.garageTheme !== garageThemeToRemove);
       setWishlistObjects(newWishlistObjects);
-      await saveObject('@WishlistObjectList', newWishlistObjects);
+      await util.saveObject('@WishlistObjectList', newWishlistObjects);
     } catch (error) {
       console.error(error);
     }
@@ -349,13 +349,13 @@ const Garages = () => {
           <View key={index} style={styles.containerForGarageList}>
             <View style={{ flex: 1 }}>
               <TouchableOpacity onPress={() => showGarageDetails(currentGarageObject)}>
-                <Text style={{ color: 'black', fontWeight: 'bold' }}>{currentGarageObject.location}</Text>
+                <Text style={styles.textListItemGarageB}>{currentGarageObject.location}</Text>
               </TouchableOpacity>
             </View>
 
             <View style={{ flex: 1 }}>
               <TouchableOpacity onPress={() => showGarageDetails(currentGarageObject)}>
-                <Text style={{ color: 'black', fontStyle: 'italic' }}>{currentGarageObject.theme}</Text>
+                <Text style={styles.textListItemGarageM}>{currentGarageObject.theme}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -365,189 +365,11 @@ const Garages = () => {
       <TouchableOpacity
         onPress={openAddNewGarageWindow}
         style={styles.buttonGreen}>
-        <Text style={{ color: "white" }}>Add New Garage</Text>
+        <Text style={styles.textButton}>Add New Garage</Text>
       </TouchableOpacity>
 
       <Modal
-        animationType="slide"
-        transparent={false}
-        visible={addGarageModalVisible}
-        onRequestClose={() => {
-          setEmptyGarageObject();
-          setAddGarageModalVisible(false);
-        }}
-      >
-        <View style={{ backgroundColor: '#2D640F', justifyContent: 'center', height: 50 }}>
-          <Text style={styles.header}>Add New Garage</Text>
-        </View>
-
-        <View style={{ flex: 1, flexDirection: 'column' }}>
-          <View>
-
-            <View style={styles.separator} />
-            <Text style={{ color: 'grey', margin: 10 }}>{'Garage Details:'}</Text>
-
-            <TextInput
-              value={garageObject.location}
-              onChangeText={text => setGarageObject({ ...garageObject, location: text })}
-              placeholder="Garage Location"
-              placeholderTextColor="grey"
-              style={styles.textInput}
-            />
-
-            <TextInput
-              value={garageObject.theme}
-              onChangeText={text => setGarageObject({ ...garageObject, theme: text })}
-              placeholder="Garage Theme"
-              placeholderTextColor="grey"
-              style={styles.textInput}
-            />
-
-            <TextInput
-              value={garageObject.capacity}
-              onChangeText={text => setGarageObject({ ...garageObject, capacity: text })}
-              keyboardType='number-pad'
-              placeholder="Capacity"
-              placeholderTextColor="grey"
-              style={styles.textInput}
-            />
-
-            <View style={styles.separator} />
-            <Text style={{ color: 'grey', margin: 10 }}>{'Disposable Vehicles:'}</Text>
-
-            {garageObject.disposableVehicles.map((disposableVehicle, index) => (
-              <View key={index} style={{ flexDirection: 'row' }}>
-                <View style={{ flex: 1 }}>
-                  <TextInput
-                    value={disposableVehicle}
-                    style={styles.textInput}
-                    placeholder="New Disposable Vehicle"
-                    placeholderTextColor="grey"
-                    onChangeText={text => {
-                      const newDisposableVehicles = [...garageObject.disposableVehicles];
-                      newDisposableVehicles[index] = text;
-                      setGarageObject({ ...garageObject, disposableVehicles: newDisposableVehicles });
-                    }}
-                  />
-                </View>
-                <TouchableOpacity
-                  style={styles.buttonRed}
-                  onPress={() => removeDisposableVehicle(index)}>
-                  <Text style={{ color: 'white' }}>Remove</Text>
-                </TouchableOpacity>
-              </View>
-            ))}
-
-            <TouchableOpacity
-              style={styles.buttonYellow}
-              onPress={() => setGarageObject({ ...garageObject, disposableVehicles: [...garageObject.disposableVehicles, ''] })}>
-
-              <Text style={{ color: 'white' }}>Add Disposable Vehicle</Text>
-
-            </TouchableOpacity>
-          </View>
-
-          <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'flex-end' }}>
-            <TouchableOpacity
-              style={styles.buttonGreen}
-              onPress={addGarageObject}>
-
-              <Text style={{ color: 'white' }}>Add</Text>
-
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
-      <Modal
-        animationType="slide"
-        transparent={false}
-        visible={editGarageModalVisible}
-        onRequestClose={() => {
-          setEmptyGarageObject();
-          setEditGarageModalVisible(false);
-        }}
-      >
-        <View style={{ backgroundColor: '#2D640F', justifyContent: 'center', height: 50 }}>
-          <Text style={styles.header}>Edit Garage</Text>
-        </View>
-
-        <View style={{ flex: 1, flexDirection: 'column' }}>
-          <View>
-
-            <View style={styles.separator} />
-            <Text style={{ color: 'grey', margin: 10 }}>{'Garage Details:'}</Text>
-
-            <TextInput
-              value={garageObject.location}
-              onChangeText={text => setGarageObject({ ...garageObject, location: text })}
-              placeholder="New Garage Location"
-              placeholderTextColor="grey"
-              style={styles.textInput}
-            />
-
-            <TextInput
-              value={garageObject.theme}
-              onChangeText={text => setGarageObject({ ...garageObject, theme: text })}
-              placeholder="New Garage Theme"
-              placeholderTextColor="grey"
-              style={styles.textInput}
-            />
-
-            <TextInput
-              value={garageObject.capacity}
-              onChangeText={text => setGarageObject({ ...garageObject, capacity: text })}
-              keyboardType='number-pad'
-              placeholder="New Capacity"
-              placeholderTextColor="grey"
-              style={styles.textInput}
-            />
-
-            <View style={styles.separator} />
-            <Text style={{ color: 'grey', margin: 10 }}>{'Disposable Vehicles:'}</Text>
-
-            {garageObject.disposableVehicles.map((disposableVehicle, index) => (
-              <View key={index} style={{ flexDirection: 'row' }}>
-                <View style={{ flex: 1 }}>
-                  <TextInput
-                    value={disposableVehicle}
-                    style={styles.textInput}
-                    placeholder="New Disposable Vehicle"
-                    placeholderTextColor="grey"
-                    onChangeText={text => {
-                      const newDisposableVehicles = [...garageObject.disposableVehicles];
-                      newDisposableVehicles[index] = text;
-                      setGarageObject({ ...garageObject, disposableVehicles: newDisposableVehicles });
-                    }}
-                  />
-                </View>
-                <TouchableOpacity
-                  style={styles.buttonRed}
-                  onPress={() => removeDisposableVehicle(index)}>
-                  <Text style={{ color: 'white' }}>Remove</Text>
-                </TouchableOpacity>
-              </View>
-            ))}
-
-            <TouchableOpacity
-              style={styles.buttonYellow}
-              onPress={() => setGarageObject({ ...garageObject, disposableVehicles: [...garageObject.disposableVehicles, ''] })}>
-              <Text style={{ color: 'white' }}>Add Disposable Vehicle</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'flex-end' }}>
-            <TouchableOpacity
-              style={styles.buttonGreen}
-              onPress={editGarageObject}>
-              <Text style={{ color: 'white' }}>Save</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
-      <Modal
-        animationType="slide"
+        animationType='slide'
         transparent={false}
         visible={showGarageDetailsVisible}
         onRequestClose={() => {
@@ -555,7 +377,7 @@ const Garages = () => {
           setShowGarageDetailsVisible(false);
         }}
       >
-        <View style={{ backgroundColor: '#2D640F', justifyContent: 'center', height: 50 }}>
+        <View style={ styles.headerContainer }>
           <Text style={styles.header}>{garageObject.location}</Text>
         </View>
 
@@ -565,32 +387,32 @@ const Garages = () => {
 
             <View style={styles.separatorTop} />
 
-            <Text style={{ color: 'black', margin: 10, fontWeight: 'bold', fontStyle: 'italic', fontSize: 17.5 }}>{'Garage Details'}</Text>
+            <Text style={styles.textGarageDetailsTitle}>{'Garage Details'}</Text>
 
             <View style={{ flexDirection: 'row', margin: 10, marginTop: 0 }}>
-              <Text style={{ color: 'grey', fontWeight: 'bold', fontStyle: 'italic' }}>Theme: </Text>
-              <Text style={{ color: 'grey' }}>{garageObject.theme}</Text>
+              <Text style={styles.textGarageDetailsSoftTitle}>Theme: </Text>
+              <Text style={styles.textGarageDetails}>{garageObject.theme}</Text>
             </View>
 
             <View style={{ flexDirection: 'row', margin: 10, marginTop: 0 }}>
-              <Text style={{ color: 'grey', fontWeight: 'bold', fontStyle: 'italic' }}>Capacity: </Text>
-              <Text style={{ color: 'grey' }}>{garageObject.capacity}</Text>
+              <Text style={styles.textGarageDetailsSoftTitle}>Capacity: </Text>
+              <Text style={styles.textGarageDetails}>{garageObject.capacity}</Text>
             </View>
 
             <View style={{ flexDirection: 'row', margin: 10, marginTop: 0 }}>
-              <Text style={{ color: 'grey', fontWeight: 'bold', fontStyle: 'italic' }}>Available Space: </Text>
-              <Text style={{ color: 'grey' }}>{garageObject.capacity - garageObject.vehicles.length}</Text>
+              <Text style={styles.textGarageDetailsSoftTitle}>Available Space: </Text>
+              <Text style={styles.textGarageDetails}>{garageObject.capacity - garageObject.vehicles.length}</Text>
             </View>
 
             <View style={styles.separatorTop} />
 
-            <Text style={{ color: 'black', margin: 10, fontWeight: 'bold', fontStyle: 'italic', fontSize: 17.5 }}>{'Vehicles in Garage' + ' (' + garageObject.vehicles.length + ')'}</Text>
+            <Text style={styles.textGarageDetailsTitle}>{'Vehicles in Garage' + ' (' + garageObject.vehicles.length + ')'}</Text>
 
             <View>
               {garageObject.vehicles && garageObject.vehicles.map((vehicleName, index) => (
                 <View key={index} style={styles.containerForSimpleLists}>
                   <TouchableOpacity>
-                    <Text style={{ color: 'grey' }}>{vehicleName}</Text>
+                    <Text style={styles.textGarageDetails}>{vehicleName}</Text>
                   </TouchableOpacity>
                 </View>
               ))}
@@ -598,12 +420,12 @@ const Garages = () => {
 
             <View style={styles.separatorTop} />
 
-            <Text style={{ color: 'black', margin: 10, fontWeight: 'bold', fontStyle: 'italic', fontSize: 17.5 }}>{'Disposible Vehicles' + ' (' + garageObject.disposableVehicles.length + ')'}</Text>
+            <Text style={styles.textGarageDetailsTitle}>{'Disposible Vehicles' + ' (' + garageObject.disposableVehicles.length + ')'}</Text>
 
             <View>{garageObject.disposableVehicles && garageObject.disposableVehicles.map((disposableVehicle, index) => (
               <View key={index} style={styles.containerForSimpleLists}>
                 <TouchableOpacity>
-                  <Text style={{ color: 'grey' }}>{disposableVehicle}</Text>
+                  <Text style={styles.textGarageDetails}>{disposableVehicle}</Text>
                 </TouchableOpacity>
               </View>
             ))}
@@ -611,12 +433,12 @@ const Garages = () => {
 
             <View style={styles.separatorTop} />
 
-            <Text style={{ color: 'black', margin: 10, fontWeight: 'bold', fontStyle: 'italic', fontSize: 17.5 }}>{'Wishlist for This Garage' + ' (' + garageObject.wishlist.length + ')'}</Text>
+            <Text style={styles.textGarageDetailsTitle}>{'Wishlist for This Garage' + ' (' + garageObject.wishlist.length + ')'}</Text>
 
             <View>{garageObject.wishlist && garageObject.wishlist.map((wishlistObj, index) => (
               <View key={index} style={styles.containerForSimpleLists}>
                 <TouchableOpacity>
-                  <Text style={{ color: 'grey' }}>{wishlistObj.vehicleName}</Text>
+                  <Text style={styles.textGarageDetails}>{wishlistObj.vehicleName}</Text>
                 </TouchableOpacity>
               </View>
             ))}
@@ -635,93 +457,197 @@ const Garages = () => {
             <TouchableOpacity
               onPress={() => openEditGarageWindow()}
               style={styles.buttonGreen}>
-              <Text style={{ color: 'white' }}>Edit Garage</Text>
+              <Text style={styles.textButton}>Edit Garage</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={() => removeGarageObject()}
               style={styles.buttonRed}>
-              <Text style={{ color: 'white' }}>Remove Garage</Text>
+              <Text style={styles.textButton}>Remove Garage</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        animationType='slide'
+        transparent={false}
+        visible={addGarageModalVisible}
+        onRequestClose={() => {
+          setEmptyGarageObject();
+          setAddGarageModalVisible(false);
+        }}
+      >
+        <View style={ styles.headerContainer }>
+          <Text style={styles.header}>Add New Garage</Text>
+        </View>
+
+        <View style={{ flex: 1, flexDirection: 'column' }}>
+          <View>
+
+            <View style={styles.separator} />
+            <Text style={styles.textSoftTitle}>{'Garage Details:'}</Text>
+
+            <TextInput
+              value={garageObject.location}
+              onChangeText={text => setGarageObject({ ...garageObject, location: text })}
+              placeholder='Garage Location'
+              placeholderTextColor='grey'
+              style={styles.textInput}
+            />
+
+            <TextInput
+              value={garageObject.theme}
+              onChangeText={text => setGarageObject({ ...garageObject, theme: text })}
+              placeholder='Garage Theme'
+              placeholderTextColor='grey'
+              style={styles.textInput}
+            />
+
+            <TextInput
+              value={garageObject.capacity}
+              onChangeText={text => setGarageObject({ ...garageObject, capacity: text })}
+              keyboardType='number-pad'
+              placeholder='Capacity'
+              placeholderTextColor='grey'
+              style={styles.textInput}
+            />
+
+            <View style={styles.separator} />
+            <Text style={styles.textSoftTitle}>{'Disposable Vehicles:'}</Text>
+
+            {garageObject.disposableVehicles.map((disposableVehicle, index) => (
+              <View key={index} style={{ flexDirection: 'row' }}>
+                <View style={{ flex: 1 }}>
+                  <TextInput
+                    value={disposableVehicle}
+                    style={styles.textInput}
+                    placeholder='New Disposable Vehicle'
+                    placeholderTextColor='grey'
+                    onChangeText={text => {
+                      const newDisposableVehicles = [...garageObject.disposableVehicles];
+                      newDisposableVehicles[index] = text;
+                      setGarageObject({ ...garageObject, disposableVehicles: newDisposableVehicles });
+                    }}
+                  />
+                </View>
+                <TouchableOpacity
+                  style={styles.buttonRed}
+                  onPress={() => removeDisposableVehicle(index)}>
+                  <Text style={{ color: 'white' }}>Remove</Text>
+                </TouchableOpacity>
+              </View>
+            ))}
+
+            <TouchableOpacity
+              style={styles.buttonYellow}
+              onPress={() => setGarageObject({ ...garageObject, disposableVehicles: [...garageObject.disposableVehicles, ''] })}>
+
+              <Text style={styles.textButton}>Add Disposable Vehicle</Text>
+
+            </TouchableOpacity>
+          </View>
+
+          <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'flex-end' }}>
+            <TouchableOpacity
+              style={styles.buttonGreen}
+              onPress={addGarageObject}>
+
+              <Text style={styles.textButton}>Add</Text>
+
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        animationType='slide'
+        transparent={false}
+        visible={editGarageModalVisible}
+        onRequestClose={() => {
+          setEmptyGarageObject();
+          setEditGarageModalVisible(false);
+        }}
+      >
+        <View style={ styles.headerContainer }>
+          <Text style={styles.header}>Edit Garage</Text>
+        </View>
+
+        <View style={{ flex: 1, flexDirection: 'column' }}>
+          <View>
+
+            <View style={styles.separator} />
+            <Text style={styles.textSoftTitle}>{'Garage Details:'}</Text>
+
+            <TextInput
+              value={garageObject.location}
+              onChangeText={text => setGarageObject({ ...garageObject, location: text })}
+              placeholder='New Garage Location'
+              placeholderTextColor='grey'
+              style={styles.textInput}
+            />
+
+            <TextInput
+              value={garageObject.theme}
+              onChangeText={text => setGarageObject({ ...garageObject, theme: text })}
+              placeholder='New Garage Theme'
+              placeholderTextColor='grey'
+              style={styles.textInput}
+            />
+
+            <TextInput
+              value={garageObject.capacity}
+              onChangeText={text => setGarageObject({ ...garageObject, capacity: text })}
+              keyboardType='number-pad'
+              placeholder='New Capacity'
+              placeholderTextColor='grey'
+              style={styles.textInput}
+            />
+
+            <View style={styles.separator} />
+            <Text style={styles.textSoftTitle}>{'Disposable Vehicles:'}</Text>
+
+            {garageObject.disposableVehicles.map((disposableVehicle, index) => (
+              <View key={index} style={{ flexDirection: 'row' }}>
+                <View style={{ flex: 1 }}>
+                  <TextInput
+                    value={disposableVehicle}
+                    style={styles.textInput}
+                    placeholder='New Disposable Vehicle'
+                    placeholderTextColor='grey'
+                    onChangeText={text => {
+                      const newDisposableVehicles = [...garageObject.disposableVehicles];
+                      newDisposableVehicles[index] = text;
+                      setGarageObject({ ...garageObject, disposableVehicles: newDisposableVehicles });
+                    }}
+                  />
+                </View>
+                <TouchableOpacity
+                  style={styles.buttonRed}
+                  onPress={() => removeDisposableVehicle(index)}>
+                  <Text style={styles.textButton}>Remove</Text>
+                </TouchableOpacity>
+              </View>
+            ))}
+
+            <TouchableOpacity
+              style={styles.buttonYellow}
+              onPress={() => setGarageObject({ ...garageObject, disposableVehicles: [...garageObject.disposableVehicles, ''] })}>
+              <Text style={styles.textButton}>Add Disposable Vehicle</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'flex-end' }}>
+            <TouchableOpacity
+              style={styles.buttonGreen}
+              onPress={editGarageObject}>
+              <Text style={styles.textButton}>Save</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
     </View>
   );
-};
-
-const saveObject = async (key, object) => {
-  try {
-    const stringifiedObject = JSON.stringify(object);
-    await AsyncStorage.setItem(key, stringifiedObject);
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-const retrieveObject = async (key) => {
-  try {
-    const stringifiedObject = await AsyncStorage.getItem(key);
-    if (stringifiedObject !== null) {
-      return JSON.parse(stringifiedObject);
-    }
-    return [];
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-};
-
-function compareGarages(garageA, garageB) {
-  if (garageA.location < garageB.location) {
-    return -1;
-  }
-  if (garageA.location > garageB.location) {
-    return 1;
-  }
-  return 0;
-};
-
-function compareVehicles(vehicleA, vehicleB) {
-
-  // First sort by garage locations
-  if (vehicleA.garageLocation < vehicleB.garageLocation) {
-    return -1;
-  }
-  if (vehicleA.garageLocation > vehicleB.garageLocation) {
-    return 1;
-  }
-
-  // Then sort by vehicle names
-  if (vehicleA.vehicleName < vehicleB.vehicleName) {
-    return -1;
-  }
-  if (vehicleA.vehicleName > vehicleB.vehicleName) {
-    return 1;
-  }
-
-  return 0;
-};
-
-function compareWishlistItems(wishlistItemA, wishlistItemB) {
-
-  // First sort by garage themes
-  if (wishlistItemA.garageTheme < wishlistItemB.garageTheme) {
-    return -1;
-  }
-  if (wishlistItemA.garageTheme > wishlistItemB.garageTheme) {
-    return 1;
-  }
-
-  // Then sort by vehicle names
-  if (wishlistItemA.vehicleName < wishlistItemB.vehicleName) {
-    return -1;
-  }
-  if (wishlistItemA.vehicleName > wishlistItemB.vehicleName) {
-    return 1;
-  }
-
-  return 0;
 };
 
 export default Garages;

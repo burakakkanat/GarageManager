@@ -1,18 +1,20 @@
-
 import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useContext, useEffect, useState } from 'react';
 import { VehicleContext } from '../Context/VehicleContext';
+import DropDownPicker from 'react-native-dropdown-picker';
 import { GarageContext } from '../Context/GarageContext';
 import { BlurView } from '@react-native-community/blur';
-import { Picker } from '@react-native-picker/picker';
 import styles from './Styles';
+import util from './Util';
 
 const Vehicles = () => {
 
   const { garageObjects, setGarageObjects } = useContext(GarageContext);
   const { vehicleObjects, setVehicleObjects } = useContext(VehicleContext);
 
+  const [selectedGarageLocation, setSelectedGarageLocation] = useState('');
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [pickerItemsLoading, setPickerItemsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [vehicleObject, setVehicleObject] = useState({
@@ -23,7 +25,7 @@ const Vehicles = () => {
   useEffect(() => {
     // Get the list of garage names from local storage
     const getGarageObjects = async () => {
-      const garages = await retrieveObject('@GarageObjectList');
+      const garages = await util.retrieveObject('@GarageObjectList');
       setGarageObjects(garages);
     };
     getGarageObjects();
@@ -32,7 +34,7 @@ const Vehicles = () => {
   useEffect(() => {
     // Get the list of all vehicles in all garages from local storage
     const getVehicles = async () => {
-      const vehicles = await retrieveObject('@VehicleObjectList');
+      const vehicles = await util.retrieveObject('@VehicleObjectList');
       setVehicleObjects(vehicles);
     };
     getVehicles();
@@ -40,7 +42,7 @@ const Vehicles = () => {
 
   const addNewVehicle = async () => {
     if (!vehicleObject.vehicleName.trim()) {
-      Alert.alert('Add New Vehicle', "Vehicle name can not be empty.");
+      Alert.alert('Add New Vehicle', 'Vehicle name can not be empty.');
       return;
     }
 
@@ -60,12 +62,12 @@ const Vehicles = () => {
       newGarageObjects[selectedGarageIndex] = selectedGarageObject;
 
       setGarageObjects(newGarageObjects);
-      await saveObject('@GarageObjectList', newGarageObjects);
+      await util.saveObject('@GarageObjectList', newGarageObjects);
 
       const newVehicleObjects = [...vehicleObjects, vehicleObject];
-      newVehicleObjects.sort(compareVehicles);
+      newVehicleObjects.sort(util.compareVehicles);
       setVehicleObjects(newVehicleObjects);
-      await saveObject('@VehicleObjectList', newVehicleObjects);
+      await util.saveObject('@VehicleObjectList', newVehicleObjects);
 
     } catch (error) {
       console.error(error);
@@ -108,7 +110,7 @@ const Vehicles = () => {
               const newVehicleList = garageObject.vehicles.filter((_, index) => index !== vehicleIndex);
               garageObject.vehicles = newVehicleList;
 
-              await saveObject('@GarageObjectList', garageObjects);
+              await util.saveObject('@GarageObjectList', garageObjects);
 
               /*
               * Updating the vehicleObjects
@@ -120,7 +122,7 @@ const Vehicles = () => {
                 vehicleObj.vehicleName === vehicleObjectToRemove.vehicleName
               );
               const newVehicleObjects = vehicleObjects.filter((_, index) => index !== vehicleObjectIndex);
-              await saveObject('@VehicleObjectList', newVehicleObjects);
+              await util.saveObject('@VehicleObjectList', newVehicleObjects);
               setVehicleObjects(newVehicleObjects);
 
             } catch (error) {
@@ -138,12 +140,13 @@ const Vehicles = () => {
 
   return (
     <View style={{ flex: 1 }}>
+
       <ScrollView>
         <View style={styles.separatorTop} />
         {vehicleObjects.map((currentVehicleObject, index) => (
           <View key={index} style={styles.containerForLists}>
             <TouchableOpacity>
-              <Text style={{ color: 'black', fontWeight: 'bold' }}>
+              <Text style={styles.textListItemVehicleB}>
                 {currentVehicleObject.vehicleName}
               </Text>
             </TouchableOpacity>
@@ -151,12 +154,14 @@ const Vehicles = () => {
             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
               <TouchableOpacity
                 style={{ marginRight: 20 }}>
-                <Text style={{ color: 'black', fontStyle: 'italic' }}>{'at ' + currentVehicleObject.garageLocation}</Text>
+                <Text style={styles.textListItemVehicleM}>
+                  {'at ' + currentVehicleObject.garageLocation}
+                </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
                 onPress={() => removeVehicle(currentVehicleObject)}>
-                <Text style={{ color: 'red' }}>Remove</Text>
+                <Text style={{ color: 'red', fontFamily: 'FOTNewRodin Pro M', fontSize: 12 }}>Remove</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -167,29 +172,55 @@ const Vehicles = () => {
         <TextInput
           value={vehicleObject.vehicleName}
           onChangeText={text => setVehicleObject({ ...vehicleObject, vehicleName: text })}
-          style={styles.newVehicleName}
-          placeholder="Vehicle Name"
-          placeholderTextColor="grey"
+          style={styles.textInputNewVehicleName}
+          placeholder=' Vehicle Name'
+          placeholderTextColor='grey'
         />
+        <DropDownPicker
+          loading={pickerItemsLoading}
+          closeOnBackPressed={true}
+          dropDownDirection='TOP'
+          setOpen={setPickerOpen}
+          open={pickerOpen}
 
-        <Picker
-          selectedValue={vehicleObject.garageLocation}
-          onValueChange={text => setVehicleObject({ ...vehicleObject, garageLocation: text })}
-          style={styles.containerPickerAddVehicle}
-          dropdownIconColor='black'
-          prompt='Your Garages'>
+          items={garageObjects.map((garageObject, index) => ({
+            label: garageObject.location,
+            value: garageObject.location,
+          }))}
 
-          {garageObjects.map((garageObject, index) => (
-            <Picker.Item
-              key={index}
-              label={garageObject.location}
-              value={garageObject.location}
-              style={{backgroundColor: '#F2F2F2'}}
-              color='black'
-            />
-          ))}
+          value={selectedGarageLocation}
+          setValue={setSelectedGarageLocation}
 
-        </Picker>
+          onSelectItem={(item) => {
+            setVehicleObject({ ...vehicleObject, garageLocation: item.value })
+          }}
+
+          listMode='SCROLLVIEW'
+          scrollViewProps={{
+            scrollEnabled: true,
+            nestedScrollEnabled: true
+          }}
+
+          containerStyle={styles.containerPickerAddVehicle}
+          dropDownContainerStyle={{
+            backgroundColor: '#F2F2F2',
+            height: 500
+          }}
+          style={{ backgroundColor: '#F2F2F2' }}
+          itemStyle={{ justifyContent: 'flex-start' }}
+
+          textStyle={{
+            fontFamily: 'FOTNewRodin Pro M',
+            fontSize: 10
+          }}
+
+          placeholder='Choose a garage'
+          placeholderStyle={{
+            fontFamily: 'FOTNewRodin Pro M',
+            fontSize: 12,
+            color: 'grey'
+          }}
+        />
       </View>
 
       <TouchableOpacity
@@ -197,63 +228,20 @@ const Vehicles = () => {
         disabled={loading}
         style={styles.buttonGreen}
       >
-        <Text style={{ color: 'white' }}>Add New Vehicle</Text>
+        <Text style={styles.textButton}>Add New Vehicle</Text>
       </TouchableOpacity>
 
       {loading && (
         <View style={styles.loadingContainer}>
-          <BlurView blurType="light" blurAmount={5} style={StyleSheet.absoluteFill}>
+          <BlurView blurType='light' blurAmount={5} style={StyleSheet.absoluteFill}>
             <View style={styles.loadingIndicator}>
-              <ActivityIndicator size="large" color="#2D640F" />
+              <ActivityIndicator size='large' color='#2D640F' />
             </View>
           </BlurView>
         </View>
       )}
     </View>
   );
-};
-
-const saveObject = async (key, object) => {
-  try {
-    const stringifiedObject = JSON.stringify(object);
-    await AsyncStorage.setItem(key, stringifiedObject);
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-const retrieveObject = async (key) => {
-  try {
-    const stringifiedObject = await AsyncStorage.getItem(key);
-    if (stringifiedObject !== null) {
-      return JSON.parse(stringifiedObject);
-    }
-    return [];
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-};
-
-function compareVehicles(vehicleA, vehicleB) {
-
-  // First sort by garage locations
-  if (vehicleA.garageLocation < vehicleB.garageLocation) {
-    return -1;
-  }
-  if (vehicleA.garageLocation > vehicleB.garageLocation) {
-    return 1;
-  }
-
-  // Then sort by vehicle names
-  if (vehicleA.vehicleName < vehicleB.vehicleName) {
-    return -1;
-  }
-  if (vehicleA.vehicleName > vehicleB.vehicleName) {
-    return 1;
-  }
-
-  return 0;
 };
 
 export default Vehicles;

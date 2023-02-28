@@ -2,6 +2,14 @@
   "migIndex": 1,
   "data": [
     {
+      "path": "assets/fonts/FOTNewRodin Pro B.otf",
+      "sha1": "e80c012f9e4f692874f5c4c747b3446439432c7d"
+    },
+    {
+      "path": "assets/fonts/FOTNewRodin Pro M.otf",
+      "sha1": "061e99c890154b09df408238a417db36f8025985"
+    },
+    {
       "path": "assets/fonts/SignPainter-HouseScript.ttf",
       "sha1": "dd9d9f50d89fd704e045054bf50d6336339db1ee"
     }
