@@ -169,6 +169,7 @@ const Vehicles = () => {
       </ScrollView>
 
       <View style={styles.containerAddNewVehicle}>
+
         <TextInput
           value={vehicleObject.vehicleName}
           onChangeText={text => setVehicleObject({ ...vehicleObject, vehicleName: text })}
@@ -176,6 +177,7 @@ const Vehicles = () => {
           placeholder=' Vehicle Name'
           placeholderTextColor='grey'
         />
+
         <DropDownPicker
           loading={pickerItemsLoading}
           closeOnBackPressed={true}
@@ -195,9 +197,10 @@ const Vehicles = () => {
             setVehicleObject({ ...vehicleObject, garageLocation: item.value })
           }}
 
-          listMode='SCROLLVIEW'
+          listMode='MODAL'  // #TODO: Change when dropdown bug is fixed
+          modalTitle='Your Garage Location' //#TODO: Change when dropdown bug is fixed
+
           scrollViewProps={{
-            scrollEnabled: true,
             nestedScrollEnabled: true
           }}
 

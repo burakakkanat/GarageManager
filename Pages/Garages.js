@@ -378,7 +378,7 @@ const Garages = () => {
         }}
       >
         <View style={ styles.headerContainer }>
-          <Text style={styles.header}>{garageObject.location}</Text>
+          <Text style={styles.header}>{garageObject.location + ' '}</Text>
         </View>
 
         <View style={{ flex: 1 }}>
