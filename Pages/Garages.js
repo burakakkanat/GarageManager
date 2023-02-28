@@ -23,6 +23,16 @@ const Garages = () => {
   const [editGarageModalVisible, setEditGarageModalVisible] = useState(false);
   const [showGarageDetailsVisible, setShowGarageDetailsVisible] = useState(false);
 
+  const [garageObject, setGarageObject] = useState({
+    uuid: '',
+    location: '',
+    theme: '',
+    capacity: '',
+    vehicles: [vehicleObject],
+    disposableVehicles: [],
+    wishlist: [wishlistObject]
+  });
+
   const [vehicleObject, setVehicleObject] = useState({
     uuid: '',
     vehicleName: '',
@@ -35,16 +45,6 @@ const Garages = () => {
     vehicleName: '',
     price: '',
     tradePrice: ''
-  });
-
-  const [garageObject, setGarageObject] = useState({
-    uuid: '',
-    location: '',
-    theme: '',
-    capacity: '',
-    vehicles: [],
-    disposableVehicles: [],
-    wishlist: [wishlistObject]
   });
 
   useEffect(() => {
@@ -62,7 +62,8 @@ const Garages = () => {
     }, [])
   );
 
-  // Last executed: 26.02.2023 16:50
+  // Last executed: 28.02.2023 15:55
+  // garageObjects have objects in vehicles and wishlist arrays
   const backupData = async () => {
     const garages = await util.retrieveObject('@GarageObjectList');
     const vehicles = await util.retrieveObject('@VehicleObjectList');
@@ -381,7 +382,7 @@ const Garages = () => {
           setShowGarageDetailsVisible(false);
         }}
       >
-        <View style={ styles.headerContainer }>
+        <View style={styles.headerContainer}>
           <Text style={styles.header}>{garageObject.location + ' '}</Text>
         </View>
 
@@ -413,10 +414,10 @@ const Garages = () => {
             <Text style={styles.textGarageDetailsTitle}>{'Vehicles in Garage' + ' (' + garageObject.vehicles.length + ')'}</Text>
 
             <View>
-              {garageObject.vehicles && garageObject.vehicles.map((vehicleName, index) => (
+              {garageObject.vehicles && garageObject.vehicles.map((vehicleObj, index) => (
                 <View key={index} style={styles.containerForSimpleLists}>
                   <TouchableOpacity>
-                    <Text style={styles.textGarageDetails}>{vehicleName}</Text>
+                    <Text style={styles.textGarageDetails}>{vehicleObj?.vehicleName || 'Unknown Vehicle'}</Text>
                   </TouchableOpacity>
                 </View>
               ))}
@@ -442,7 +443,7 @@ const Garages = () => {
             <View>{garageObject.wishlist && garageObject.wishlist.map((wishlistObj, index) => (
               <View key={index} style={styles.containerForSimpleLists}>
                 <TouchableOpacity>
-                  <Text style={styles.textGarageDetails}>{wishlistObj.vehicleName}</Text>
+                  <Text style={styles.textGarageDetails}>{wishlistObj?.vehicleName || 'Unknown Vehicle'}</Text>
                 </TouchableOpacity>
               </View>
             ))}
@@ -482,7 +483,7 @@ const Garages = () => {
           setAddGarageModalVisible(false);
         }}
       >
-        <View style={ styles.headerContainer }>
+        <View style={styles.headerContainer}>
           <Text style={styles.header}>Add New Garage</Text>
         </View>
 
@@ -573,7 +574,7 @@ const Garages = () => {
           setEditGarageModalVisible(false);
         }}
       >
-        <View style={ styles.headerContainer }>
+        <View style={styles.headerContainer}>
           <Text style={styles.header}>Edit Garage</Text>
         </View>
 
