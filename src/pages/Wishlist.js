@@ -4,8 +4,8 @@ import { WishlistContext } from '../../Context/WishlistContext';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useFocusEffect } from '@react-navigation/native';
 import { GarageContext } from '../../Context/GarageContext';
-import uuid from 'react-native-uuid';
 import styles from '../styles/Styles';
+import uuid from 'react-native-uuid';
 import util from '../util/Util';
 
 const Wishlist = () => {
@@ -225,7 +225,7 @@ const Wishlist = () => {
               listMode='MODAL'
               modalTitle='Your Garage Themes'
               modalTitleStyle={{
-                fontFamily: 'FOTNewRodin Pro B', // Not working
+                fontFamily: util.getBoldFontName(), // Not working
                 fontSize: 15 // Not working
               }}
               modalContentContainerStyle={{
@@ -243,12 +243,12 @@ const Wishlist = () => {
               }}
 
               textStyle={{
-                fontFamily: 'FOTNewRodin Pro M',
+                fontFamily: util.getFontName(),
                 fontSize: 12
               }}
               placeholder='Choose a theme'
               placeholderStyle={{
-                fontFamily: 'FOTNewRodin Pro M',
+                fontFamily: util.getFontName(),
                 fontSize: 12,
                 color: 'grey'
               }}

@@ -135,7 +135,7 @@ const Vehicles = () => {
 
               <TouchableOpacity
                 onPress={() => removeVehicle(currentVehicleObject)}>
-                <Text style={{ color: 'red', fontFamily: 'FOTNewRodin Pro M', fontSize: 12 }}>Remove</Text>
+                <Text style={{ color: 'red', fontFamily: util.getFontName(), fontSize: 12 }}>Remove</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -187,13 +187,13 @@ const Vehicles = () => {
           itemStyle={{ justifyContent: 'flex-start' }}
 
           textStyle={{
-            fontFamily: 'FOTNewRodin Pro M',
+            fontFamily: util.getFontName(),
             fontSize: 10
           }}
 
           placeholder='Choose a garage'
           placeholderStyle={{
-            fontFamily: 'FOTNewRodin Pro M',
+            fontFamily: util.getFontName(),
             fontSize: 12,
             color: 'grey'
           }}

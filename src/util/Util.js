@@ -110,6 +110,12 @@ const util = {
             }
         }
         return low;
+    },
+    getFontName: function () {
+        return 'FOTNewRodin Pro M';
+    },
+    getBoldFontName: function () {
+        return 'FOTNewRodin Pro B';
     }
 }
 

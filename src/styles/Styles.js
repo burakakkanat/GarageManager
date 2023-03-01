@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import util from '../util/Util';
 
 const styles = StyleSheet.create({
     buttonGreen: {
@@ -106,7 +107,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     screenOptons: {
-        tabBarLabelStyle: { fontFamily: 'FOTNewRodin Pro B', fontSize: 12 },
+        tabBarLabelStyle: { fontFamily: util.getBoldFontName(), fontSize: 12 },
         "tabBarActiveTintColor": '#FFFFFF',
         "tabBarInactiveTintColor": '#B3E5FC',
         "tabBarIndicatorStyle": { backgroundColor: '#FFFFFF' },
@@ -125,28 +126,28 @@ const styles = StyleSheet.create({
         marginTop: 3
     },
     textButton: {
-        fontFamily: 'FOTNewRodin Pro B',
+        fontFamily: util.getBoldFontName(),
         color: 'white',
         fontSize: 12
     },
     textGarageDetails: {
-        fontFamily: 'FOTNewRodin Pro M',
+        fontFamily: util.getFontName(),
         color: 'grey',
         fontSize: 12,
     },
     textGarageDetailsTitle: {
-        fontFamily: 'FOTNewRodin Pro B',
+        fontFamily: util.getBoldFontName(),
         color: 'black',
         fontSize: 15,
         margin: 10
     },
     textGarageDetailsSoftTitle: {
-        fontFamily: 'FOTNewRodin Pro B',
+        fontFamily: util.getBoldFontName(),
         color: 'grey',
         fontSize: 12,
     },
     textHeaderWishlist: {
-        fontFamily: 'FOTNewRodin Pro M',
+        fontFamily: util.getFontName(),
         fontSize: 12,
         color: '#F2F2F2',
     },
@@ -155,7 +156,7 @@ const styles = StyleSheet.create({
         borderWidth: 0.5,
         margin: 10,
         height: 40,
-        fontFamily: 'FOTNewRodin Pro M',
+        fontFamily: util.getFontName(),
         fontSize: 12
     },
     textInputNewVehicleName: {
@@ -166,42 +167,42 @@ const styles = StyleSheet.create({
         flex: 1,
         marginRight: 10,
         marginTop: 5,
-        fontFamily: 'FOTNewRodin Pro M',
+        fontFamily: util.getFontName(),
         fontSize: 12
     },
     textListItemGarageB: {
-        fontFamily: 'FOTNewRodin Pro B',
+        fontFamily: util.getBoldFontName(),
         color: 'black',
         fontSize: 11
     },
     textListItemGarageM: {
-        fontFamily: 'FOTNewRodin Pro M',
+        fontFamily: util.getFontName(),
         color: 'black',
         fontSize: 11
     },
     textListItemVehicleB: {
-        fontFamily: 'FOTNewRodin Pro B',
+        fontFamily: util.getBoldFontName(),
         color: 'black',
         fontSize: 10.5
     },
     textListItemVehicleM: {
-        fontFamily: 'FOTNewRodin Pro M',
+        fontFamily: util.getFontName(),
         color: 'black',
         fontSize: 10.5
     },
     textSoftTitle: {
-        fontFamily: 'FOTNewRodin Pro B',
+        fontFamily: util.getBoldFontName(),
         color: 'black',
         fontSize: 10.5,
         margin: 10
     },
     textWishlistObjectM: {
-        fontFamily: 'FOTNewRodin Pro M',
+        fontFamily: util.getFontName(),
         fontSize: 10,
         color: 'black',
     },
     textWishlistObjectB: {
-        fontFamily: 'FOTNewRodin Pro B',
+        fontFamily: util.getBoldFontName(),
         fontSize: 10,
         color: 'black',
     }
