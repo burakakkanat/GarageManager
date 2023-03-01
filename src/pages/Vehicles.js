@@ -25,13 +25,14 @@ const Vehicles = () => {
   });
 
   const addNewVehicle = async () => {
+
     if (!vehicleObject.vehicleName.trim()) {
-      Alert.alert('Add New Vehicle', 'Vehicle name can not be empty.');
+      Alert.alert('Error', 'Vehicle name can not be empty.');
       return;
     }
 
-    if (vehicleObject.vehicleName.includes('_')) {
-      Alert.alert('Add New Vehicle', 'Vehicle name can not contain "_" character.');
+    if (vehicleObject.garageLocation === '') {
+      Alert.alert('Error', 'Please choose a garage.');
       return;
     }
 
@@ -86,17 +87,20 @@ const Vehicles = () => {
 
               setLoading(true);
 
-              // Remove from garage
-              const garageObject = garageObjects.filter(function (garageObj) {
-                return garageObj.location === vehicleObjectToRemove.garageLocation;
-              }).at(0);
+              // Remove from the garage
+              const garageIndex = garageObjects.findIndex((garageObj) => garageObj.location === vehicleObjectToRemove.garageLocation);
+              const garageObject = garageObjects[garageIndex];
+              const newVehicleList = garageObject.vehicles.filter((vehicleObj) => vehicleObj.uuid !== vehicleObjectToRemove.uuid);
+              garageObjects[garageIndex] = { ...garageObject, vehicles: newVehicleList };
 
-              const newVehicleList = garageObject.vehicles.filter(vehicleObj => vehicleObj.uuid !== vehicleObjectToRemove.uuid);
-              garageObject.vehicles = newVehicleList;
               await util.saveObject('@GarageObjectList', garageObjects);
 
               // Remove from vehicleObjects
-              const newVehicleObjects = vehicleObjects.filter(vehicleObj => vehicleObj.uuid !== vehicleObjectToRemove.uuid);
+              const indexToRemove = vehicleObjects.findIndex(vehicleObj => vehicleObj.uuid === vehicleObjectToRemove.uuid);
+              const newVehicleObjects = [...vehicleObjects];
+              if (indexToRemove !== -1) {
+                newVehicleObjects.splice(indexToRemove, 1);
+              }
               setVehicleObjects(newVehicleObjects);
 
             } catch (error) {
@@ -135,7 +139,7 @@ const Vehicles = () => {
 
               <TouchableOpacity
                 onPress={() => removeVehicle(currentVehicleObject)}>
-                <Text style={{ color: 'red', fontFamily: 'FOTNewRodin Pro M', fontSize: 12 }}>Remove</Text>
+                <Text style={{ color: 'red', fontFamily: util.getFontName(), fontSize: 12 }}>Remove</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -187,13 +191,13 @@ const Vehicles = () => {
           itemStyle={{ justifyContent: 'flex-start' }}
 
           textStyle={{
-            fontFamily: 'FOTNewRodin Pro M',
+            fontFamily: util.getFontName(),
             fontSize: 10
           }}
 
           placeholder='Choose a garage'
           placeholderStyle={{
-            fontFamily: 'FOTNewRodin Pro M',
+            fontFamily: util.getFontName(),
             fontSize: 12,
             color: 'grey'
           }}

@@ -5,8 +5,8 @@ import { VehicleContext } from '../../Context/VehicleContext';
 import { useFocusEffect } from '@react-navigation/native';
 import { GarageContext } from '../../Context/GarageContext';
 import dataManagementUtil from '../util/DataManagementUtil';
-import uuid from 'react-native-uuid';
 import styles from '../styles/Styles';
+import uuid from 'react-native-uuid';
 import util from '../util/Util';
 
 const Garages = () => {
@@ -97,18 +97,21 @@ const Garages = () => {
     try {
       setInProgress(true);
 
-      if (!verifyGarageFields('Add New Garage', garageObjects)) {
+      if (!verifyGarageFields(garageObjects)) {
         return;
       }
 
       garageObject.uuid = uuid.v4();
 
-      garageObjects.push(garageObject);
-      garageObjects.sort(util.compareGarages);
-      setGarageObjects([...garageObjects]);
+      setGarageObjects(prevGarageObjects => {
+        const newGarageObjects = [...prevGarageObjects];
+        const garageInsertionIndex = util.findGarageInsertionIndex(newGarageObjects, garageObject);
+        newGarageObjects.splice(garageInsertionIndex, 0, garageObject);
+
+        return newGarageObjects;
+      });
 
       await util.saveObject('@GarageObjectList', garageObjects);
-
       await setEmptyGarageObject();
       setAddGarageModalVisible(false);
 
@@ -119,33 +122,25 @@ const Garages = () => {
     }
   };
 
-  const showGarageDetails = async (garageObj) => {
-    setOldGarageLocation(garageObj.location);
-    setOldGarageTheme(garageObj.theme);
-    setGarageObject(garageObj);
-    setShowGarageDetailsVisible(true);
-  };
-
-  const openEditGarageWindow = async () => {
-    setShowGarageDetailsVisible(false);
-    setEditGarageModalVisible(true);
-  };
-
   const editGarageObject = async () => {
 
     try {
       setInProgress(true);
 
-      const newGarageObjects = garageObjects.filter(garageObj => garageObj.location !== oldGarageLocation);
+      // There is only one garage with a specific location so it is safe to use index.
+      const indexToRemove = garageObjects.findIndex(garageObj => garageObj.location === oldGarageLocation);
+      const newGarageObjects = [...garageObjects];
+      if (indexToRemove !== -1) {
+        newGarageObjects.splice(indexToRemove, 1);
+      }
 
-      if (!verifyGarageFields('Edit Garage', newGarageObjects)) {
+      if (!verifyGarageFields(newGarageObjects)) {
         return;
       }
 
-      newGarageObjects.push(garageObject);
-      newGarageObjects.sort(util.compareGarages);
+      const garageInsertionIndex = util.findGarageInsertionIndex(newGarageObjects, garageObject);
+      newGarageObjects.splice(garageInsertionIndex, 0, garageObject);
 
-      // Set the new garageObjects to local an state
       await util.saveObject('@GarageObjectList', newGarageObjects);
       setGarageObjects(newGarageObjects);
 
@@ -167,65 +162,6 @@ const Garages = () => {
     }
   };
 
-  const verifyGarageFields = (alertTitle, garageObjects) => {
-
-    if (!garageObject.location.trim()) {
-      Alert.alert(alertTitle, 'Garage location can not be empty.');
-      return;
-    }
-
-    if (!garageObject.theme.trim()) {
-      Alert.alert(alertTitle, 'Garage theme can not be empty.');
-      return;
-    }
-
-    const garageWithSameLocation = garageObjects.filter(
-      (garageObj) => garageObj.location === garageObject.location
-    );
-    if (garageWithSameLocation.length !== 0) {
-      Alert.alert(alertTitle, 'Garage at this location already exists.');
-      return false;
-    }
-
-    const garageWithSameTheme = garageObjects.filter(
-      (garageObj) => garageObj.theme === garageObject.theme
-    );
-    if (garageWithSameTheme.length !== 0) {
-      Alert.alert(alertTitle, 'Garage with this theme already exists.');
-      return false;
-    }
-
-    return true;
-  };
-
-  const updateVehicleObjects = async () => {
-    const vehicleObjectsToUpdate = Object.assign([], vehicleObjects.filter(vehicleObject => vehicleObject.garageLocation === oldGarageLocation));
-    const newVehicleObjects = vehicleObjects.filter(vehicleObject => vehicleObject.garageLocation !== oldGarageLocation);
-
-    for (const vehicleObject of vehicleObjectsToUpdate) {
-      vehicleObject.garageLocation = garageObject.location;
-      newVehicleObjects.push(vehicleObject);
-    }
-
-    newVehicleObjects.sort(util.compareVehicles);
-
-    setVehicleObjects(newVehicleObjects);
-  };
-
-  const updateWishlistObjects = async () => {
-    const wishlistObjectsToUpdate = Object.assign([], wishlistObjects.filter(wishlistItem => wishlistItem.garageTheme === oldGarageTheme));
-    const newWishlistObjects = wishlistObjects.filter(wishlistItem => wishlistItem.garageTheme !== oldGarageTheme);
-
-    for (const wishlistObj of wishlistObjectsToUpdate) {
-      wishlistObj.garageTheme = garageObject.theme;
-      newWishlistObjects.push(wishlistObj);
-    }
-
-    newWishlistObjects.sort(util.compareWishlistItems);
-
-    setWishlistObjects(newWishlistObjects);
-  };
-
   const removeGarageObject = async () => {
 
     Alert.alert(
@@ -242,8 +178,12 @@ const Garages = () => {
             try {
               setInProgress(true);
 
-              const newGarageObjects = garageObjects.filter(garageObj => garageObj.location !== oldGarageLocation);
-
+              // There is only one garage with a specific location so it is safe to use index.
+              const indexToRemove = garageObjects.findIndex(garageObj => garageObj.location === oldGarageLocation);
+              const newGarageObjects = [...garageObjects];
+              if (indexToRemove !== -1) {
+                newGarageObjects.splice(indexToRemove, 1);
+              }
               setGarageObjects(newGarageObjects);
               await util.saveObject('@GarageObjectList', newGarageObjects);
 
@@ -264,6 +204,84 @@ const Garages = () => {
       ],
       { cancelable: false }
     );
+  };
+
+  const showGarageDetails = async (garageObj) => {
+    setOldGarageLocation(garageObj.location);
+    setOldGarageTheme(garageObj.theme);
+    setGarageObject(garageObj);
+    setShowGarageDetailsVisible(true);
+  };
+
+  const openEditGarageWindow = async () => {
+    setShowGarageDetailsVisible(false);
+    setEditGarageModalVisible(true);
+  };
+
+  const verifyGarageFields = (garageObjects) => {
+
+    if (!garageObject.location.trim()) {
+      Alert.alert('Error', 'Garage location can not be empty.');
+      return;
+    }
+
+    if (!garageObject.theme.trim()) {
+      Alert.alert('Error', 'Garage theme can not be empty.');
+      return;
+    }
+
+    const garageWithSameLocationIndex = garageObjects.findIndex((garageObj) => garageObj.location === garageObject.location);
+    console.debug(garageWithSameLocationIndex)
+    if (garageWithSameLocationIndex !== -1) {
+      Alert.alert('Error', 'Garage at this location already exists.');
+      return false;
+    }
+
+    const garageWithSameThemeIndex = garageObjects.findIndex((garageObj) => garageObj.theme === garageObject.theme);
+    if (garageWithSameThemeIndex !== -1) {
+      Alert.alert('Error', 'Garage with this theme already exists.');
+      return false;
+    }
+
+    return true;
+  };
+
+  const updateVehicleObjects = async () => {
+
+    const vehiclesToUpdateIndexes = vehicleObjects.reduce((acc, vehicleObject, index) => {
+      if (vehicleObject.garageLocation === oldGarageLocation) {
+        acc.push(index);
+        vehicleObject.garageLocation = garageObject.location;
+      }
+      return acc;
+    }, []);
+
+    const newVehicleObjects = [...vehicleObjects];
+    vehiclesToUpdateIndexes.forEach((index) => {
+      newVehicleObjects.splice(index, 1, vehicleObjects[index]);
+    });
+
+    newVehicleObjects.sort(util.compareVehicles);
+    setVehicleObjects(newVehicleObjects);
+  };
+
+  const updateWishlistObjects = async () => {
+    
+    const wishlistItemsToUpdateIndexes = wishlistObjects.reduce((acc, wishlistItem, index) => {
+      if (wishlistItem.garageTheme === oldGarageTheme) {
+        acc.push(index);
+        wishlistItem.garageTheme = garageObject.theme;
+      }
+      return acc;
+    }, []);
+
+    const newWishlistObjects = [...wishlistObjects];
+    wishlistItemsToUpdateIndexes.forEach((index) => {
+      newWishlistObjects.splice(index, 1, wishlistObjects[index]);
+    });
+
+    newWishlistObjects.sort(util.compareWishlistItems);
+    setWishlistObjects(newWishlistObjects);
   };
 
   const removeVehicleObjects = async (garageLocationToRemove) => {

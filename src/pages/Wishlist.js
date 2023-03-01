@@ -4,8 +4,8 @@ import { WishlistContext } from '../../Context/WishlistContext';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useFocusEffect } from '@react-navigation/native';
 import { GarageContext } from '../../Context/GarageContext';
-import uuid from 'react-native-uuid';
 import styles from '../styles/Styles';
+import uuid from 'react-native-uuid';
 import util from '../util/Util';
 
 const Wishlist = () => {
@@ -33,9 +33,15 @@ const Wishlist = () => {
 
   const setEmptyWishlistObject = async () => {
     setWishlistObject({ garageTheme: '', vehicleName: '', price: '', tradePrice: '' });
+    setSelectedGarageTheme(''); // Also reset the value displayed on theme picker
   }
 
   const addWishlistItem = async () => {
+
+    if (wishlistObject.garageTheme === '') {
+      Alert.alert('Error', 'Please choose a theme.');
+      return;
+    }
 
     if (wishlistObject.tradePrice === '') {
       wishlistObject.tradePrice = 'N/A';
@@ -82,21 +88,20 @@ const Wishlist = () => {
           onPress: async () => {
             try {
 
-              /*
-              * Updating the garage which the wishlist item is removed from
-              */
-
               // Remove from garage
-              const garageObject = garageObjects.filter(function (garageObj) {
-                return garageObj.theme === whislistItemToRemove.garageTheme;
-              }).at(0);
+              const garageIndex = garageObjects.findIndex((garageObj) => garageObj.theme === whislistItemToRemove.garageTheme);
+              const garageObject = garageObjects[garageIndex];
+              const newWishlist = garageObject.wishlist.filter((wishlistObj) => wishlistObj.uuid !== whislistItemToRemove.uuid);
+              garageObjects[garageIndex] = { ...garageObject, wishlist: newWishlist };
 
-              const newWishlistItems = garageObject.wishlist.filter(wishlistObj => wishlistObj.uuid !== whislistItemToRemove.uuid);
-              garageObject.wishlist = newWishlistItems;
               await util.saveObject('@GarageObjectList', garageObjects);
 
               // Remove from wishlistObjects
-              const newWishlistObjects = wishlistObjects.filter(wishlistObj => wishlistObj.uuid !== whislistItemToRemove.uuid);
+              const indexToRemove = wishlistObjects.findIndex(wishlistObj => wishlistObj.uuid === whislistItemToRemove.uuid);
+              const newWishlistObjects = [...wishlistObjects];
+              if (indexToRemove !== -1) {
+                newWishlistObjects.splice(indexToRemove, 1);
+              }
               setWishlistObjects(newWishlistObjects);
 
             } catch (error) {
@@ -165,7 +170,6 @@ const Wishlist = () => {
         onRequestClose={() => {
           setAddWishlistModalVisible(false);
           setEmptyWishlistObject();
-          setSelectedGarageTheme('');
           setPickerOpen(false);
         }}>
 
@@ -225,7 +229,7 @@ const Wishlist = () => {
               listMode='MODAL'
               modalTitle='Your Garage Themes'
               modalTitleStyle={{
-                fontFamily: 'FOTNewRodin Pro B', // Not working
+                fontFamily: util.getBoldFontName(), // Not working
                 fontSize: 15 // Not working
               }}
               modalContentContainerStyle={{
@@ -243,12 +247,12 @@ const Wishlist = () => {
               }}
 
               textStyle={{
-                fontFamily: 'FOTNewRodin Pro M',
+                fontFamily: util.getFontName(),
                 fontSize: 12
               }}
               placeholder='Choose a theme'
               placeholderStyle={{
-                fontFamily: 'FOTNewRodin Pro M',
+                fontFamily: util.getFontName(),
                 fontSize: 12,
                 color: 'grey'
               }}
