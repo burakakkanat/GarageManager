@@ -13,9 +13,8 @@ const Vehicles = () => {
   const { garageObjects, setGarageObjects } = useContext(GarageContext);
   const { vehicleObjects, setVehicleObjects } = useContext(VehicleContext);
 
-  const [selectedGarageLocation, setSelectedGarageLocation] = useState('');
-  const [pickerItemsLoading, setPickerItemsLoading] = useState(false);
   const [addNewVehicleContainerHeight, setAddVehicleContainerHeight] = useState(55);
+  const [selectedGarageLocation, setSelectedGarageLocation] = useState('');
   const [pickerOpen, setPickerOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -170,20 +169,21 @@ const Vehicles = () => {
         />
 
         <DropDownPicker
-          loading={pickerItemsLoading}
           closeOnBackPressed={true}
-          dropDownDirection='TOP'
           setOpen={setPickerOpen}
+          dropDownDirection='TOP'
           open={pickerOpen}
 
           containerStyle={styles.containerPickerAddVehicle}
+          style={{
+            backgroundColor: '#F2F2F2',
+            bottom: 0,
+            position: 'absolute'
+          }}
           dropDownContainerStyle={{
             backgroundColor: '#F2F2F2',
             maxHeight: 200
           }}
-          style={{ backgroundColor: '#F2F2F2' }}
-          itemStyle={{ justifyContent: 'flex-start' }}
-
           textStyle={{
             fontFamily: util.getFontName(),
             fontSize: 10
@@ -207,12 +207,7 @@ const Vehicles = () => {
             setAddVehicleContainerHeight(55);
           }}
 
-          listMode='SCROLLVIEW'  // #TODO: Change when dropdown bug is fixed
-          modalTitle='Your Garage Locations' //#TODO: Change when dropdown bug is fixed
-
-          scrollViewProps={{
-            nestedScrollEnabled: true
-          }}
+          listMode='SCROLLVIEW'
 
           placeholder='Choose a garage'
           placeholderStyle={{

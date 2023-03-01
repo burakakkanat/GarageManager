@@ -28,8 +28,7 @@ const styles = StyleSheet.create({
         borderTopColor: '#ccc',
         borderTopWidth: 1,
         flexDirection: 'row',
-        justifyContent: 'flex-end',
-        marginHorizontal: 10,
+        justifyContent: 'flex-end'
     },
     containerHeader: {
         backgroundColor: '#2D640F',
@@ -63,8 +62,9 @@ const styles = StyleSheet.create({
         padding: 8,
     },
     containerPickerAddVehicle: {
-        height: '93%',
-        width: '54%'
+        height: '100%',
+        marginRight: 10,
+        width: '52%'
     },
     containerPickerWishlist: {
         marginLeft: 10,
@@ -159,15 +159,16 @@ const styles = StyleSheet.create({
         fontSize: 12
     },
     textInputNewVehicleName: {
+        backgroundColor: '#F2F2F2',
         borderColor: 'black',
         borderRadius: 10,
         borderWidth: 1,
         color: 'black',
         fontFamily: util.getFontName(),
         fontSize: 12,
+        height: 50,
         marginRight: 10,
-        width: '44%',
-        height: 50
+        width: '41%'
     },
     textListItemGarageB: {
         fontFamily: util.getBoldFontName(),
