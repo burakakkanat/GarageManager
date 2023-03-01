@@ -25,13 +25,14 @@ const Vehicles = () => {
   });
 
   const addNewVehicle = async () => {
+    
     if (!vehicleObject.vehicleName.trim()) {
-      Alert.alert('Add New Vehicle', 'Vehicle name can not be empty.');
+      Alert.alert('Error', 'Vehicle name can not be empty.');
       return;
     }
 
-    if (vehicleObject.vehicleName.includes('_')) {
-      Alert.alert('Add New Vehicle', 'Vehicle name can not contain "_" character.');
+    if (vehicleObject.garageLocation === '') {
+      Alert.alert('Error', 'Please choose a garage.');
       return;
     }
 
@@ -86,13 +87,13 @@ const Vehicles = () => {
 
               setLoading(true);
 
-              // Remove from garage
-              const garageObject = garageObjects.filter(function (garageObj) {
-                return garageObj.location === vehicleObjectToRemove.garageLocation;
-              }).at(0);
+              // Remove from the garage
+              const garageIndex = garageObjects.findIndex((garageObj) => garageObj.location === vehicleObjectToRemove.garageLocation);
 
-              const newVehicleList = garageObject.vehicles.filter(vehicleObj => vehicleObj.uuid !== vehicleObjectToRemove.uuid);
-              garageObject.vehicles = newVehicleList;
+              const garageObject = garageObjects[garageIndex];
+              const newVehicleList = garageObject.vehicles.filter((vehicleObj) => vehicleObj.uuid !== vehicleObjectToRemove.uuid);
+              garageObjects[garageIndex] = { ...garageObject, vehicles: newVehicleList };
+
               await util.saveObject('@GarageObjectList', garageObjects);
 
               // Remove from vehicleObjects

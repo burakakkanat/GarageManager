@@ -37,6 +37,11 @@ const Wishlist = () => {
 
   const addWishlistItem = async () => {
 
+    if (wishlistObject.garageTheme === '') {
+      Alert.alert('Error', 'Please choose a theme.');
+      return;
+    }
+
     if (wishlistObject.tradePrice === '') {
       wishlistObject.tradePrice = 'N/A';
     }

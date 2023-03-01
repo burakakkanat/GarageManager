@@ -92,23 +92,26 @@ const Garages = () => {
     await setEmptyGarageObject();
     setAddGarageModalVisible(true);
   };
-
+  
   const addGarageObject = async () => {
     try {
       setInProgress(true);
 
-      if (!verifyGarageFields('Add New Garage', garageObjects)) {
+      if (!verifyGarageFields(garageObjects)) {
         return;
       }
 
       garageObject.uuid = uuid.v4();
 
-      garageObjects.push(garageObject);
-      garageObjects.sort(util.compareGarages);
-      setGarageObjects([...garageObjects]);
+      setGarageObjects(prevGarageObjects => {
+        const newGarageObjects = [...prevGarageObjects];
+        const garageInsertionIndex = util.findGarageInsertionIndex(newGarageObjects, garageObject);
+        newGarageObjects.splice(garageInsertionIndex, 0, garageObject);
+
+        return newGarageObjects;
+      });
 
       await util.saveObject('@GarageObjectList', garageObjects);
-
       await setEmptyGarageObject();
       setAddGarageModalVisible(false);
 
@@ -119,18 +122,6 @@ const Garages = () => {
     }
   };
 
-  const showGarageDetails = async (garageObj) => {
-    setOldGarageLocation(garageObj.location);
-    setOldGarageTheme(garageObj.theme);
-    setGarageObject(garageObj);
-    setShowGarageDetailsVisible(true);
-  };
-
-  const openEditGarageWindow = async () => {
-    setShowGarageDetailsVisible(false);
-    setEditGarageModalVisible(true);
-  };
-
   const editGarageObject = async () => {
 
     try {
@@ -138,7 +129,7 @@ const Garages = () => {
 
       const newGarageObjects = garageObjects.filter(garageObj => garageObj.location !== oldGarageLocation);
 
-      if (!verifyGarageFields('Edit Garage', newGarageObjects)) {
+      if (!verifyGarageFields(newGarageObjects)) {
         return;
       }
 
@@ -165,65 +156,6 @@ const Garages = () => {
     } finally {
       setInProgress(false);
     }
-  };
-
-  const verifyGarageFields = (alertTitle, garageObjects) => {
-
-    if (!garageObject.location.trim()) {
-      Alert.alert(alertTitle, 'Garage location can not be empty.');
-      return;
-    }
-
-    if (!garageObject.theme.trim()) {
-      Alert.alert(alertTitle, 'Garage theme can not be empty.');
-      return;
-    }
-
-    const garageWithSameLocation = garageObjects.filter(
-      (garageObj) => garageObj.location === garageObject.location
-    );
-    if (garageWithSameLocation.length !== 0) {
-      Alert.alert(alertTitle, 'Garage at this location already exists.');
-      return false;
-    }
-
-    const garageWithSameTheme = garageObjects.filter(
-      (garageObj) => garageObj.theme === garageObject.theme
-    );
-    if (garageWithSameTheme.length !== 0) {
-      Alert.alert(alertTitle, 'Garage with this theme already exists.');
-      return false;
-    }
-
-    return true;
-  };
-
-  const updateVehicleObjects = async () => {
-    const vehicleObjectsToUpdate = Object.assign([], vehicleObjects.filter(vehicleObject => vehicleObject.garageLocation === oldGarageLocation));
-    const newVehicleObjects = vehicleObjects.filter(vehicleObject => vehicleObject.garageLocation !== oldGarageLocation);
-
-    for (const vehicleObject of vehicleObjectsToUpdate) {
-      vehicleObject.garageLocation = garageObject.location;
-      newVehicleObjects.push(vehicleObject);
-    }
-
-    newVehicleObjects.sort(util.compareVehicles);
-
-    setVehicleObjects(newVehicleObjects);
-  };
-
-  const updateWishlistObjects = async () => {
-    const wishlistObjectsToUpdate = Object.assign([], wishlistObjects.filter(wishlistItem => wishlistItem.garageTheme === oldGarageTheme));
-    const newWishlistObjects = wishlistObjects.filter(wishlistItem => wishlistItem.garageTheme !== oldGarageTheme);
-
-    for (const wishlistObj of wishlistObjectsToUpdate) {
-      wishlistObj.garageTheme = garageObject.theme;
-      newWishlistObjects.push(wishlistObj);
-    }
-
-    newWishlistObjects.sort(util.compareWishlistItems);
-
-    setWishlistObjects(newWishlistObjects);
   };
 
   const removeGarageObject = async () => {
@@ -264,6 +196,77 @@ const Garages = () => {
       ],
       { cancelable: false }
     );
+  };
+
+  const showGarageDetails = async (garageObj) => {
+    setOldGarageLocation(garageObj.location);
+    setOldGarageTheme(garageObj.theme);
+    setGarageObject(garageObj);
+    setShowGarageDetailsVisible(true);
+  };
+
+  const openEditGarageWindow = async () => {
+    setShowGarageDetailsVisible(false);
+    setEditGarageModalVisible(true);
+  };
+
+  const verifyGarageFields = (garageObjects) => {
+
+    if (!garageObject.location.trim()) {
+      Alert.alert('Error', 'Garage location can not be empty.');
+      return;
+    }
+
+    if (!garageObject.theme.trim()) {
+      Alert.alert('Error', 'Garage theme can not be empty.');
+      return;
+    }
+
+    const garageWithSameLocation = garageObjects.filter(
+      (garageObj) => garageObj.location === garageObject.location
+    );
+    if (garageWithSameLocation.length !== 0) {
+      Alert.alert('Error', 'Garage at this location already exists.');
+      return false;
+    }
+
+    const garageWithSameTheme = garageObjects.filter(
+      (garageObj) => garageObj.theme === garageObject.theme
+    );
+    if (garageWithSameTheme.length !== 0) {
+      Alert.alert('Error', 'Garage with this theme already exists.');
+      return false;
+    }
+
+    return true;
+  };
+
+  const updateVehicleObjects = async () => {
+    const vehicleObjectsToUpdate = Object.assign([], vehicleObjects.filter(vehicleObject => vehicleObject.garageLocation === oldGarageLocation));
+    const newVehicleObjects = vehicleObjects.filter(vehicleObject => vehicleObject.garageLocation !== oldGarageLocation);
+
+    for (const vehicleObject of vehicleObjectsToUpdate) {
+      vehicleObject.garageLocation = garageObject.location;
+      newVehicleObjects.push(vehicleObject);
+    }
+
+    newVehicleObjects.sort(util.compareVehicles);
+
+    setVehicleObjects(newVehicleObjects);
+  };
+
+  const updateWishlistObjects = async () => {
+    const wishlistObjectsToUpdate = Object.assign([], wishlistObjects.filter(wishlistItem => wishlistItem.garageTheme === oldGarageTheme));
+    const newWishlistObjects = wishlistObjects.filter(wishlistItem => wishlistItem.garageTheme !== oldGarageTheme);
+
+    for (const wishlistObj of wishlistObjectsToUpdate) {
+      wishlistObj.garageTheme = garageObject.theme;
+      newWishlistObjects.push(wishlistObj);
+    }
+
+    newWishlistObjects.sort(util.compareWishlistItems);
+
+    setWishlistObjects(newWishlistObjects);
   };
 
   const removeVehicleObjects = async (garageLocationToRemove) => {
