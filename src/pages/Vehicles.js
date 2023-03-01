@@ -1,11 +1,11 @@
-import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native';
-import React, { useContext, useEffect, useState } from 'react';
-import { VehicleContext } from '../../Context/VehicleContext';
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View, } from 'react-native';
+import React, { useContext, useState } from 'react';
+import { VehicleContext } from '../context/VehicleContext';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { GarageContext } from '../../Context/GarageContext';
+import { GarageContext } from '../context/GarageContext';
 import { BlurView } from '@react-native-community/blur';
-import uuid from 'react-native-uuid';
 import styles from '../styles/Styles';
+import uuid from 'react-native-uuid';
 import util from '../util/Util';
 
 const Vehicles = () => {
@@ -14,8 +14,8 @@ const Vehicles = () => {
   const { vehicleObjects, setVehicleObjects } = useContext(VehicleContext);
 
   const [selectedGarageLocation, setSelectedGarageLocation] = useState('');
-  const [pickerOpen, setPickerOpen] = useState(false);
   const [pickerItemsLoading, setPickerItemsLoading] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [vehicleObject, setVehicleObject] = useState({
@@ -61,6 +61,12 @@ const Vehicles = () => {
         return newVehicleObjects;
       });
 
+      ToastAndroid.showWithGravity(
+        'Vehicle added.',
+        ToastAndroid.SHORT,
+        ToastAndroid.TOP, // Not working
+      );
+
     } catch (error) {
       console.error(error);
     } finally {
@@ -103,6 +109,12 @@ const Vehicles = () => {
               }
               setVehicleObjects(newVehicleObjects);
 
+              ToastAndroid.showWithGravity(
+                'Vehicle removed.',
+                ToastAndroid.SHORT,
+                ToastAndroid.TOP, // Not working
+              );
+
             } catch (error) {
               console.error(error);
             } finally {
@@ -121,11 +133,11 @@ const Vehicles = () => {
 
       <ScrollView>
         <View style={styles.separatorTop} />
-        {vehicleObjects.map((currentVehicleObject, index) => (
+        {vehicleObjects.map((vehicleObj, index) => (
           <View key={index} style={styles.containerForLists}>
             <TouchableOpacity>
               <Text style={styles.textListItemVehicleB}>
-                {currentVehicleObject.vehicleName}
+                {vehicleObj.vehicleName}
               </Text>
             </TouchableOpacity>
 
@@ -133,12 +145,12 @@ const Vehicles = () => {
               <TouchableOpacity
                 style={{ marginRight: 20 }}>
                 <Text style={styles.textListItemVehicleM}>
-                  {'at ' + currentVehicleObject.garageLocation}
+                  {'at ' + vehicleObj.garageLocation}
                 </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={() => removeVehicle(currentVehicleObject)}>
+                onPress={() => removeVehicle(vehicleObj)}>
                 <Text style={{ color: 'red', fontFamily: util.getFontName(), fontSize: 12 }}>Remove</Text>
               </TouchableOpacity>
             </View>

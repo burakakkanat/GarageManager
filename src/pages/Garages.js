@@ -1,10 +1,10 @@
-import { Alert, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Modal, ScrollView, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
-import { WishlistContext } from '../../Context/WishlistContext';
-import { VehicleContext } from '../../Context/VehicleContext';
-import { useFocusEffect } from '@react-navigation/native';
-import { GarageContext } from '../../Context/GarageContext';
+import { WishlistContext } from '../context/WishlistContext';
 import dataManagementUtil from '../util/DataManagementUtil';
+import { VehicleContext } from '../context/VehicleContext';
+import { useFocusEffect } from '@react-navigation/native';
+import { GarageContext } from '../context/GarageContext';
 import styles from '../styles/Styles';
 import uuid from 'react-native-uuid';
 import util from '../util/Util';
@@ -103,17 +103,21 @@ const Garages = () => {
 
       garageObject.uuid = uuid.v4();
 
-      setGarageObjects(prevGarageObjects => {
-        const newGarageObjects = [...prevGarageObjects];
-        const garageInsertionIndex = util.findGarageInsertionIndex(newGarageObjects, garageObject);
-        newGarageObjects.splice(garageInsertionIndex, 0, garageObject);
+      const newGarageObjects = [...garageObjects];
+      const garageInsertionIndex = util.findGarageInsertionIndex(newGarageObjects, garageObject);
+      newGarageObjects.splice(garageInsertionIndex, 0, garageObject);
 
-        return newGarageObjects;
-      });
+      setGarageObjects(newGarageObjects);
+      await util.saveObject('@GarageObjectList', newGarageObjects);
 
-      await util.saveObject('@GarageObjectList', garageObjects);
       await setEmptyGarageObject();
       setAddGarageModalVisible(false);
+
+      ToastAndroid.showWithGravity(
+        'Garage added.',
+        ToastAndroid.SHORT,
+        ToastAndroid.TOP, // Not working
+      );
 
     } catch (error) {
       console.error(error);
@@ -155,6 +159,12 @@ const Garages = () => {
       await setEmptyGarageObject();
       setEditGarageModalVisible(false);
 
+      ToastAndroid.showWithGravity(
+        'Garage edited.',
+        ToastAndroid.SHORT,
+        ToastAndroid.TOP, // Not working
+      );
+
     } catch (error) {
       console.error(error);
     } finally {
@@ -194,6 +204,12 @@ const Garages = () => {
               await setEmptyGarageObject();
               setShowGarageDetailsVisible(false);
 
+              ToastAndroid.showWithGravity(
+                'Garage removed.',
+                ToastAndroid.SHORT,
+                ToastAndroid.TOP, // Not working
+              );
+
             } catch (error) {
               console.error(error);
             } finally {
@@ -231,7 +247,6 @@ const Garages = () => {
     }
 
     const garageWithSameLocationIndex = garageObjects.findIndex((garageObj) => garageObj.location === garageObject.location);
-    console.debug(garageWithSameLocationIndex)
     if (garageWithSameLocationIndex !== -1) {
       Alert.alert('Error', 'Garage at this location already exists.');
       return false;
@@ -266,7 +281,7 @@ const Garages = () => {
   };
 
   const updateWishlistObjects = async () => {
-    
+
     const wishlistItemsToUpdateIndexes = wishlistObjects.reduce((acc, wishlistItem, index) => {
       if (wishlistItem.garageTheme === oldGarageTheme) {
         acc.push(index);
@@ -504,7 +519,7 @@ const Garages = () => {
                 <TouchableOpacity
                   style={styles.buttonRed}
                   onPress={() => removeDisposableVehicle(index)}>
-                  <Text style={{ color: 'white' }}>Remove</Text>
+                  <Text style={styles.textButton}>Remove</Text>
                 </TouchableOpacity>
               </View>
             ))}

@@ -1,9 +1,9 @@
-import { Alert, FlatList, Modal, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import React, { useContext, useEffect, useState } from 'react';
-import { WishlistContext } from '../../Context/WishlistContext';
+import { Alert, FlatList, Modal, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import React, { useContext, useState } from 'react';
+import { WishlistContext } from '../context/WishlistContext';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useFocusEffect } from '@react-navigation/native';
-import { GarageContext } from '../../Context/GarageContext';
+import { GarageContext } from '../context/GarageContext';
 import styles from '../styles/Styles';
 import uuid from 'react-native-uuid';
 import util from '../util/Util';
@@ -71,6 +71,12 @@ const Wishlist = () => {
 
     setEmptyWishlistObject();
     setAddWishlistModalVisible(false);
+
+    ToastAndroid.showWithGravity(
+      'Wishlist item added.',
+      ToastAndroid.SHORT,
+      ToastAndroid.TOP, // Not working
+    );
   };
 
   const removeWishlistObject = async (whislistItemToRemove) => {
@@ -103,6 +109,12 @@ const Wishlist = () => {
                 newWishlistObjects.splice(indexToRemove, 1);
               }
               setWishlistObjects(newWishlistObjects);
+
+              ToastAndroid.showWithGravity(
+                'Wishlist item removed.',
+                ToastAndroid.SHORT,
+                ToastAndroid.TOP, // Not working
+              );
 
             } catch (error) {
               console.error(error);
@@ -240,7 +252,7 @@ const Wishlist = () => {
                 animationType: 'fade',
                 hardwareAccelerated: true,
               }}
-              
+
               containerStyle={styles.containerPickerWishlist}
               itemStyle={{
                 justifyContent: 'flex-start'

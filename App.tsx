@@ -1,9 +1,9 @@
 import React from 'react';
 import { Image, Text, View } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { WishlistContextProvider } from './Context/WishlistContext';
-import { VehicleContextProvider } from './Context/VehicleContext';
-import { GarageContextProvider } from './Context/GarageContext';
+import { WishlistContextProvider } from './src/context/WishlistContext';
+import { VehicleContextProvider } from './src/context/VehicleContext';
+import { GarageContextProvider } from './src/context/GarageContext';
 import { NavigationContainer } from '@react-navigation/native';
 import Wishlist from './src/pages/Wishlist';
 import Vehicles from './src/pages/Vehicles';
