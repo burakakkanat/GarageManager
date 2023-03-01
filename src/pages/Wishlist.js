@@ -38,7 +38,7 @@ const Wishlist = () => {
   const addWishlistItem = async () => {
 
     if (wishlistObject.tradePrice === '') {
-      wishlistObject.tradePrice = '       -       ';
+      wishlistObject.tradePrice = 'N/A';
     }
 
     wishlistObject.uuid = uuid.v4();
@@ -112,16 +112,16 @@ const Wishlist = () => {
   const renderWishlistObject = ({ item }) => {
     return (
       <TouchableOpacity style={styles.containerForLists} onPress={() => removeWishlistObject(item)}>
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, marginHorizontal: 3 }}>
           <Text style={styles.textWishlistObjectB}>{item.vehicleName}</Text>
         </View>
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, marginHorizontal: 3 }}>
           <Text style={styles.textWishlistObjectM}>{item.garageTheme}</Text>
         </View>
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, marginHorizontal: 3 }}>
           <Text style={styles.textWishlistObjectB}>{item.price}</Text>
         </View>
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, marginHorizontal: 3 }}>
           <Text style={styles.textWishlistObjectM}>{item.tradePrice}</Text>
         </View>
       </TouchableOpacity>
@@ -132,16 +132,16 @@ const Wishlist = () => {
     <View style={{ flex: 1 }}>
 
       <View style={styles.containerWishlistHeader}>
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, marginHorizontal: 3 }}>
           <Text style={styles.textHeaderWishlist}>Vehicle</Text>
         </View>
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, marginHorizontal: 3 }}>
           <Text style={styles.textHeaderWishlist}>Theme</Text>
         </View>
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, marginHorizontal: 3 }}>
           <Text style={styles.textHeaderWishlist}>Price</Text>
         </View>
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, marginHorizontal: 3 }}>
           <Text style={styles.textHeaderWishlist}>Trade Price</Text>
         </View>
       </View>

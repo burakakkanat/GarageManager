@@ -4,6 +4,7 @@ import { WishlistContext } from '../../Context/WishlistContext';
 import { VehicleContext } from '../../Context/VehicleContext';
 import { useFocusEffect } from '@react-navigation/native';
 import { GarageContext } from '../../Context/GarageContext';
+import dataManagementUtil from '../util/DataManagementUtil';
 import uuid from 'react-native-uuid';
 import styles from '../styles/Styles';
 import util from '../util/Util';
