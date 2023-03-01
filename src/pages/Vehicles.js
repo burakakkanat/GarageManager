@@ -172,6 +172,8 @@ const Vehicles = () => {
           closeOnBackPressed={true}
           setOpen={setPickerOpen}
           dropDownDirection='TOP'
+          searchable={true}
+          searchPlaceholder={'Search garage location...'}
           open={pickerOpen}
 
           containerStyle={styles.containerPickerAddVehicle}
@@ -182,7 +184,7 @@ const Vehicles = () => {
           }}
           dropDownContainerStyle={{
             backgroundColor: '#F2F2F2',
-            maxHeight: 200
+            maxHeight: 220
           }}
           textStyle={{
             fontFamily: util.getFontName(),
@@ -201,7 +203,7 @@ const Vehicles = () => {
             setVehicleObject({ ...vehicleObject, garageLocation: item.value })
           }}
           onOpen={() => {
-            setAddVehicleContainerHeight(255);
+            setAddVehicleContainerHeight(275);
           }}
           onClose={() => {
             setAddVehicleContainerHeight(55);
