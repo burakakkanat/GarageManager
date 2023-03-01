@@ -1,5 +1,5 @@
-import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native';
-import React, { useContext, useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View, } from 'react-native';
+import React, { useContext, useState } from 'react';
 import { VehicleContext } from '../context/VehicleContext';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { GarageContext } from '../context/GarageContext';
@@ -14,8 +14,8 @@ const Vehicles = () => {
   const { vehicleObjects, setVehicleObjects } = useContext(VehicleContext);
 
   const [selectedGarageLocation, setSelectedGarageLocation] = useState('');
-  const [pickerOpen, setPickerOpen] = useState(false);
   const [pickerItemsLoading, setPickerItemsLoading] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [vehicleObject, setVehicleObject] = useState({
@@ -61,6 +61,12 @@ const Vehicles = () => {
         return newVehicleObjects;
       });
 
+      ToastAndroid.showWithGravity(
+        'Vehicle added.',
+        ToastAndroid.SHORT,
+        ToastAndroid.TOP, // Not working
+      );
+
     } catch (error) {
       console.error(error);
     } finally {
@@ -102,6 +108,12 @@ const Vehicles = () => {
                 newVehicleObjects.splice(indexToRemove, 1);
               }
               setVehicleObjects(newVehicleObjects);
+
+              ToastAndroid.showWithGravity(
+                'Vehicle removed.',
+                ToastAndroid.SHORT,
+                ToastAndroid.TOP, // Not working
+              );
 
             } catch (error) {
               console.error(error);
