@@ -5,10 +5,10 @@ import { WishlistContextProvider } from './Context/WishlistContext';
 import { VehicleContextProvider } from './Context/VehicleContext';
 import { GarageContextProvider } from './Context/GarageContext';
 import { NavigationContainer } from '@react-navigation/native';
-import Wishlist from './Pages/Wishlist';
-import Vehicles from './Pages/Vehicles';
-import Garages from './Pages/Garages';
-import styles from './Pages/Styles';
+import Wishlist from './src/pages/Wishlist';
+import Vehicles from './src/pages/Vehicles';
+import Garages from './src/pages/Garages';
+import styles from './src/styles/Styles';
 
 const Tab = createMaterialTopTabNavigator();
 

@@ -71,6 +71,45 @@ const util = {
         }
 
         return 0;
+    },
+    findGarageInsertionIndex: function (garageObjects, newGarageObject) {
+        let low = 0;
+        let high = garageObjects.length;
+        while (low < high) {
+            const mid = Math.floor((low + high) / 2);
+            if (util.compareGarages(garageObjects[mid], newGarageObject) < 0) {
+                low = mid + 1;
+            } else {
+                high = mid;
+            }
+        }
+        return low;
+    },
+    findVehicleInsertionIndex: function (vehicleObjects, newVehicleObject) {
+        let low = 0;
+        let high = vehicleObjects.length;
+        while (low < high) {
+            const mid = Math.floor((low + high) / 2);
+            if (util.compareVehicles(vehicleObjects[mid], newVehicleObject) < 0) {
+                low = mid + 1;
+            } else {
+                high = mid;
+            }
+        }
+        return low;
+    },
+    findWishlistInsertionIndex: function (wishlistObjects, newWishlistObject) {
+        let low = 0;
+        let high = wishlistObjects.length;
+        while (low < high) {
+            const mid = Math.floor((low + high) / 2);
+            if (util.compareWishlistItems(wishlistObjects[mid], newWishlistObject) < 0) {
+                low = mid + 1;
+            } else {
+                high = mid;
+            }
+        }
+        return low;
     }
 }
 
