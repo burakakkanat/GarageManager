@@ -161,10 +161,12 @@ const styles = StyleSheet.create({
         borderColor: 'black',
         borderRadius: 10,
         borderWidth: 1,
+        color: 'black',
         fontFamily: util.getFontName(),
         fontSize: 12,
         marginRight: 10,
-        width: '44%'
+        width: '44%',
+        height: 50
     },
     textListItemGarageB: {
         fontFamily: util.getBoldFontName(),
