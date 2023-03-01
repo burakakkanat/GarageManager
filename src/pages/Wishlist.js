@@ -185,7 +185,7 @@ const Wishlist = () => {
           setPickerOpen(false);
         }}>
 
-        <View style={styles.headerContainer}>
+        <View style={styles.containerHeader}>
           <Text style={styles.header}>Add New Wishlist Item</Text>
         </View>
 

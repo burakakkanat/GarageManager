@@ -32,20 +32,17 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
         borderTopColor: '#ccc'
     },
-    containerPickerAddVehicle: {
-        height: '80%',
-        width: '55%',
-    },
-    containerPickerWishlist: {
-        marginLeft: 10,
-        width: '95%'
-    },
-    containerWishlistHeader: {
+    containerHeader: {
         backgroundColor: '#2D640F',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        padding: 10,
-        alignItems: 'center',
+        justifyContent: 'center',
+        height: 50,
+        alignItems: 'center'
+    },
+    containerHeaderMain: {
+        backgroundColor: '#2D640F',
+        justifyContent: 'center',
+        height: 50,
+        alignItems: 'center'
     },
     containerForLists: {
         flexDirection: 'row',
@@ -66,6 +63,33 @@ const styles = StyleSheet.create({
         borderColor: 'lightgrey',
         padding: 8,
     },
+    containerPickerAddVehicle: {
+        height: '80%',
+        width: '55%',
+    },
+    containerPickerWishlist: {
+        marginLeft: 10,
+        width: '95%'
+    },
+    containerWishlistHeader: {
+        backgroundColor: '#2D640F',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        padding: 10,
+        alignItems: 'center',
+    },
+    header: {
+        marginTop: 10,
+        fontSize: 30,
+        color: 'white',
+        fontFamily: 'SignPainter-HouseScript'
+    },
+    headerMain: {
+        marginTop: 5,
+        fontSize: 30,
+        color: 'white',
+        fontFamily: 'SignPainter-HouseScript'
+    },
     loadingContainer: {
         position: 'absolute',
         top: 0,
@@ -80,30 +104,6 @@ const styles = StyleSheet.create({
     loadingIndicator: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
-    },
-    header: {
-        marginTop: 10,
-        fontSize: 30,
-        color: 'white',
-        fontFamily: 'SignPainter-HouseScript'
-    },
-    headerMain: {
-        marginTop: 5,
-        fontSize: 30,
-        color: 'white',
-        fontFamily: 'SignPainter-HouseScript'
-    },
-    headerContainer: {
-        backgroundColor: '#2D640F',
-        justifyContent: 'center',
-        height: 50,
-        alignItems: 'center'
-    },
-    headerContainerMain: {
-        backgroundColor: '#2D640F',
-        justifyContent: 'center',
-        height: 50,
         alignItems: 'center'
     },
     screenOptons: {
@@ -135,16 +135,16 @@ const styles = StyleSheet.create({
         color: 'grey',
         fontSize: 12,
     },
+    textGarageDetailsSoftTitle: {
+        fontFamily: util.getBoldFontName(),
+        color: 'grey',
+        fontSize: 12,
+    },
     textGarageDetailsTitle: {
         fontFamily: util.getBoldFontName(),
         color: 'black',
         fontSize: 15,
         margin: 10
-    },
-    textGarageDetailsSoftTitle: {
-        fontFamily: util.getBoldFontName(),
-        color: 'grey',
-        fontSize: 12,
     },
     textHeaderWishlist: {
         fontFamily: util.getFontName(),

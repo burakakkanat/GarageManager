@@ -18,7 +18,7 @@ const JohnnyOnTheSpot = () => {
       <GarageContextProvider>
         <VehicleContextProvider>
           <WishlistContextProvider>
-            <View style={styles.headerContainerMain}>
+            <View style={styles.containerHeaderMain}>
               <Image
                 style={{
                   position: 'absolute',
