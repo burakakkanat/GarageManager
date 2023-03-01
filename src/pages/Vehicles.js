@@ -15,6 +15,7 @@ const Vehicles = () => {
 
   const [selectedGarageLocation, setSelectedGarageLocation] = useState('');
   const [pickerItemsLoading, setPickerItemsLoading] = useState(false);
+  const [addNewVehicleContainerHeight, setAddVehicleContainerHeight] = useState(55);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -158,7 +159,7 @@ const Vehicles = () => {
         ))}
       </ScrollView>
 
-      <View style={styles.containerAddNewVehicle}>
+      <View style={[styles.containerAddNewVehicle, { height: addNewVehicleContainerHeight }]}>
 
         <TextInput
           value={vehicleObject.vehicleName}
@@ -175,6 +176,19 @@ const Vehicles = () => {
           setOpen={setPickerOpen}
           open={pickerOpen}
 
+          containerStyle={styles.containerPickerAddVehicle}
+          dropDownContainerStyle={{
+            backgroundColor: '#F2F2F2',
+            maxHeight: 200
+          }}
+          style={{ backgroundColor: '#F2F2F2' }}
+          itemStyle={{ justifyContent: 'flex-start' }}
+
+          textStyle={{
+            fontFamily: util.getFontName(),
+            fontSize: 10
+          }}
+
           items={garageObjects.map((garageObject, index) => ({
             label: garageObject.location,
             value: garageObject.location,
@@ -186,25 +200,18 @@ const Vehicles = () => {
           onSelectItem={(item) => {
             setVehicleObject({ ...vehicleObject, garageLocation: item.value })
           }}
+          onOpen={() => {
+            setAddVehicleContainerHeight(255);
+          }}
+          onClose={() => {
+            setAddVehicleContainerHeight(55);
+          }}
 
-          listMode='MODAL'  // #TODO: Change when dropdown bug is fixed
+          listMode='SCROLLVIEW'  // #TODO: Change when dropdown bug is fixed
           modalTitle='Your Garage Locations' //#TODO: Change when dropdown bug is fixed
 
           scrollViewProps={{
             nestedScrollEnabled: true
-          }}
-
-          containerStyle={styles.containerPickerAddVehicle}
-          dropDownContainerStyle={{
-            backgroundColor: '#F2F2F2',
-            height: 500
-          }}
-          style={{ backgroundColor: '#F2F2F2' }}
-          itemStyle={{ justifyContent: 'flex-start' }}
-
-          textStyle={{
-            fontFamily: util.getFontName(),
-            fontSize: 10
           }}
 
           placeholder='Choose a garage'
