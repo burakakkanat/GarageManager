@@ -1,9 +1,9 @@
 import { Alert, FlatList, Modal, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
-import { WishlistContext } from '../../Context/WishlistContext';
+import { WishlistContext } from '../context/WishlistContext';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useFocusEffect } from '@react-navigation/native';
-import { GarageContext } from '../../Context/GarageContext';
+import { GarageContext } from '../context/GarageContext';
 import styles from '../styles/Styles';
 import uuid from 'react-native-uuid';
 import util from '../util/Util';

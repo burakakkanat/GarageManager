@@ -1,11 +1,11 @@
 import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
-import { VehicleContext } from '../../Context/VehicleContext';
+import { VehicleContext } from '../context/VehicleContext';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { GarageContext } from '../../Context/GarageContext';
+import { GarageContext } from '../context/GarageContext';
 import { BlurView } from '@react-native-community/blur';
-import uuid from 'react-native-uuid';
 import styles from '../styles/Styles';
+import uuid from 'react-native-uuid';
 import util from '../util/Util';
 
 const Vehicles = () => {

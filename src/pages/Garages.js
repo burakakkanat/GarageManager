@@ -1,10 +1,10 @@
 import { Alert, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
-import { WishlistContext } from '../../Context/WishlistContext';
-import { VehicleContext } from '../../Context/VehicleContext';
-import { useFocusEffect } from '@react-navigation/native';
-import { GarageContext } from '../../Context/GarageContext';
+import { WishlistContext } from '../context/WishlistContext';
 import dataManagementUtil from '../util/DataManagementUtil';
+import { VehicleContext } from '../context/VehicleContext';
+import { useFocusEffect } from '@react-navigation/native';
+import { GarageContext } from '../context/GarageContext';
 import styles from '../styles/Styles';
 import uuid from 'react-native-uuid';
 import util from '../util/Util';
