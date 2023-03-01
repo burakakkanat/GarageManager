@@ -25,7 +25,7 @@ const Vehicles = () => {
   });
 
   const addNewVehicle = async () => {
-    
+
     if (!vehicleObject.vehicleName.trim()) {
       Alert.alert('Error', 'Vehicle name can not be empty.');
       return;
@@ -89,7 +89,6 @@ const Vehicles = () => {
 
               // Remove from the garage
               const garageIndex = garageObjects.findIndex((garageObj) => garageObj.location === vehicleObjectToRemove.garageLocation);
-
               const garageObject = garageObjects[garageIndex];
               const newVehicleList = garageObject.vehicles.filter((vehicleObj) => vehicleObj.uuid !== vehicleObjectToRemove.uuid);
               garageObjects[garageIndex] = { ...garageObject, vehicles: newVehicleList };
@@ -97,7 +96,11 @@ const Vehicles = () => {
               await util.saveObject('@GarageObjectList', garageObjects);
 
               // Remove from vehicleObjects
-              const newVehicleObjects = vehicleObjects.filter(vehicleObj => vehicleObj.uuid !== vehicleObjectToRemove.uuid);
+              const indexToRemove = vehicleObjects.findIndex(vehicleObj => vehicleObj.uuid === vehicleObjectToRemove.uuid);
+              const newVehicleObjects = [...vehicleObjects];
+              if (indexToRemove !== -1) {
+                newVehicleObjects.splice(indexToRemove, 1);
+              }
               setVehicleObjects(newVehicleObjects);
 
             } catch (error) {
