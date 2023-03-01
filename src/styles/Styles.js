@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
         padding: 8,
     },
     containerPickerAddVehicle: {
+        height: '93%',
         width: '54%'
     },
     containerPickerWishlist: {
