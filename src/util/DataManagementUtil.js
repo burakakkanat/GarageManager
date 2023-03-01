@@ -5,7 +5,7 @@ const dataManagementUtil = {
 
   // Last executed: 28.02.2023 15:55
   // garageObjects have objects in vehicles and wishlist arrays
-    backupData: async () => {
+  backupData: async () => {
     const garages = await util.retrieveObject('@GarageObjectList');
 
     await util.saveObject('@GarageObjectListBackup', garages);

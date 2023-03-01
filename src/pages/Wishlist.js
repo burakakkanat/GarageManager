@@ -240,7 +240,7 @@ const Wishlist = () => {
                 animationType: 'fade',
                 hardwareAccelerated: true,
               }}
-              
+
               containerStyle={styles.containerPickerWishlist}
               itemStyle={{
                 justifyContent: 'flex-start'

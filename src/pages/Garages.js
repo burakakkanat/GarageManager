@@ -266,7 +266,7 @@ const Garages = () => {
   };
 
   const updateWishlistObjects = async () => {
-    
+
     const wishlistItemsToUpdateIndexes = wishlistObjects.reduce((acc, wishlistItem, index) => {
       if (wishlistItem.garageTheme === oldGarageTheme) {
         acc.push(index);
@@ -504,7 +504,7 @@ const Garages = () => {
                 <TouchableOpacity
                   style={styles.buttonRed}
                   onPress={() => removeDisposableVehicle(index)}>
-                  <Text style={{ color: 'white' }}>Remove</Text>
+                  <Text style={styles.textButton}>Remove</Text>
                 </TouchableOpacity>
               </View>
             ))}

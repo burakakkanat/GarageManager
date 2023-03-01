@@ -121,11 +121,11 @@ const Vehicles = () => {
 
       <ScrollView>
         <View style={styles.separatorTop} />
-        {vehicleObjects.map((currentVehicleObject, index) => (
+        {vehicleObjects.map((vehicleObj, index) => (
           <View key={index} style={styles.containerForLists}>
             <TouchableOpacity>
               <Text style={styles.textListItemVehicleB}>
-                {currentVehicleObject.vehicleName}
+                {vehicleObj.vehicleName}
               </Text>
             </TouchableOpacity>
 
@@ -133,12 +133,12 @@ const Vehicles = () => {
               <TouchableOpacity
                 style={{ marginRight: 20 }}>
                 <Text style={styles.textListItemVehicleM}>
-                  {'at ' + currentVehicleObject.garageLocation}
+                  {'at ' + vehicleObj.garageLocation}
                 </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={() => removeVehicle(currentVehicleObject)}>
+                onPress={() => removeVehicle(vehicleObj)}>
                 <Text style={{ color: 'red', fontFamily: util.getFontName(), fontSize: 12 }}>Remove</Text>
               </TouchableOpacity>
             </View>
