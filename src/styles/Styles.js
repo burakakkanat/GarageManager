@@ -76,7 +76,8 @@ const styles = StyleSheet.create({
         width: '52%'
     },
     containerPickerWishlist: {
-        marginLeft: 10,
+        height: '100%',
+        margin: 10,
         width: '95%'
     },
     containerWishlistHeader: {
@@ -153,11 +154,12 @@ const styles = StyleSheet.create({
         fontSize: 12
     },
     textInput: {
+        borderRadius: 10,
         borderWidth: 0.5,
         color: 'black',
         fontFamily: util.getFontName(),
         fontSize: 12,
-        height: 40,
+        height: 50,
         margin: 10
     },
     textInputNewVehicleName: {

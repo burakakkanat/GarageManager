@@ -190,7 +190,7 @@ const Wishlist = () => {
         </View>
 
         <View style={{ flex: 1, flexDirection: 'column' }}>
-          <View>
+          <View style={{ height: '90%' }}>
 
             <View style={styles.separator} />
             <Text style={styles.textSoftTitle}>{'Wishlist Details:'}</Text>
@@ -198,7 +198,7 @@ const Wishlist = () => {
             <TextInput
               value={wishlistObject.vehicleName}
               onChangeText={text => setWishlistObject({ ...wishlistObject, vehicleName: text })}
-              placeholder='Vehicle Name'
+              placeholder='  Vehicle Name'
               placeholderTextColor='grey'
               style={styles.textInput}
             />
@@ -207,7 +207,7 @@ const Wishlist = () => {
               value={wishlistObject.price}
               onChangeText={text => setWishlistObject({ ...wishlistObject, price: text })}
               keyboardType='number-pad'
-              placeholder='Price'
+              placeholder='  Price'
               placeholderTextColor='grey'
               style={styles.textInput}
             />
@@ -216,7 +216,7 @@ const Wishlist = () => {
               value={wishlistObject.tradePrice}
               onChangeText={text => setWishlistObject({ ...wishlistObject, tradePrice: text })}
               keyboardType='number-pad'
-              placeholder='Trade Price'
+              placeholder='  Trade Price'
               placeholderTextColor='grey'
               style={styles.textInput}
             />
@@ -225,6 +225,31 @@ const Wishlist = () => {
               closeOnBackPressed={true}
               setOpen={setPickerOpen}
               open={pickerOpen}
+              searchable={true}
+
+              searchPlaceholder='Search garage theme...'
+              placeholder='Choose a theme'
+              listMode='SCROLLVIEW'
+
+              containerStyle={styles.containerPickerWishlist}
+              dropDownContainerStyle={{
+                borderWidth: 0.5,
+                elevation: 5,
+                maxHeight: 260
+              }}
+              placeholderStyle={{
+                fontFamily: util.getFontName(),
+                fontSize: 12,
+                color: 'grey'
+              }}
+              style={{
+                borderWidth: 0.5,
+                elevation: 5
+              }}
+              textStyle={{
+                fontFamily: util.getFontName(),
+                fontSize: 12
+              }}
 
               items={garageObjects.map((garageObject, index) => ({
                 label: garageObject.theme,
@@ -237,39 +262,7 @@ const Wishlist = () => {
               onSelectItem={(item) =>
                 setWishlistObject({ ...wishlistObject, garageTheme: item.value })
               }
-
-              listMode='MODAL'
-              modalTitle='Your Garage Themes'
-              modalTitleStyle={{
-                fontFamily: util.getBoldFontName(), // Not working
-                fontSize: 15 // Not working
-              }}
-              modalContentContainerStyle={{
-                backgroundColor: '#fffcc' // Not working
-              }}
-              modalProps={{
-                presentationStyle: 'pageSheet',
-                animationType: 'fade',
-                hardwareAccelerated: true,
-              }}
-
-              containerStyle={styles.containerPickerWishlist}
-              itemStyle={{
-                justifyContent: 'flex-start'
-              }}
-
-              textStyle={{
-                fontFamily: util.getFontName(),
-                fontSize: 12
-              }}
-              placeholder='Choose a theme'
-              placeholderStyle={{
-                fontFamily: util.getFontName(),
-                fontSize: 12,
-                color: 'grey'
-              }}
             />
-
           </View>
 
           <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'flex-end' }}>
