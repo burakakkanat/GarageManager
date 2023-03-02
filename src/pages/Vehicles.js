@@ -1,9 +1,9 @@
-import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View, } from 'react-native';
-import React, { useContext, useState } from 'react';
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import { VehicleContext } from '../context/VehicleContext';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { GarageContext } from '../context/GarageContext';
 import { BlurView } from '@react-native-community/blur';
+import React, { useContext, useState } from 'react';
 import styles from '../styles/Styles';
 import uuid from 'react-native-uuid';
 import util from '../util/Util';
@@ -173,36 +173,20 @@ const Vehicles = () => {
 
         <DropDownPicker
           closeOnBackPressed={true}
-          setOpen={setPickerOpen}
           dropDownDirection='TOP'
-          searchable={true}
+          setOpen={setPickerOpen}
           open={pickerOpen}
+          searchable={true}
 
           searchPlaceholder='Search garage location...'
           placeholder='Choose a garage'
           listMode='SCROLLVIEW'
 
-          containerStyle={styles.containerPickerAddVehicle}
-          dropDownContainerStyle={{
-            backgroundColor: '#F2F2F2',
-            elevation: 5,
-            maxHeight: 260
-          }}
-          placeholderStyle={{
-            fontFamily: util.getFontName(),
-            fontSize: 12,
-            color: 'grey'
-          }}
-          style={{
-            backgroundColor: '#F2F2F2',
-            bottom: 0,
-            elevation: 5,
-            position: 'absolute'
-          }}
-          textStyle={{
-            fontFamily: util.getFontName(),
-            fontSize: 10
-          }}
+          dropDownContainerStyle={styles.dropDownAddVehicleDropDownContainerStyle}
+          placeholderStyle={styles.dropDownAddVehiclePlaceholderStyle}
+          containerStyle={styles.dropDownAddVehicleContainerStyle}
+          textStyle={styles.dropDownAddVehicleTextStyle}
+          style={styles.dropDownAddVehicleStyle}
 
           items={garageObjects.map((garageObject, index) => ({
             label: garageObject.location,
