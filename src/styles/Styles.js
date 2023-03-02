@@ -31,11 +31,13 @@ const styles = StyleSheet.create({
     },
     containerAddNewVehicle: {
         alignItems: 'flex-end',
-        backgroundColor: 'transparent',
-        borderTopColor: 'grey',
-        borderTopWidth: 1,
+        bottom: 60,
+        backgroundColor: 'rgba(125,125,125,0)',
         flexDirection: 'row',
-        justifyContent: 'flex-end'
+        justifyContent: 'flex-end',
+        position: 'absolute',
+        width: '100%',
+        zIndex:1
     },
     containerHeader: {
         alignItems: 'center',

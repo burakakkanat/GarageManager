@@ -129,9 +129,9 @@ const Vehicles = () => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View >
 
-      <ScrollView>
+      <ScrollView style={{ zIndex: 0 }}>
         <View style={styles.separatorTop} />
         {vehicleObjects.map((vehicleObj, index) => (
           <View key={index} style={styles.containerForLists}>
@@ -224,14 +224,14 @@ const Vehicles = () => {
       <TouchableOpacity
         onPress={addNewVehicle}
         disabled={loading}
-        style={styles.buttonGreen}
+        style={[styles.buttonGreen, { bottom: 0, position: 'absolute', width:'95%', zIndex: 1 }]}
       >
         <Text style={styles.textButton}>Add New Vehicle</Text>
       </TouchableOpacity>
 
       {loading && (
         <View style={styles.loadingContainer}>
-          <BlurView blurType='light' blurAmount={5} style={StyleSheet.absoluteFill}>
+          <BlurView blurType='light' blurAmount={3} style={StyleSheet.absoluteFill}>
             <View style={styles.loadingIndicator}>
               <ActivityIndicator size='large' color='#2D640F' />
             </View>
