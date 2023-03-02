@@ -19,9 +19,9 @@ const Vehicles = () => {
   const [loading, setLoading] = useState(false);
 
   const [vehicleObject, setVehicleObject] = useState({
+    garageLocation: '',
     uuid: '',
     vehicleName: '',
-    garageLocation: ''
   });
 
   const addNewVehicle = async () => {
@@ -135,7 +135,7 @@ const Vehicles = () => {
         <View style={styles.separatorTop} />
 
         {vehicleObjects.map((vehicleObj, index) => (
-          <View key={index} style={styles.containerForLists}>
+          <View key={index} style={styles.containerList}>
             <TouchableOpacity>
               <Text style={styles.textListItemVehicleB}>
                 {vehicleObj.vehicleName}
@@ -152,7 +152,7 @@ const Vehicles = () => {
 
               <TouchableOpacity
                 onPress={() => removeVehicle(vehicleObj)}>
-                <Text style={{ color: 'red', fontFamily: util.getFontName(), fontSize: 12 }}>Remove</Text>
+                <Text style={styles.buttonRemoveVehicle}>Remove</Text>
               </TouchableOpacity>
             </View>
           </View>

@@ -20,6 +20,11 @@ const styles = StyleSheet.create({
         margin: 10,
         padding: 10
     },
+    buttonRemoveVehicle: {
+        color: 'red',
+        fontFamily: util.getFontName(),
+        fontSize: 12
+    },
     buttonYellow: {
         alignItems: 'center',
         backgroundColor: 'orange',
@@ -39,6 +44,22 @@ const styles = StyleSheet.create({
         width: '100%',
         zIndex: 1
     },
+    containerButton: {
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'flex-end'
+    },
+    containerGarageDetailsSoftTitle: {
+        flexDirection: 'row',
+        margin: 10,
+        marginTop: 0
+    },
+    containerGarageList: {
+        borderBottomWidth: 1,
+        borderColor: 'lightgrey',
+        flexDirection: 'row',
+        padding: 8
+    },
     containerHeader: {
         alignItems: 'center',
         backgroundColor: '#2D640F',
@@ -51,20 +72,14 @@ const styles = StyleSheet.create({
         height: 50,
         justifyContent: 'center'
     },
-    containerForGarageList: {
-        borderBottomWidth: 1,
-        borderColor: 'lightgrey',
-        flexDirection: 'row',
-        padding: 8
-    },
-    containerForLists: {
+    containerList: {
         borderBottomWidth: 1,
         borderColor: 'lightgrey',
         flexDirection: 'row',
         justifyContent: 'space-between',
         padding: 10
     },
-    containerForSimpleLists: {
+    containerSimpleLists: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         padding: 10,
@@ -76,6 +91,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         padding: 10
+    },
+    containerWishlistText: {
+        flex: 1,
+        marginHorizontal: 3
     },
     dropDownAddVehicleContainerStyle: {
         height: '100%',

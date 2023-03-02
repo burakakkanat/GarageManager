@@ -20,32 +20,32 @@ const Garages = () => {
   const [inProgress, setInProgress] = useState(false);
 
   // Modal visibility
-  const [addGarageModalVisible, setAddGarageModalVisible] = useState(false);
-  const [editGarageModalVisible, setEditGarageModalVisible] = useState(false);
   const [showGarageDetailsVisible, setShowGarageDetailsVisible] = useState(false);
+  const [editGarageModalVisible, setEditGarageModalVisible] = useState(false);
+  const [addGarageModalVisible, setAddGarageModalVisible] = useState(false);
 
   const [garageObject, setGarageObject] = useState({
-    uuid: '',
+    capacity: '',
+    disposableVehicles: [],
     location: '',
     theme: '',
-    capacity: '',
+    uuid: '',
     vehicles: [vehicleObject],
-    disposableVehicles: [],
     wishlist: [wishlistObject]
   });
 
   const [vehicleObject, setVehicleObject] = useState({
+    garageLocation: '',
     uuid: '',
-    vehicleName: '',
-    garageLocation: ''
+    vehicleName: ''
   });
 
   const [wishlistObject, setWishlistObject] = useState({
-    uuid: '',
     garageTheme: '',
-    vehicleName: '',
     price: '',
-    tradePrice: ''
+    tradePrice: '',
+    uuid: '',
+    vehicleName: ''
   });
 
   useEffect(() => {
@@ -66,8 +66,8 @@ const Garages = () => {
 
   function setVehicleObjectsAndWishlistObjects(garageObjectList) {
 
-    let allVehicleObjects = [];
     let allWishlistObjects = [];
+    let allVehicleObjects = [];
 
     for (const garageObject of garageObjectList) {
 
@@ -107,7 +107,7 @@ const Garages = () => {
         const newGarageObjects = [...prevGarageObjects];
         const garageInsertionIndex = util.findGarageInsertionIndex(newGarageObjects, garageObject);
         newGarageObjects.splice(garageInsertionIndex, 0, garageObject);
-        
+
         util.saveObject('@GarageObjectList', newGarageObjects);
 
         return newGarageObjects;
@@ -334,7 +334,7 @@ const Garages = () => {
         <View style={styles.separatorTop} />
 
         {garageObjects.map((currentGarageObject, index) => (
-          <View key={index} style={styles.containerForGarageList}>
+          <View key={index} style={styles.containerGarageList}>
             <View style={{ flex: 1 }}>
               <TouchableOpacity onPress={() => showGarageDetails(currentGarageObject)}>
                 <Text style={styles.textListItemGarageB}>{currentGarageObject.location}</Text>
@@ -377,17 +377,17 @@ const Garages = () => {
 
             <Text style={styles.textGarageDetailsTitle}>{'Garage Details'}</Text>
 
-            <View style={{ flexDirection: 'row', margin: 10, marginTop: 0 }}>
+            <View style={styles.containerGarageDetailsSoftTitle}>
               <Text style={styles.textGarageDetailsSoftTitle}>Theme: </Text>
               <Text style={styles.textGarageDetails}>{garageObject.theme}</Text>
             </View>
 
-            <View style={{ flexDirection: 'row', margin: 10, marginTop: 0 }}>
+            <View style={styles.containerGarageDetailsSoftTitle}>
               <Text style={styles.textGarageDetailsSoftTitle}>Capacity: </Text>
               <Text style={styles.textGarageDetails}>{garageObject.capacity}</Text>
             </View>
 
-            <View style={{ flexDirection: 'row', margin: 10, marginTop: 0 }}>
+            <View style={styles.containerGarageDetailsSoftTitle}>
               <Text style={styles.textGarageDetailsSoftTitle}>Available Space: </Text>
               <Text style={styles.textGarageDetails}>{garageObject.capacity - garageObject.vehicles.length}</Text>
             </View>
@@ -398,7 +398,7 @@ const Garages = () => {
 
             <View>
               {garageObject.vehicles && garageObject.vehicles.map((vehicleObj, index) => (
-                <View key={index} style={styles.containerForSimpleLists}>
+                <View key={index} style={styles.containerSimpleLists}>
                   <TouchableOpacity>
                     <Text style={styles.textGarageDetails}>{vehicleObj?.vehicleName || 'Unknown Vehicle'}</Text>
                   </TouchableOpacity>
@@ -411,7 +411,7 @@ const Garages = () => {
             <Text style={styles.textGarageDetailsTitle}>{'Disposible Vehicles' + ' (' + garageObject.disposableVehicles.length + ')'}</Text>
 
             <View>{garageObject.disposableVehicles && garageObject.disposableVehicles.map((disposableVehicle, index) => (
-              <View key={index} style={styles.containerForSimpleLists}>
+              <View key={index} style={styles.containerSimpleLists}>
                 <TouchableOpacity>
                   <Text style={styles.textGarageDetails}>{disposableVehicle}</Text>
                 </TouchableOpacity>
@@ -424,7 +424,7 @@ const Garages = () => {
             <Text style={styles.textGarageDetailsTitle}>{'Wishlist for This Garage' + ' (' + garageObject.wishlist.length + ')'}</Text>
 
             <View>{garageObject.wishlist && garageObject.wishlist.map((wishlistObj, index) => (
-              <View key={index} style={styles.containerForSimpleLists}>
+              <View key={index} style={styles.containerSimpleLists}>
                 <TouchableOpacity>
                   <Text style={styles.textGarageDetails}>{wishlistObj?.vehicleName || 'Unknown Vehicle'}</Text>
                 </TouchableOpacity>
@@ -435,16 +435,13 @@ const Garages = () => {
           </ScrollView>
 
           <View style={{
-            flexDirection: 'column',
-            margin: 5,
-            marginTop: 0,
-            marginBottom: 0,
+            borderTopColor: 'grey',
             borderTopWidth: 1,
-            borderTopColor: '#black'
+            flexDirection: 'column'
           }}>
             <TouchableOpacity
               onPress={() => openEditGarageWindow()}
-              style={styles.buttonGreen}>
+              style={[styles.buttonGreen, { marginBottom: 0 }]}>
               <Text style={styles.textButton}>Edit Garage</Text>
             </TouchableOpacity>
 
@@ -536,7 +533,7 @@ const Garages = () => {
             </TouchableOpacity>
           </View>
 
-          <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'flex-end' }}>
+          <View style={styles.containerButton}>
             <TouchableOpacity
               style={styles.buttonGreen}
               onPress={addGarageObject}>
@@ -625,7 +622,7 @@ const Garages = () => {
             </TouchableOpacity>
           </View>
 
-          <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'flex-end' }}>
+          <View style={styles.containerButton}>
             <TouchableOpacity
               style={styles.buttonGreen}
               onPress={editGarageObject}>

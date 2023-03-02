@@ -128,17 +128,17 @@ const Wishlist = () => {
 
   const renderWishlistObject = ({ item }) => {
     return (
-      <TouchableOpacity style={styles.containerForLists} onPress={() => removeWishlistObject(item)}>
-        <View style={{ flex: 1, marginHorizontal: 3 }}>
+      <TouchableOpacity style={styles.containerList} onPress={() => removeWishlistObject(item)}>
+        <View style={styles.containerWishlistText}>
           <Text style={styles.textWishlistObjectB}>{item.vehicleName}</Text>
         </View>
-        <View style={{ flex: 1, marginHorizontal: 3 }}>
+        <View style={styles.containerWishlistText}>
           <Text style={styles.textWishlistObjectM}>{item.garageTheme}</Text>
         </View>
-        <View style={{ flex: 1, marginHorizontal: 3 }}>
+        <View style={styles.containerWishlistText}>
           <Text style={styles.textWishlistObjectB}>{item.price}</Text>
         </View>
-        <View style={{ flex: 1, marginHorizontal: 3 }}>
+        <View style={styles.containerWishlistText}>
           <Text style={styles.textWishlistObjectM}>{item.tradePrice}</Text>
         </View>
       </TouchableOpacity>
@@ -149,16 +149,16 @@ const Wishlist = () => {
     <View style={{ flex: 1 }}>
 
       <View style={styles.containerWishlistHeader}>
-        <View style={{ flex: 1, marginHorizontal: 3 }}>
+        <View style={styles.containerWishlistText}>
           <Text style={styles.textHeaderWishlist}>Vehicle</Text>
         </View>
-        <View style={{ flex: 1, marginHorizontal: 3 }}>
+        <View style={styles.containerWishlistText}>
           <Text style={styles.textHeaderWishlist}>Theme</Text>
         </View>
-        <View style={{ flex: 1, marginHorizontal: 3 }}>
+        <View style={styles.containerWishlistText}>
           <Text style={styles.textHeaderWishlist}>Price</Text>
         </View>
-        <View style={{ flex: 1, marginHorizontal: 3 }}>
+        <View style={styles.containerWishlistText}>
           <Text style={styles.textHeaderWishlist}>Trade Price</Text>
         </View>
       </View>
@@ -252,7 +252,7 @@ const Wishlist = () => {
             />
           </View>
 
-          <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'flex-end' }}>
+          <View style={styles.containerButton}>
             <TouchableOpacity
               style={styles.buttonGreen}
               onPress={addWishlistItem}>
