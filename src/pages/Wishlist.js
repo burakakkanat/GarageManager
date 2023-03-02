@@ -1,9 +1,9 @@
 import { Alert, FlatList, Modal, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
-import React, { useContext, useState } from 'react';
 import { WishlistContext } from '../context/WishlistContext';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useFocusEffect } from '@react-navigation/native';
 import { GarageContext } from '../context/GarageContext';
+import React, { useContext, useState } from 'react';
 import styles from '../styles/Styles';
 import uuid from 'react-native-uuid';
 import util from '../util/Util';
@@ -222,6 +222,7 @@ const Wishlist = () => {
             />
 
             <DropDownPicker
+              dropDownDirection='BOTTOM'
               closeOnBackPressed={true}
               setOpen={setPickerOpen}
               open={pickerOpen}
@@ -231,33 +232,19 @@ const Wishlist = () => {
               placeholder='Choose a theme'
               listMode='SCROLLVIEW'
 
-              containerStyle={styles.containerPickerWishlist}
-              dropDownContainerStyle={{
-                borderWidth: 0.5,
-                elevation: 5,
-                maxHeight: 260
-              }}
-              placeholderStyle={{
-                fontFamily: util.getFontName(),
-                fontSize: 12,
-                color: 'grey'
-              }}
-              style={{
-                borderWidth: 0.5,
-                elevation: 5
-              }}
-              textStyle={{
-                fontFamily: util.getFontName(),
-                fontSize: 12
-              }}
+              dropDownContainerStyle={styles.dropDownWishlistDropDownContainerStyle}
+              placeholderStyle={styles.dropDownWishlistPlaceholderStyle}
+              containerStyle={styles.dropDownWishlistContainerStyle}
+              textStyle={styles.dropDownWishlistTextStyle}
+              style={styles.dropDownWishlistStyle}
 
               items={garageObjects.map((garageObject, index) => ({
                 label: garageObject.theme,
                 value: garageObject.theme,
               }))}
 
-              value={selectedGarageTheme}
               setValue={setSelectedGarageTheme}
+              value={selectedGarageTheme}
 
               onSelectItem={(item) =>
                 setWishlistObject({ ...wishlistObject, garageTheme: item.value })

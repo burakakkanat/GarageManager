@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
         position: 'absolute',
         width: '100%',
-        zIndex:1
+        zIndex: 1
     },
     containerHeader: {
         alignItems: 'center',
@@ -50,6 +50,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#2D640F',
         height: 50,
         justifyContent: 'center'
+    },
+    containerForGarageList: {
+        borderBottomWidth: 1,
+        borderColor: 'lightgrey',
+        flexDirection: 'row',
+        padding: 8
     },
     containerForLists: {
         borderBottomWidth: 1,
@@ -64,28 +70,60 @@ const styles = StyleSheet.create({
         padding: 10,
         paddingTop: 0
     },
-    containerForGarageList: {
-        borderBottomWidth: 1,
-        borderColor: 'lightgrey',
-        flexDirection: 'row',
-        padding: 8
-    },
-    containerPickerAddVehicle: {
-        height: '100%',
-        marginRight: 10,
-        width: '52%'
-    },
-    containerPickerWishlist: {
-        height: '100%',
-        margin: 10,
-        width: '95%'
-    },
     containerWishlistHeader: {
         alignItems: 'center',
         backgroundColor: '#2D640F',
         flexDirection: 'row',
         justifyContent: 'space-between',
         padding: 10
+    },
+    dropDownAddVehicleContainerStyle: {
+        height: '100%',
+        marginRight: 10,
+        width: '52%'
+    },
+    dropDownAddVehicleDropDownContainerStyle: {
+        backgroundColor: '#F2F2F2',
+        elevation: 5,
+        maxHeight: 260
+    },
+    dropDownAddVehiclePlaceholderStyle: {
+        fontFamily: util.getFontName(),
+        fontSize: 12,
+        color: 'grey'
+    },
+    dropDownAddVehicleStyle: {
+        backgroundColor: '#F2F2F2',
+        bottom: 0,
+        elevation: 5,
+        position: 'absolute'
+    },
+    dropDownAddVehicleTextStyle: {
+        fontFamily: util.getFontName(),
+        fontSize: 10
+    },
+    dropDownWishlistContainerStyle: {
+        height: '100%',
+        margin: 10,
+        width: '95%'
+    },
+    dropDownWishlistDropDownContainerStyle: {
+        borderWidth: 0.5,
+        elevation: 5,
+        maxHeight: 260
+    },
+    dropDownWishlistPlaceholderStyle: {
+        fontFamily: util.getFontName(),
+        fontSize: 12,
+        color: 'grey'
+    },
+    dropDownWishlistStyle: {
+        borderWidth: 0.5,
+        elevation: 5
+    },
+    dropDownWishlistTextStyle: {
+        fontFamily: util.getFontName(),
+        fontSize: 12
     },
     header: {
         color: 'white',
