@@ -130,9 +130,10 @@ const Vehicles = () => {
 
   return (
     <View >
-
       <ScrollView style={{ zIndex: 0 }}>
+
         <View style={styles.separatorTop} />
+
         {vehicleObjects.map((vehicleObj, index) => (
           <View key={index} style={styles.containerForLists}>
             <TouchableOpacity>
@@ -156,6 +157,8 @@ const Vehicles = () => {
             </View>
           </View>
         ))}
+
+        <View style={{height:110}}></View>
       </ScrollView>
 
       <View style={[styles.containerAddNewVehicle, { height: addNewVehicleContainerHeight }]}>
