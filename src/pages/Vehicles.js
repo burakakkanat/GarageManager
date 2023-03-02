@@ -180,10 +180,12 @@ const Vehicles = () => {
           style={{
             backgroundColor: '#F2F2F2',
             bottom: 0,
+            elevation: 5,
             position: 'absolute'
           }}
           dropDownContainerStyle={{
             backgroundColor: '#F2F2F2',
+            elevation: 5,
             maxHeight: 220
           }}
           textStyle={{
