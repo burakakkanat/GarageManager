@@ -158,7 +158,7 @@ const Vehicles = () => {
           </View>
         ))}
 
-        <View style={{height:110}}></View>
+        <View style={{ height: 110 }}></View>
       </ScrollView>
 
       <View style={[styles.containerAddNewVehicle, { height: addNewVehicleContainerHeight }]}>
@@ -178,30 +178,30 @@ const Vehicles = () => {
           searchable={true}
           open={pickerOpen}
 
-          listMode='SCROLLVIEW'
           searchPlaceholder='Search garage location...'
           placeholder='Choose a garage'
+          listMode='SCROLLVIEW'
 
           containerStyle={styles.containerPickerAddVehicle}
+          dropDownContainerStyle={{
+            backgroundColor: '#F2F2F2',
+            elevation: 5,
+            maxHeight: 260
+          }}
+          placeholderStyle={{
+            fontFamily: util.getFontName(),
+            fontSize: 12,
+            color: 'grey'
+          }}
           style={{
             backgroundColor: '#F2F2F2',
             bottom: 0,
             elevation: 5,
             position: 'absolute'
           }}
-          dropDownContainerStyle={{
-            backgroundColor: '#F2F2F2',
-            elevation: 5,
-            maxHeight: 220
-          }}
           textStyle={{
             fontFamily: util.getFontName(),
             fontSize: 10
-          }}
-          placeholderStyle={{
-            fontFamily: util.getFontName(),
-            fontSize: 12,
-            color: 'grey'
           }}
 
           items={garageObjects.map((garageObject, index) => ({
@@ -216,7 +216,7 @@ const Vehicles = () => {
             setVehicleObject({ ...vehicleObject, garageLocation: item.value })
           }}
           onOpen={() => {
-            setAddVehicleContainerHeight(275);
+            setAddVehicleContainerHeight(250);
           }}
           onClose={() => {
             setAddVehicleContainerHeight(55);
@@ -227,7 +227,7 @@ const Vehicles = () => {
       <TouchableOpacity
         onPress={addNewVehicle}
         disabled={loading}
-        style={[styles.buttonGreen, { bottom: 0, position: 'absolute', width:'95%', zIndex: 1 }]}
+        style={[styles.buttonGreen, { bottom: 0, position: 'absolute', width: '95%', zIndex: 1 }]}
       >
         <Text style={styles.textButton}>Add New Vehicle</Text>
       </TouchableOpacity>
