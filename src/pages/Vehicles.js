@@ -13,8 +13,8 @@ const Vehicles = () => {
   const { garageObjects, setGarageObjects } = useContext(GarageContext);
   const { vehicleObjects, setVehicleObjects } = useContext(VehicleContext);
 
+  const [addNewVehicleContainerHeight, setAddVehicleContainerHeight] = useState(55);
   const [selectedGarageLocation, setSelectedGarageLocation] = useState('');
-  const [pickerItemsLoading, setPickerItemsLoading] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -129,9 +129,9 @@ const Vehicles = () => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View >
 
-      <ScrollView>
+      <ScrollView style={{ zIndex: 0 }}>
         <View style={styles.separatorTop} />
         {vehicleObjects.map((vehicleObj, index) => (
           <View key={index} style={styles.containerForLists}>
@@ -158,7 +158,7 @@ const Vehicles = () => {
         ))}
       </ScrollView>
 
-      <View style={styles.containerAddNewVehicle}>
+      <View style={[styles.containerAddNewVehicle, { height: addNewVehicleContainerHeight }]}>
 
         <TextInput
           value={vehicleObject.vehicleName}
@@ -169,11 +169,37 @@ const Vehicles = () => {
         />
 
         <DropDownPicker
-          loading={pickerItemsLoading}
           closeOnBackPressed={true}
-          dropDownDirection='TOP'
           setOpen={setPickerOpen}
+          dropDownDirection='TOP'
+          searchable={true}
           open={pickerOpen}
+
+          listMode='SCROLLVIEW'
+          searchPlaceholder='Search garage location...'
+          placeholder='Choose a garage'
+
+          containerStyle={styles.containerPickerAddVehicle}
+          style={{
+            backgroundColor: '#F2F2F2',
+            bottom: 0,
+            elevation: 5,
+            position: 'absolute'
+          }}
+          dropDownContainerStyle={{
+            backgroundColor: '#F2F2F2',
+            elevation: 5,
+            maxHeight: 220
+          }}
+          textStyle={{
+            fontFamily: util.getFontName(),
+            fontSize: 10
+          }}
+          placeholderStyle={{
+            fontFamily: util.getFontName(),
+            fontSize: 12,
+            color: 'grey'
+          }}
 
           items={garageObjects.map((garageObject, index) => ({
             label: garageObject.location,
@@ -186,32 +212,11 @@ const Vehicles = () => {
           onSelectItem={(item) => {
             setVehicleObject({ ...vehicleObject, garageLocation: item.value })
           }}
-
-          listMode='MODAL'  // #TODO: Change when dropdown bug is fixed
-          modalTitle='Your Garage Locations' //#TODO: Change when dropdown bug is fixed
-
-          scrollViewProps={{
-            nestedScrollEnabled: true
+          onOpen={() => {
+            setAddVehicleContainerHeight(275);
           }}
-
-          containerStyle={styles.containerPickerAddVehicle}
-          dropDownContainerStyle={{
-            backgroundColor: '#F2F2F2',
-            height: 500
-          }}
-          style={{ backgroundColor: '#F2F2F2' }}
-          itemStyle={{ justifyContent: 'flex-start' }}
-
-          textStyle={{
-            fontFamily: util.getFontName(),
-            fontSize: 10
-          }}
-
-          placeholder='Choose a garage'
-          placeholderStyle={{
-            fontFamily: util.getFontName(),
-            fontSize: 12,
-            color: 'grey'
+          onClose={() => {
+            setAddVehicleContainerHeight(55);
           }}
         />
       </View>
@@ -219,14 +224,14 @@ const Vehicles = () => {
       <TouchableOpacity
         onPress={addNewVehicle}
         disabled={loading}
-        style={styles.buttonGreen}
+        style={[styles.buttonGreen, { bottom: 0, position: 'absolute', width:'95%', zIndex: 1 }]}
       >
         <Text style={styles.textButton}>Add New Vehicle</Text>
       </TouchableOpacity>
 
       {loading && (
         <View style={styles.loadingContainer}>
-          <BlurView blurType='light' blurAmount={5} style={StyleSheet.absoluteFill}>
+          <BlurView blurType='light' blurAmount={3} style={StyleSheet.absoluteFill}>
             <View style={styles.loadingIndicator}>
               <ActivityIndicator size='large' color='#2D640F' />
             </View>

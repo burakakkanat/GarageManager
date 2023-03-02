@@ -103,12 +103,15 @@ const Garages = () => {
 
       garageObject.uuid = uuid.v4();
 
-      const newGarageObjects = [...garageObjects];
-      const garageInsertionIndex = util.findGarageInsertionIndex(newGarageObjects, garageObject);
-      newGarageObjects.splice(garageInsertionIndex, 0, garageObject);
+      setGarageObjects(prevGarageObjects => {
+        const newGarageObjects = [...prevGarageObjects];
+        const garageInsertionIndex = util.findGarageInsertionIndex(newGarageObjects, garageObject);
+        newGarageObjects.splice(garageInsertionIndex, 0, garageObject);
+        
+        util.saveObject('@GarageObjectList', newGarageObjects);
 
-      setGarageObjects(newGarageObjects);
-      await util.saveObject('@GarageObjectList', newGarageObjects);
+        return newGarageObjects;
+      });
 
       await setEmptyGarageObject();
       setAddGarageModalVisible(false);
@@ -362,7 +365,7 @@ const Garages = () => {
           setShowGarageDetailsVisible(false);
         }}
       >
-        <View style={styles.headerContainer}>
+        <View style={styles.containerHeader}>
           <Text style={styles.header}>{garageObject.location + ' '}</Text>
         </View>
 
@@ -463,7 +466,7 @@ const Garages = () => {
           setAddGarageModalVisible(false);
         }}
       >
-        <View style={styles.headerContainer}>
+        <View style={styles.containerHeader}>
           <Text style={styles.header}>Add New Garage</Text>
         </View>
 
@@ -554,7 +557,7 @@ const Garages = () => {
           setEditGarageModalVisible(false);
         }}
       >
-        <View style={styles.headerContainer}>
+        <View style={styles.containerHeader}>
           <Text style={styles.header}>Edit Garage</Text>
         </View>
 

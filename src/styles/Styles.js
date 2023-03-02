@@ -3,56 +3,60 @@ import util from '../util/Util';
 
 const styles = StyleSheet.create({
     buttonGreen: {
-        padding: 10,
-        backgroundColor: '#2D640F',
         alignItems: 'center',
+        backgroundColor: '#2D640F',
+        borderRadius: 10,
+        elevation: 5,
         justifyContent: 'center',
-        margin: 10
+        margin: 10,
+        padding: 10
     },
     buttonRed: {
-        padding: 10,
-        backgroundColor: '#c70000',
         alignItems: 'center',
+        backgroundColor: '#c70000',
+        borderRadius: 10,
+        elevation: 5,
         justifyContent: 'center',
-        margin: 10
+        margin: 10,
+        padding: 10
     },
     buttonYellow: {
-        padding: 10,
-        backgroundColor: 'orange',
         alignItems: 'center',
+        backgroundColor: 'orange',
+        borderRadius: 10,
+        elevation: 5,
         justifyContent: 'center',
-        margin: 10
+        margin: 10,
+        padding: 10
     },
     containerAddNewVehicle: {
+        alignItems: 'flex-end',
+        bottom: 60,
+        backgroundColor: 'rgba(125,125,125,0)',
         flexDirection: 'row',
+        justifyContent: 'flex-end',
+        position: 'absolute',
+        width: '100%',
+        zIndex:1
+    },
+    containerHeader: {
         alignItems: 'center',
-        marginBottom: 0,
-        marginTop: 0,
-        margin: 10,
-        borderTopWidth: 1,
-        borderTopColor: '#ccc'
-    },
-    containerPickerAddVehicle: {
-        height: '80%',
-        width: '55%',
-    },
-    containerPickerWishlist: {
-        marginLeft: 10,
-        width: '95%'
-    },
-    containerWishlistHeader: {
         backgroundColor: '#2D640F',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        padding: 10,
+        height: 50,
+        justifyContent: 'center'
+    },
+    containerHeaderMain: {
         alignItems: 'center',
+        backgroundColor: '#2D640F',
+        height: 50,
+        justifyContent: 'center'
     },
     containerForLists: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
         borderBottomWidth: 1,
         borderColor: 'lightgrey',
-        padding: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        padding: 10
     },
     containerForSimpleLists: {
         flexDirection: 'row',
@@ -61,150 +65,149 @@ const styles = StyleSheet.create({
         paddingTop: 0
     },
     containerForGarageList: {
-        flexDirection: 'row',
         borderBottomWidth: 1,
         borderColor: 'lightgrey',
-        padding: 8,
+        flexDirection: 'row',
+        padding: 8
     },
-    loadingContainer: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        bottom: 0,
-        right: 0,
+    containerPickerAddVehicle: {
+        height: '100%',
+        marginRight: 10,
+        width: '52%'
+    },
+    containerPickerWishlist: {
+        marginLeft: 10,
+        width: '95%'
+    },
+    containerWishlistHeader: {
         alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // semi-transparent black background
-        zIndex: 999 // ensure the loading indicator is on top of everything else
-    },
-    loadingIndicator: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
+        backgroundColor: '#2D640F',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        padding: 10
     },
     header: {
-        marginTop: 10,
-        fontSize: 30,
         color: 'white',
-        fontFamily: 'SignPainter-HouseScript'
+        fontFamily: 'SignPainter-HouseScript',
+        fontSize: 30,
+        marginTop: 10
     },
     headerMain: {
-        marginTop: 5,
-        fontSize: 30,
         color: 'white',
-        fontFamily: 'SignPainter-HouseScript'
+        fontFamily: 'SignPainter-HouseScript',
+        fontSize: 30,
+        marginTop: 5
     },
-    headerContainer: {
-        backgroundColor: '#2D640F',
+    loadingContainer: {
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        bottom: 0,
         justifyContent: 'center',
-        height: 50,
-        alignItems: 'center'
+        left: 0,
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        zIndex: 999
     },
-    headerContainerMain: {
-        backgroundColor: '#2D640F',
+    loadingIndicator: {
+        alignItems: 'center',
+        flex: 1,
         justifyContent: 'center',
-        height: 50,
-        alignItems: 'center'
-    },
-    screenOptons: {
-        tabBarLabelStyle: { fontFamily: util.getBoldFontName(), fontSize: 12 },
-        "tabBarActiveTintColor": '#FFFFFF',
-        "tabBarInactiveTintColor": '#B3E5FC',
-        "tabBarIndicatorStyle": { backgroundColor: '#FFFFFF' },
-        "tabBarStyle": { backgroundColor: '#2D640F' },
     },
     separator: {
-        width: '100%',
-        height: 1,
         backgroundColor: 'lightgrey',
+        height: 1,
         marginVertical: 5,
+        width: '100%'
     },
     separatorTop: {
-        width: '100%',
-        height: 1,
         backgroundColor: 'lightgrey',
-        marginTop: 3
+        height: 1,
+        marginTop: 3,
+        width: '100%'
     },
     textButton: {
-        fontFamily: util.getBoldFontName(),
         color: 'white',
+        fontFamily: util.getBoldFontName(),
         fontSize: 12
     },
     textGarageDetails: {
-        fontFamily: util.getFontName(),
         color: 'grey',
-        fontSize: 12,
+        fontFamily: util.getFontName(),
+        fontSize: 12
+    },
+    textGarageDetailsSoftTitle: {
+        color: 'grey',
+        fontFamily: util.getBoldFontName(),
+        fontSize: 12
     },
     textGarageDetailsTitle: {
-        fontFamily: util.getBoldFontName(),
         color: 'black',
+        fontFamily: util.getBoldFontName(),
         fontSize: 15,
         margin: 10
     },
-    textGarageDetailsSoftTitle: {
-        fontFamily: util.getBoldFontName(),
-        color: 'grey',
-        fontSize: 12,
-    },
     textHeaderWishlist: {
-        fontFamily: util.getFontName(),
-        fontSize: 12,
         color: '#F2F2F2',
+        fontFamily: util.getFontName(),
+        fontSize: 12
     },
     textInput: {
-        color: 'black',
         borderWidth: 0.5,
-        margin: 10,
-        height: 40,
+        color: 'black',
         fontFamily: util.getFontName(),
-        fontSize: 12
+        fontSize: 12,
+        height: 40,
+        margin: 10
     },
     textInputNewVehicleName: {
-        height: '85%',
-        borderColor: 'gray',
-        color: 'black',
+        backgroundColor: '#F2F2F2',
+        borderColor: 'black',
+        borderRadius: 10,
         borderWidth: 1,
-        flex: 1,
-        marginRight: 10,
-        marginTop: 5,
+        color: 'black',
+        elevation: 5,
         fontFamily: util.getFontName(),
-        fontSize: 12
+        fontSize: 12,
+        height: 50,
+        marginRight: 10,
+        width: '41%'
     },
     textListItemGarageB: {
-        fontFamily: util.getBoldFontName(),
         color: 'black',
+        fontFamily: util.getBoldFontName(),
         fontSize: 11
     },
     textListItemGarageM: {
-        fontFamily: util.getFontName(),
         color: 'black',
+        fontFamily: util.getFontName(),
         fontSize: 11
     },
     textListItemVehicleB: {
-        fontFamily: util.getBoldFontName(),
         color: 'black',
+        fontFamily: util.getBoldFontName(),
         fontSize: 10.5
     },
     textListItemVehicleM: {
-        fontFamily: util.getFontName(),
         color: 'black',
+        fontFamily: util.getFontName(),
         fontSize: 10.5
     },
     textSoftTitle: {
-        fontFamily: util.getBoldFontName(),
         color: 'black',
+        fontFamily: util.getBoldFontName(),
         fontSize: 10.5,
         margin: 10
     },
     textWishlistObjectM: {
-        fontFamily: util.getFontName(),
-        fontSize: 10,
         color: 'black',
+        fontFamily: util.getFontName(),
+        fontSize: 10
     },
     textWishlistObjectB: {
-        fontFamily: util.getBoldFontName(),
-        fontSize: 10,
         color: 'black',
+        fontFamily: util.getBoldFontName(),
+        fontSize: 10
     }
 });
 
