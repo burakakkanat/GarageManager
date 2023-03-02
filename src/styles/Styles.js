@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
     },
     containerAddNewVehicle: {
         alignItems: 'flex-end',
+        backgroundColor: 'transparent',
         borderTopColor: 'grey',
         borderTopWidth: 1,
         flexDirection: 'row',

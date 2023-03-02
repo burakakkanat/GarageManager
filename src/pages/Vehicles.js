@@ -173,8 +173,11 @@ const Vehicles = () => {
           setOpen={setPickerOpen}
           dropDownDirection='TOP'
           searchable={true}
-          searchPlaceholder={'Search garage location...'}
           open={pickerOpen}
+
+          listMode='SCROLLVIEW'
+          searchPlaceholder='Search garage location...'
+          placeholder='Choose a garage'
 
           containerStyle={styles.containerPickerAddVehicle}
           style={{
@@ -191,6 +194,11 @@ const Vehicles = () => {
           textStyle={{
             fontFamily: util.getFontName(),
             fontSize: 10
+          }}
+          placeholderStyle={{
+            fontFamily: util.getFontName(),
+            fontSize: 12,
+            color: 'grey'
           }}
 
           items={garageObjects.map((garageObject, index) => ({
@@ -209,15 +217,6 @@ const Vehicles = () => {
           }}
           onClose={() => {
             setAddVehicleContainerHeight(55);
-          }}
-
-          listMode='SCROLLVIEW'
-
-          placeholder='Choose a garage'
-          placeholderStyle={{
-            fontFamily: util.getFontName(),
-            fontSize: 12,
-            color: 'grey'
           }}
         />
       </View>
