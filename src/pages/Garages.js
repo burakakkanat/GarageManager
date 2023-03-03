@@ -1,5 +1,5 @@
 import { Alert, Modal, ScrollView, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { WishlistContext } from '../context/WishlistContext';
 import dataManagementUtil from '../util/DataManagementUtil';
 import { VehicleContext } from '../context/VehicleContext';
@@ -63,6 +63,22 @@ const Garages = () => {
       setEmptyGarageObject();
     }, [])
   );
+
+  const memoizedGarageObjects = useMemo(() => garageObjects.map((currentGarageObject, index) => (
+    <View key={index} style={styles.containerGarageList}>
+      <View style={{ flex: 1 }}>
+        <TouchableOpacity onPress={() => showGarageDetails(currentGarageObject)}>
+          <Text style={styles.textListItemGarageB}>{currentGarageObject.location}</Text>
+        </TouchableOpacity>
+      </View>
+  
+      <View style={{ flex: 1 }}>
+        <TouchableOpacity onPress={() => showGarageDetails(currentGarageObject)}>
+          <Text style={styles.textListItemGarageM}>{currentGarageObject.theme}</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  )), [garageObjects]);
 
   function setVehicleObjectsAndWishlistObjects(garageObjectList) {
 
@@ -334,24 +350,8 @@ const Garages = () => {
     <View style={{ flex: 1 }}>
 
       <ScrollView>
-
         <View style={styles.separatorTop} />
-
-        {garageObjects.map((currentGarageObject, index) => (
-          <View key={index} style={styles.containerGarageList}>
-            <View style={{ flex: 1 }}>
-              <TouchableOpacity onPress={() => showGarageDetails(currentGarageObject)}>
-                <Text style={styles.textListItemGarageB}>{currentGarageObject.location}</Text>
-              </TouchableOpacity>
-            </View>
-
-            <View style={{ flex: 1 }}>
-              <TouchableOpacity onPress={() => showGarageDetails(currentGarageObject)}>
-                <Text style={styles.textListItemGarageM}>{currentGarageObject.theme}</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        ))}
+        {memoizedGarageObjects}
       </ScrollView>
 
       <TouchableOpacity

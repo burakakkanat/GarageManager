@@ -1,10 +1,10 @@
 import { ActivityIndicator, Alert, Linking, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import { InAppBrowser } from 'react-native-inappbrowser-reborn'
+import React, { useContext, useMemo, useState } from 'react';
 import { VehicleContext } from '../context/VehicleContext';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { GarageContext } from '../context/GarageContext';
 import { BlurView } from '@react-native-community/blur';
-import React, { useContext, useState } from 'react';
 import styles from '../styles/Styles';
 import uuid from 'react-native-uuid';
 import util from '../util/Util';
@@ -24,6 +24,30 @@ const Vehicles = () => {
     uuid: '',
     vehicleName: '',
   });
+
+  const memoizedVehicleObjects = useMemo(() => vehicleObjects.map((vehicleObj, index) => (
+    <View key={index} style={styles.containerList}>
+      <TouchableOpacity onPress={() => util.openVehicleFandomPage(vehicleObj.vehicleName)}>
+        <Text style={styles.textListItemVehicleB}>
+          {vehicleObj.vehicleName}
+        </Text>
+      </TouchableOpacity>
+
+      <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
+        <TouchableOpacity
+          style={{ marginRight: 20 }}>
+          <Text style={styles.textListItemVehicleM}>
+            {'at ' + vehicleObj.garageLocation}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => removeVehicle(vehicleObj)}>
+          <Text style={styles.buttonRemoveVehicle}>Remove</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  )), [vehicleObjects]);
 
   const addNewVehicle = async () => {
 
@@ -95,12 +119,14 @@ const Vehicles = () => {
               setLoading(true);
 
               // Remove from the garage
-              const garageIndex = garageObjects.findIndex((garageObj) => garageObj.location === vehicleObjectToRemove.garageLocation);
-              const garageObject = garageObjects[garageIndex];
-              const newVehicleList = garageObject.vehicles.filter((vehicleObj) => vehicleObj.uuid !== vehicleObjectToRemove.uuid);
-              garageObjects[garageIndex] = { ...garageObject, vehicles: newVehicleList };
+              const newGarageObjects = [...garageObjects];
+              const garageIndex = newGarageObjects.findIndex((garageObj) => garageObj.location === vehicleObjectToRemove.garageLocation);
+              const newGarageObject = newGarageObjects[garageIndex];
+              const newVehicleList = newGarageObject.vehicles.filter((vehicleObj) => vehicleObj.uuid !== vehicleObjectToRemove.uuid);
+              newGarageObjects[garageIndex] = { ...newGarageObject, vehicles: newVehicleList };
 
-              await util.saveObject('@GarageObjectList', garageObjects);
+              setGarageObjects(newGarageObjects);
+              await util.saveObject('@GarageObjectList', newGarageObjects);
 
               // Remove from vehicleObjects
               const indexToRemove = vehicleObjects.findIndex(vehicleObj => vehicleObj.uuid === vehicleObjectToRemove.uuid);
@@ -132,33 +158,8 @@ const Vehicles = () => {
   return (
     <View >
       <ScrollView style={{ zIndex: 0 }}>
-
         <View style={styles.separatorTop} />
-
-        {vehicleObjects.map((vehicleObj, index) => (
-          <View key={index} style={styles.containerList}>
-            <TouchableOpacity onPress={() => util.openVehicleFandomPage(vehicleObj.vehicleName)}>
-              <Text style={styles.textListItemVehicleB}>
-                {vehicleObj.vehicleName}
-              </Text>
-            </TouchableOpacity>
-
-            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
-              <TouchableOpacity
-                style={{ marginRight: 20 }}>
-                <Text style={styles.textListItemVehicleM}>
-                  {'at ' + vehicleObj.garageLocation}
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => removeVehicle(vehicleObj)}>
-                <Text style={styles.buttonRemoveVehicle}>Remove</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        ))}
-
+        {memoizedVehicleObjects}
         <View style={{ height: 110 }}></View>
       </ScrollView>
 

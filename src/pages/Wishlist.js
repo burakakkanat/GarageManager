@@ -1,9 +1,9 @@
 import { Alert, FlatList, Modal, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import React, { useContext, useMemo, useState } from 'react';
 import { WishlistContext } from '../context/WishlistContext';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useFocusEffect } from '@react-navigation/native';
 import { GarageContext } from '../context/GarageContext';
-import React, { useContext, useState } from 'react';
 import styles from '../styles/Styles';
 import uuid from 'react-native-uuid';
 import util from '../util/Util';
@@ -30,6 +30,29 @@ const Wishlist = () => {
       setPickerOpen(false);
     }, [])
   );
+
+  const memoizedRenderWishlistObject = useMemo(() => ({ item: wishlistItem }) => {
+    return (
+      <TouchableOpacity
+        style={styles.containerList}
+        onPress={() => util.openVehicleFandomPage(wishlistItem.vehicleName)}
+        onLongPress={() => removeWishlistObject(wishlistItem)}
+      >
+        <View style={styles.containerWishlistText}>
+          <Text style={styles.textWishlistObjectB}>{wishlistItem.vehicleName}</Text>
+        </View>
+        <View style={styles.containerWishlistText}>
+          <Text style={styles.textWishlistObjectM}>{wishlistItem.garageTheme}</Text>
+        </View>
+        <View style={styles.containerWishlistText}>
+          <Text style={styles.textWishlistObjectB}>{wishlistItem.price}</Text>
+        </View>
+        <View style={styles.containerWishlistText}>
+          <Text style={styles.textWishlistObjectM}>{wishlistItem.tradePrice}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  }, []);
 
   const setEmptyWishlistObject = async () => {
     setWishlistObject({ garageTheme: '', vehicleName: '', price: '', tradePrice: '' });
@@ -95,12 +118,14 @@ const Wishlist = () => {
             try {
 
               // Remove from garage
-              const garageIndex = garageObjects.findIndex((garageObj) => garageObj.theme === whislistItemToRemove.garageTheme);
-              const garageObject = garageObjects[garageIndex];
-              const newWishlist = garageObject.wishlist.filter((wishlistObj) => wishlistObj.uuid !== whislistItemToRemove.uuid);
-              garageObjects[garageIndex] = { ...garageObject, wishlist: newWishlist };
+              const newGarageObjects = [...garageObjects];
+              const garageIndex = newGarageObjects.findIndex((garageObj) => garageObj.theme === whislistItemToRemove.garageTheme);
+              const newGarageObject = newGarageObjects[garageIndex];
+              const newWishlist = newGarageObject.wishlist.filter((wishlistObj) => wishlistObj.uuid !== whislistItemToRemove.uuid);
+              newGarageObjects[garageIndex] = { ...newGarageObject, wishlist: newWishlist };
 
-              await util.saveObject('@GarageObjectList', garageObjects);
+              setGarageObjects(newGarageObjects);
+              await util.saveObject('@GarageObjectList', newGarageObjects);
 
               // Remove from wishlistObjects
               const indexToRemove = wishlistObjects.findIndex(wishlistObj => wishlistObj.uuid === whislistItemToRemove.uuid);
@@ -126,29 +151,6 @@ const Wishlist = () => {
     );
   };
 
-  const renderWishlistObject = ({ item }) => {
-    return (
-      <TouchableOpacity style={styles.containerList}
-        onPress={() => util.openVehicleFandomPage(item.vehicleName)}
-        onLongPress={() => removeWishlistObject(item)}>
-
-        <View style={styles.containerWishlistText}>
-          <Text style={styles.textWishlistObjectB}>{item.vehicleName}</Text>
-        </View>
-        <View style={styles.containerWishlistText}>
-          <Text style={styles.textWishlistObjectM}>{item.garageTheme}</Text>
-        </View>
-        <View style={styles.containerWishlistText}>
-          <Text style={styles.textWishlistObjectB}>{item.price}</Text>
-        </View>
-        <View style={styles.containerWishlistText}>
-          <Text style={styles.textWishlistObjectM}>{item.tradePrice}</Text>
-        </View>
-
-      </TouchableOpacity>
-    );
-  };
-
   return (
     <View style={{ flex: 1 }}>
 
@@ -170,7 +172,7 @@ const Wishlist = () => {
       <FlatList
         data={wishlistObjects}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={renderWishlistObject}
+        renderItem={memoizedRenderWishlistObject}
       />
 
       <TouchableOpacity
