@@ -201,8 +201,12 @@ const Garages = () => {
               await util.saveObject('@GarageObjectList', newGarageObjects);
 
               // Set new vehicles list for Vehicles page
-              await removeVehicleObjects(oldGarageLocation);
-              await removeWishlistObjects(oldGarageTheme);
+              if (garageObject.vehicles.length !== 0) {
+                await removeVehicleObjects(oldGarageLocation);
+              }
+              if (garageObject.wishlist.length !== 0) {
+                await removeWishlistObjects(oldGarageTheme);
+              }
 
               await setEmptyGarageObject();
               setShowGarageDetailsVisible(false);
@@ -375,7 +379,7 @@ const Garages = () => {
 
             <View style={styles.separatorTop} />
 
-            <Text style={styles.textGarageDetailsTitle}>{'Garage Details'}</Text>
+            <Text style={styles.textGarageDetailsTitle}>{'Details'}</Text>
 
             <View style={styles.containerGarageDetailsSoftTitle}>
               <Text style={styles.textGarageDetailsSoftTitle}>Theme: </Text>
@@ -394,7 +398,7 @@ const Garages = () => {
 
             <View style={styles.separatorTop} />
 
-            <Text style={styles.textGarageDetailsTitle}>{'Vehicles in Garage' + ' (' + garageObject.vehicles.length + ')'}</Text>
+            <Text style={styles.textGarageDetailsTitle}>{'Vehicles' + ' (' + garageObject.vehicles.length + ')'}</Text>
 
             <View>
               {garageObject.vehicles && garageObject.vehicles.map((vehicleObj, index) => (
@@ -421,7 +425,7 @@ const Garages = () => {
 
             <View style={styles.separatorTop} />
 
-            <Text style={styles.textGarageDetailsTitle}>{'Wishlist for This Garage' + ' (' + garageObject.wishlist.length + ')'}</Text>
+            <Text style={styles.textGarageDetailsTitle}>{'Wishlist' + ' (' + garageObject.wishlist.length + ')'}</Text>
 
             <View>{garageObject.wishlist && garageObject.wishlist.map((wishlistObj, index) => (
               <View key={index} style={styles.containerSimpleLists}>
