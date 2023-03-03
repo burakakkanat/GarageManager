@@ -1,4 +1,7 @@
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { InAppBrowser } from 'react-native-inappbrowser-reborn';
+import { Alert, Linking } from 'react-native';
 
 const util = {
     saveObject: async (key, object) => {
@@ -116,6 +119,42 @@ const util = {
     },
     getBoldFontName: function () {
         return 'FOTNewRodin Pro B';
+    },
+    openVehicleFandomPage: async (vehicleName) => {
+        try {
+
+            const editedVehicleName = getEditedVehicleName(vehicleName);
+            const url = 'https://gta.fandom.com/wiki/' + editedVehicleName;
+
+            if (await InAppBrowser.isAvailable()) {
+                await InAppBrowser.open(url, {
+                    enableDefaultShare: false,
+                    enableUrlBarHiding: true,
+                    forceCloseOnRedirection: false,
+                    navigationBarColor: 'black',
+                    navigationBarDividerColor: 'white',
+                    secondaryToolbarColor: 'black',
+                    showInRecents: false,
+                    showTitle: true,
+                    toolbarColor: '#2D640F'
+                })
+            } else {
+                Linking.openURL(url)
+            }
+        } catch (error) {
+            Alert.alert(error.message)
+        }
+    }
+}
+
+function getEditedVehicleName(vehicleName) {
+    if (vehicleName === 'Stromberg') {
+        return 'Stromberg_(car)';
+    } else if (vehicleName === 'Dukes') {
+        return 'Dukes_(car)';
+    }
+    else {
+        return vehicleName.replaceAll(' ', '_');
     }
 }
 
