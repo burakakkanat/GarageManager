@@ -128,7 +128,10 @@ const Wishlist = () => {
 
   const renderWishlistObject = ({ item }) => {
     return (
-      <TouchableOpacity style={styles.containerList} onPress={() => removeWishlistObject(item)}>
+      <TouchableOpacity style={styles.containerList}
+        onPress={() => util.openVehicleFandomPage(item.vehicleName)}
+        onLongPress={() => removeWishlistObject(item)}>
+
         <View style={styles.containerWishlistText}>
           <Text style={styles.textWishlistObjectB}>{item.vehicleName}</Text>
         </View>
@@ -141,6 +144,7 @@ const Wishlist = () => {
         <View style={styles.containerWishlistText}>
           <Text style={styles.textWishlistObjectM}>{item.tradePrice}</Text>
         </View>
+
       </TouchableOpacity>
     );
   };
