@@ -1,5 +1,4 @@
 import { ActivityIndicator, Alert, Linking, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
-import { InAppBrowser } from 'react-native-inappbrowser-reborn'
 import React, { useContext, useMemo, useState } from 'react';
 import { VehicleContext } from '../context/VehicleContext';
 import DropDownPicker from 'react-native-dropdown-picker';
