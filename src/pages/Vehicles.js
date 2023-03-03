@@ -1,4 +1,5 @@
-import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Linking, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import { InAppBrowser } from 'react-native-inappbrowser-reborn'
 import { VehicleContext } from '../context/VehicleContext';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { GarageContext } from '../context/GarageContext';
@@ -128,6 +129,32 @@ const Vehicles = () => {
     );
   };
 
+  const openVehicleFandomPage = async (vehicleName) => {
+    try {
+
+      const editedVehicleName = vehicleName.replaceAll(' ', '_');
+      const url = 'https://gta.fandom.com/wiki/' + editedVehicleName;
+
+      if (await InAppBrowser.isAvailable()) {
+        await InAppBrowser.open(url, {
+          enableDefaultShare: false,
+          enableUrlBarHiding: true,
+          forceCloseOnRedirection: false,
+          navigationBarColor: 'black',
+          navigationBarDividerColor: 'white',
+          secondaryToolbarColor: 'black',
+          showInRecents: false,
+          showTitle: true,
+          toolbarColor: '#2D640F'
+        })
+      } else {
+        Linking.openURL(url)
+      }
+    } catch (error) {
+      Alert.alert(error.message)
+    }
+  };
+
   return (
     <View >
       <ScrollView style={{ zIndex: 0 }}>
@@ -136,7 +163,7 @@ const Vehicles = () => {
 
         {vehicleObjects.map((vehicleObj, index) => (
           <View key={index} style={styles.containerList}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => openVehicleFandomPage(vehicleObj.vehicleName)}>
               <Text style={styles.textListItemVehicleB}>
                 {vehicleObj.vehicleName}
               </Text>

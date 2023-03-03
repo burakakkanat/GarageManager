@@ -18,6 +18,7 @@
     "react-native": "0.71.3",
     "react-native-awesome-alerts": "^2.0.0",
     "react-native-dropdown-picker": "^5.4.4",
+    "react-native-inappbrowser-reborn": "^3.7.0",
     "react-native-pager-view": "^6.1.2",
     "react-native-rename": "^3.2.12",
     "react-native-tab-view": "^3.5.0",
