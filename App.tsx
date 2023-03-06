@@ -31,7 +31,7 @@ const JohnnyOnTheSpot = () => {
             <View style={styles.containerHeaderMain}>
               <Text style={styles.headerMain}> Johnny-on-the-Spot </Text>
               <TouchableOpacity style={{ position: 'absolute', right: 10, top: 10 }} onPress={() => showSettings()}>
-                <Image source={SettingsIcon} style={{ width: 27.5, height: 27.5 }} />
+                <Image source={SettingsIcon} style={{ width: 25, height: 25 }} />
               </TouchableOpacity>
             </View>
 
@@ -47,7 +47,7 @@ const JohnnyOnTheSpot = () => {
                 <Text style={styles.header}>Settings</Text>
               </View>
 
-              <View style={{height: '25%', marginTop: '100%' }}>
+              <View style={{height: '25%', marginTop: '65%' }}>
                 <View style={styles.containerButton}>
                   <TouchableOpacity
                     style={styles.buttonGreen}
