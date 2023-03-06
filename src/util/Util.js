@@ -152,8 +152,7 @@ function getEditedVehicleName(vehicleName) {
         return 'Stromberg_(car)';
     } else if (vehicleName === 'Dukes') {
         return 'Dukes_(car)';
-    }
-    else {
+    } else {
         return vehicleName.replaceAll(' ', '_');
     }
 }

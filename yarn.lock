@@ -6146,6 +6146,11 @@ react-native-rename@^3.2.12:
     shelljs "^0.8.5"
     update-check "^1.5.4"
 
+react-native-restart@^0.0.27:
+  version "0.0.27"
+  resolved "https://registry.yarnpkg.com/react-native-restart/-/react-native-restart-0.0.27.tgz#43aa8210312c9dfa5ec7bd4b2f35238ad7972b19"
+  integrity sha512-8KScVICrXwcTSJ1rjWkqVTHyEKQIttm5AIMGSK1QG1+RS5owYlE4z/1DykOTdWfVl9l16FIk0w9Xzk9ZO6jxlA==
+
 react-native-tab-view@^3.5.0:
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-3.5.0.tgz#eee4af05708578a1a0c6bcd2c98bf9f204778cc6"

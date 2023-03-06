@@ -69,8 +69,9 @@ const styles = StyleSheet.create({
     containerHeaderMain: {
         alignItems: 'center',
         backgroundColor: '#2D640F',
-        height: 50,
-        justifyContent: 'center'
+        flexDirection: 'row',
+        height: 45,
+        justifyContent: 'flex-start'
     },
     containerList: {
         borderBottomWidth: 1,
@@ -153,8 +154,9 @@ const styles = StyleSheet.create({
     headerMain: {
         color: 'white',
         fontFamily: 'SignPainter-HouseScript',
-        fontSize: 30,
-        marginTop: 5
+        fontSize: 25,
+        marginLeft: 10,
+        marginTop: 10
     },
     loadingContainer: {
         alignItems: 'center',
