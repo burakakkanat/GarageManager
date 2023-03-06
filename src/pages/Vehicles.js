@@ -155,7 +155,7 @@ const Vehicles = () => {
   };
 
   return (
-    <View >
+    <View style={{ height: '100%' }}>
       <ScrollView style={{ zIndex: 0 }}>
         <View style={styles.separatorTop} />
         {memoizedVehicleObjects}
