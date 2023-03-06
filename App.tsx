@@ -1,7 +1,6 @@
 import React from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
 import { WishlistContextProvider } from './src/context/WishlistContext';
 import { VehicleContextProvider } from './src/context/VehicleContext';
 import { GarageContextProvider } from './src/context/GarageContext';
@@ -12,8 +11,6 @@ import Vehicles from './src/pages/Vehicles';
 import Settings from './src/pages/Settings';
 import Garages from './src/pages/Garages';
 import styles from './src/styles/Styles';
-
-const SettingsStack = createNativeStackNavigator();
 
 const Tab = createMaterialTopTabNavigator();
 
