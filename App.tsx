@@ -57,7 +57,7 @@ const JohnnyOnTheSpot = () => {
                 </View>
                 <View style={styles.containerButton}>
                   <TouchableOpacity
-                    style={styles.buttonYellow}
+                    style={styles.buttonOrange}
                     onPress={dataManagementUtil.restoreFromBackup}>
                     <Text style={styles.textButton}>Restore</Text>
                   </TouchableOpacity>

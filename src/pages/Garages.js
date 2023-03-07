@@ -533,7 +533,7 @@ const Garages = () => {
             ))}
 
             <TouchableOpacity
-              style={styles.buttonYellow}
+              style={styles.buttonOrange}
               onPress={() => setGarageObject({ ...garageObject, disposableVehicles: [...garageObject.disposableVehicles, ''] })}>
 
               <Text style={styles.textButton}>Add Disposable Vehicle</Text>
@@ -624,7 +624,7 @@ const Garages = () => {
             ))}
 
             <TouchableOpacity
-              style={styles.buttonYellow}
+              style={styles.buttonOrange}
               onPress={() => setGarageObject({ ...garageObject, disposableVehicles: [...garageObject.disposableVehicles, ''] })}>
               <Text style={styles.textButton}>Add Disposable Vehicle</Text>
             </TouchableOpacity>
