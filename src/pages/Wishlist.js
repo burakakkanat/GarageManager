@@ -1,9 +1,10 @@
-import { Alert, FlatList, Modal, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, FlatList, Modal, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import React, { useContext, useMemo, useState } from 'react';
 import { WishlistContext } from '../context/WishlistContext';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useFocusEffect } from '@react-navigation/native';
 import { GarageContext } from '../context/GarageContext';
+import { BlurView } from '@react-native-community/blur';
 import styles from '../styles/Styles';
 import uuid from 'react-native-uuid';
 import util from '../util/Util';
@@ -16,6 +17,7 @@ const Wishlist = () => {
   const [addWishlistModalVisible, setAddWishlistModalVisible] = useState(false);
   const [selectedGarageTheme, setSelectedGarageTheme] = useState('');
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [wishlistObject, setWishlistObject] = useState({
     uuid: '',
@@ -30,29 +32,6 @@ const Wishlist = () => {
       setPickerOpen(false);
     }, [])
   );
-
-  const memoizedRenderWishlistObject = useMemo(() => ({ item: wishlistItem }) => {
-    return (
-      <TouchableOpacity
-        style={styles.containerList}
-        onPress={() => util.openVehicleFandomPage(wishlistItem.vehicleName)}
-        onLongPress={() => removeWishlistObject(wishlistItem)}
-      >
-        <View style={styles.containerWishlistText}>
-          <Text style={styles.textWishlistObjectB}>{wishlistItem.vehicleName}</Text>
-        </View>
-        <View style={styles.containerWishlistText}>
-          <Text style={styles.textWishlistObjectM}>{wishlistItem.garageTheme}</Text>
-        </View>
-        <View style={styles.containerWishlistText}>
-          <Text style={styles.textWishlistObjectB}>{wishlistItem.price}</Text>
-        </View>
-        <View style={styles.containerWishlistText}>
-          <Text style={styles.textWishlistObjectM}>{wishlistItem.tradePrice}</Text>
-        </View>
-      </TouchableOpacity>
-    );
-  }, []);
 
   const setEmptyWishlistObject = async () => {
     setWishlistObject({ garageTheme: '', vehicleName: '', price: '', tradePrice: '' });
@@ -70,36 +49,43 @@ const Wishlist = () => {
       wishlistObject.tradePrice = 'N/A';
     }
 
-    wishlistObject.uuid = uuid.v4();
+    try {
 
-    setGarageObjects(prevGarageObjects => {
-      const selectedGarageIndex = prevGarageObjects.findIndex(garageObj => garageObj.theme === wishlistObject.garageTheme);
-      const selectedGarageObject = prevGarageObjects[selectedGarageIndex];
+      wishlistObject.uuid = uuid.v4();
 
-      selectedGarageObject.wishlist.push(wishlistObject);
-      selectedGarageObject.wishlist.sort(util.compareWishlistItems);
+      setGarageObjects(prevGarageObjects => {
+        const selectedGarageIndex = prevGarageObjects.findIndex(garageObj => garageObj.theme === wishlistObject.garageTheme);
+        const selectedGarageObject = prevGarageObjects[selectedGarageIndex];
 
-      util.saveObject('@GarageObjectList', prevGarageObjects);
+        selectedGarageObject.wishlist.push(wishlistObject);
+        selectedGarageObject.wishlist.sort(util.compareWishlistItems);
 
-      return [...prevGarageObjects];
-    });
+        util.saveObject('@GarageObjectList', prevGarageObjects);
 
-    setWishlistObjects(prevWishlistObjects => {
-      const newWishlistObjects = [...prevWishlistObjects];
-      const wishlistInsertionIndex = util.findWishlistInsertionIndex(newWishlistObjects, wishlistObject);
-      newWishlistObjects.splice(wishlistInsertionIndex, 0, wishlistObject);
+        return [...prevGarageObjects];
+      });
 
-      return newWishlistObjects;
-    });
+      setWishlistObjects(prevWishlistObjects => {
+        const newWishlistObjects = [...prevWishlistObjects];
+        const wishlistInsertionIndex = util.findWishlistInsertionIndex(newWishlistObjects, wishlistObject);
+        newWishlistObjects.splice(wishlistInsertionIndex, 0, wishlistObject);
 
-    setEmptyWishlistObject();
-    setAddWishlistModalVisible(false);
+        return newWishlistObjects;
+      });
+      
+      setAddWishlistModalVisible(false);
 
-    ToastAndroid.showWithGravity(
-      'Wishlist item added.',
-      ToastAndroid.SHORT,
-      ToastAndroid.TOP, // Not working
-    );
+      ToastAndroid.showWithGravity(
+        'Wishlist item added.',
+        ToastAndroid.SHORT,
+        ToastAndroid.TOP, // Not working
+      );
+
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setEmptyWishlistObject();
+    }
   };
 
   const removeWishlistObject = async (whislistItemToRemove) => {
@@ -116,6 +102,7 @@ const Wishlist = () => {
           text: 'OK',
           onPress: async () => {
             try {
+              setLoading(true);
 
               // Remove from garage
               const newGarageObjects = [...garageObjects];
@@ -143,6 +130,8 @@ const Wishlist = () => {
 
             } catch (error) {
               console.error(error);
+            } finally {
+              setLoading(false);
             }
           },
         },
@@ -150,6 +139,29 @@ const Wishlist = () => {
       { cancelable: false }
     );
   };
+
+  const memoizedRenderWishlistObject = useMemo(() => ({ item: wishlistItem }) => {
+    return (
+      <TouchableOpacity
+        style={styles.containerList}
+        onPress={() => util.openVehicleFandomPage(wishlistItem.vehicleName)}
+        onLongPress={() => removeWishlistObject(wishlistItem)}
+      >
+        <View style={styles.containerWishlistText}>
+          <Text style={styles.textWishlistObjectB}>{wishlistItem.vehicleName}</Text>
+        </View>
+        <View style={styles.containerWishlistText}>
+          <Text style={styles.textWishlistObjectM}>{wishlistItem.garageTheme}</Text>
+        </View>
+        <View style={styles.containerWishlistText}>
+          <Text style={styles.textWishlistObjectB}>{wishlistItem.price}</Text>
+        </View>
+        <View style={styles.containerWishlistText}>
+          <Text style={styles.textWishlistObjectM}>{wishlistItem.tradePrice}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  }, [wishlistObjects]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -269,6 +281,16 @@ const Wishlist = () => {
           </View>
         </View>
       </Modal>
+
+      {loading && (
+        <View style={styles.loadingContainer}>
+          <BlurView blurType='light' blurAmount={3} style={StyleSheet.absoluteFill}>
+            <View style={styles.loadingIndicator}>
+              <ActivityIndicator size='large' color='#2D640F' />
+            </View>
+          </BlurView>
+        </View>
+      )}
     </View>
   );
 };

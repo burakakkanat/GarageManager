@@ -20,11 +20,6 @@ const styles = StyleSheet.create({
         margin: 10,
         padding: 10
     },
-    buttonRemoveVehicle: {
-        color: 'red',
-        fontFamily: util.getFontName(),
-        fontSize: 12
-    },
     buttonYellow: {
         alignItems: 'center',
         backgroundColor: 'orange',

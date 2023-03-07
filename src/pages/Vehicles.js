@@ -1,4 +1,4 @@
-import { ActivityIndicator, Alert, Linking, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import React, { useContext, useMemo, useState } from 'react';
 import { VehicleContext } from '../context/VehicleContext';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -10,8 +10,8 @@ import util from '../util/Util';
 
 const Vehicles = () => {
 
-  const { garageObjects, setGarageObjects } = useContext(GarageContext);
   const { vehicleObjects, setVehicleObjects } = useContext(VehicleContext);
+  const { garageObjects, setGarageObjects } = useContext(GarageContext);
 
   const [addNewVehicleContainerHeight, setAddVehicleContainerHeight] = useState(55);
   const [selectedGarageLocation, setSelectedGarageLocation] = useState('');
@@ -23,30 +23,6 @@ const Vehicles = () => {
     uuid: '',
     vehicleName: '',
   });
-
-  const memoizedVehicleObjects = useMemo(() => vehicleObjects.map((vehicleObj, index) => (
-    <View key={index} style={styles.containerList}>
-      <TouchableOpacity onPress={() => util.openVehicleFandomPage(vehicleObj.vehicleName)}>
-        <Text style={styles.textListItemVehicleB}>
-          {vehicleObj.vehicleName}
-        </Text>
-      </TouchableOpacity>
-
-      <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
-        <TouchableOpacity
-          style={{ marginRight: 20 }}>
-          <Text style={styles.textListItemVehicleM}>
-            {'at ' + vehicleObj.garageLocation}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => removeVehicle(vehicleObj)}>
-          <Text style={styles.buttonRemoveVehicle}>Remove</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  )), [vehicleObjects]);
 
   const addNewVehicle = async () => {
 
@@ -114,7 +90,6 @@ const Vehicles = () => {
           text: 'OK',
           onPress: async () => {
             try {
-
               setLoading(true);
 
               // Remove from the garage
@@ -153,6 +128,32 @@ const Vehicles = () => {
       { cancelable: false }
     );
   };
+
+  const memoizedVehicleObjects = useMemo(() => vehicleObjects.map((vehicleObj, index) => (
+    <View key={index} style={styles.containerList}>
+      <View style={{ flex: 1 }}>
+        <TouchableOpacity
+          onPress={() => util.openVehicleFandomPage(vehicleObj.vehicleName)}
+          onLongPress={() => removeVehicle(vehicleObj)}
+        >
+          <Text style={styles.textListItemVehicleB}>
+            {vehicleObj.vehicleName}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={{ flex: 1 }}>
+        <TouchableOpacity
+          onPress={() => util.openVehicleFandomPage(vehicleObj.vehicleName)}
+          onLongPress={() => removeVehicle(vehicleObj)}
+        >
+          <Text style={styles.textListItemVehicleM}>
+            {'at ' + vehicleObj.garageLocation}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  )), [vehicleObjects]);
 
   return (
     <View style={{ height: '100%' }}>

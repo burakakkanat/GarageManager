@@ -1,7 +1,6 @@
 import { Alert, Modal, ScrollView, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { WishlistContext } from '../context/WishlistContext';
-import dataManagementUtil from '../util/DataManagementUtil';
 import { VehicleContext } from '../context/VehicleContext';
 import { useFocusEffect } from '@react-navigation/native';
 import { GarageContext } from '../context/GarageContext';
@@ -63,22 +62,6 @@ const Garages = () => {
       setEmptyGarageObject();
     }, [])
   );
-
-  const memoizedGarageObjects = useMemo(() => garageObjects.map((currentGarageObject, index) => (
-    <View key={index} style={styles.containerGarageList}>
-      <View style={{ flex: 1 }}>
-        <TouchableOpacity onPress={() => showGarageDetails(currentGarageObject)}>
-          <Text style={styles.textListItemGarageB}>{currentGarageObject.location}</Text>
-        </TouchableOpacity>
-      </View>
-  
-      <View style={{ flex: 1 }}>
-        <TouchableOpacity onPress={() => showGarageDetails(currentGarageObject)}>
-          <Text style={styles.textListItemGarageM}>{currentGarageObject.theme}</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  )), [garageObjects]);
 
   function setVehicleObjectsAndWishlistObjects(garageObjectList) {
 
@@ -150,6 +133,7 @@ const Garages = () => {
     try {
       setInProgress(true);
 
+      // Firstly, remove edited garage from garageObjects list
       // There is only one garage with a specific location so it is safe to use index.
       const indexToRemove = garageObjects.findIndex(garageObj => garageObj.location === oldGarageLocation);
       const newGarageObjects = [...garageObjects];
@@ -161,18 +145,27 @@ const Garages = () => {
         return;
       }
 
+      // Update vehicle locations and wishlist themes inside the garageObject
+      if (oldGarageLocation !== garageObject.location) {
+        await updateVehicleLocations(garageObject);
+      }
+      if (oldGarageTheme !== garageObject.theme) {
+        await updateWishlistThemes(garageObject);
+      }
+
+      // Add the edited garage back into garageObjects list
       const garageInsertionIndex = util.findGarageInsertionIndex(newGarageObjects, garageObject);
       newGarageObjects.splice(garageInsertionIndex, 0, garageObject);
 
       await util.saveObject('@GarageObjectList', newGarageObjects);
       setGarageObjects(newGarageObjects);
 
-      // Update vehicleObjects and wishlistObjects with new garage info
+      // Update vehicle list and wishlist
       if (oldGarageLocation !== garageObject.location) {
-        await updateVehicleObjects();
+        await refreshVehicleList();
       }
       if (oldGarageTheme !== garageObject.theme) {
-        await updateWishlistObjects();
+        await refreshWishlist();
       }
 
       await setEmptyGarageObject();
@@ -284,42 +277,36 @@ const Garages = () => {
     return true;
   };
 
-  const updateVehicleObjects = async () => {
-
-    const vehiclesToUpdateIndexes = vehicleObjects.reduce((acc, vehicleObject, index) => {
-      if (vehicleObject.garageLocation === oldGarageLocation) {
-        acc.push(index);
-        vehicleObject.garageLocation = garageObject.location;
-      }
-      return acc;
-    }, []);
-
-    const newVehicleObjects = [...vehicleObjects];
-    vehiclesToUpdateIndexes.forEach((index) => {
-      newVehicleObjects.splice(index, 1, vehicleObjects[index]);
-    });
-
-    newVehicleObjects.sort(util.compareVehicles);
-    setVehicleObjects(newVehicleObjects);
+  const updateVehicleLocations = async (garageObject) => {
+    for (const vehicle of garageObject.vehicles) {
+      vehicle.garageLocation = garageObject.location;
+    }
   };
 
-  const updateWishlistObjects = async () => {
+  const updateWishlistThemes = async (garageObject) => {
+    for (const wishlistItem of garageObject.wishlist) {
+      wishlistItem.garageTheme = garageObject.theme;
+    }
+  };
 
-    const wishlistItemsToUpdateIndexes = wishlistObjects.reduce((acc, wishlistItem, index) => {
-      if (wishlistItem.garageTheme === oldGarageTheme) {
-        acc.push(index);
-        wishlistItem.garageTheme = garageObject.theme;
+  const refreshVehicleList = async () => {
+    let allVehicleObjects = [];
+    for (const garageObject of garageObjects) {
+      if (garageObject.vehicles.length > 0) {
+        allVehicleObjects = [...allVehicleObjects, ...garageObject.vehicles].sort(util.compareVehicles);
       }
-      return acc;
-    }, []);
+    }
+    setVehicleObjects(allVehicleObjects);
+  };
 
-    const newWishlistObjects = [...wishlistObjects];
-    wishlistItemsToUpdateIndexes.forEach((index) => {
-      newWishlistObjects.splice(index, 1, wishlistObjects[index]);
-    });
-
-    newWishlistObjects.sort(util.compareWishlistItems);
-    setWishlistObjects(newWishlistObjects);
+  const refreshWishlist = async () => {
+    let allWishlistObjects = [];
+    for (const garageObject of garageObjects) {
+      if (garageObject.wishlist.length > 0) {
+        allWishlistObjects = [...allWishlistObjects, ...garageObject.wishlist].sort(util.compareWishlistItems);
+      }
+    }
+    setWishlistObjects(allWishlistObjects);
   };
 
   const removeVehicleObjects = async (garageLocationToRemove) => {
@@ -345,6 +332,22 @@ const Garages = () => {
     newDisposableVehicles.splice(index, 1);
     setGarageObject({ ...garageObject, disposableVehicles: newDisposableVehicles });
   };
+
+  const memoizedGarageObjects = useMemo(() => garageObjects.map((currentGarageObject, index) => (
+    <View key={index} style={styles.containerGarageList}>
+      <View style={{ flex: 1 }}>
+        <TouchableOpacity onPress={() => showGarageDetails(currentGarageObject)}>
+          <Text style={styles.textListItemGarageB}>{currentGarageObject.location}</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={{ flex: 1 }}>
+        <TouchableOpacity onPress={() => showGarageDetails(currentGarageObject)}>
+          <Text style={styles.textListItemGarageM}>{currentGarageObject.theme}</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  )), [garageObjects]);
 
   return (
     <View style={{ flex: 1 }}>
