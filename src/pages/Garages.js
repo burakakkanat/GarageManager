@@ -35,6 +35,7 @@ const Garages = () => {
 
   const [vehicleObject, setVehicleObject] = useState({
     garageLocation: '',
+    modified: true,
     uuid: '',
     vehicleName: ''
   });

@@ -15,14 +15,25 @@ const Vehicles = () => {
 
   const [addNewVehicleContainerHeight, setAddVehicleContainerHeight] = useState(55);
   const [selectedGarageLocation, setSelectedGarageLocation] = useState('');
+  const [vehicleMenuActive, setVehicleMenuActive] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [vehicleObject, setVehicleObject] = useState({
     garageLocation: '',
+    modified: true,
     uuid: '',
     vehicleName: '',
   });
+
+  const setEmptyVehicleObject = async () => {
+    setVehicleObject({ ...vehicleObject, garageLocation: '', modified: true, uuid: '', vehicleName: '' });
+  }
+
+  const openVehicleMenu = (vehicleObj) => {
+    setVehicleObject(vehicleObj);
+    setVehicleMenuActive(true);
+  };
 
   const addNewVehicle = async () => {
 
@@ -76,11 +87,11 @@ const Vehicles = () => {
 
   };
 
-  const removeVehicle = async (vehicleObjectToRemove) => {
+  const removeVehicle = async () => {
 
     Alert.alert(
       'Remove Vehicle',
-      'Are you sure you want to remove ' + vehicleObjectToRemove.vehicleName + ' in ' + vehicleObjectToRemove.garageLocation + '?',
+      'Are you sure you want to remove ' + vehicleObject.vehicleName + ' in ' + vehicleObject.garageLocation + '?',
       [
         {
           text: 'Cancel',
@@ -94,21 +105,23 @@ const Vehicles = () => {
 
               // Remove from the garage
               const newGarageObjects = [...garageObjects];
-              const garageIndex = newGarageObjects.findIndex((garageObj) => garageObj.location === vehicleObjectToRemove.garageLocation);
+              const garageIndex = newGarageObjects.findIndex((garageObj) => garageObj.location === vehicleObject.garageLocation);
               const newGarageObject = newGarageObjects[garageIndex];
-              const newVehicleList = newGarageObject.vehicles.filter((vehicleObj) => vehicleObj.uuid !== vehicleObjectToRemove.uuid);
+              const newVehicleList = newGarageObject.vehicles.filter((vehicleObj) => vehicleObj.uuid !== vehicleObject.uuid);
               newGarageObjects[garageIndex] = { ...newGarageObject, vehicles: newVehicleList };
 
               setGarageObjects(newGarageObjects);
               await util.saveObject('@GarageObjectList', newGarageObjects);
 
               // Remove from vehicleObjects
-              const indexToRemove = vehicleObjects.findIndex(vehicleObj => vehicleObj.uuid === vehicleObjectToRemove.uuid);
+              const indexToRemove = vehicleObjects.findIndex(vehicleObj => vehicleObj.uuid === vehicleObject.uuid);
               const newVehicleObjects = [...vehicleObjects];
               if (indexToRemove !== -1) {
                 newVehicleObjects.splice(indexToRemove, 1);
               }
               setVehicleObjects(newVehicleObjects);
+
+              setVehicleMenuActive(false);
 
               ToastAndroid.showWithGravity(
                 'Vehicle removed.',
@@ -119,7 +132,7 @@ const Vehicles = () => {
             } catch (error) {
               console.error(error);
             } finally {
-              setVehicleObject({ ...vehicleObject, vehicleName: '' });
+              setEmptyVehicleObject();
               setLoading(false);
             }
           },
@@ -129,37 +142,88 @@ const Vehicles = () => {
     );
   };
 
-  const memoizedVehicleObjects = useMemo(() => vehicleObjects.map((vehicleObj, index) => (
-    <View key={index} style={styles.containerList}>
-      <View style={{ flex: 1 }}>
-        <TouchableOpacity
-          onPress={() => util.openVehicleFandomPage(vehicleObj.vehicleName)}
-          onLongPress={() => removeVehicle(vehicleObj)}
-        >
-          <Text style={styles.textListItemVehicleB}>
-            {vehicleObj.vehicleName}
-          </Text>
-        </TouchableOpacity>
-      </View>
+  const changeVehicleModifiedStatus = async (modifiedStatus) => {
 
-      <View style={{ flex: 1 }}>
-        <TouchableOpacity
-          onPress={() => util.openVehicleFandomPage(vehicleObj.vehicleName)}
-          onLongPress={() => removeVehicle(vehicleObj)}
-        >
-          <Text style={styles.textListItemVehicleM}>
-            {'at ' + vehicleObj.garageLocation}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  )), [vehicleObjects]);
+    try {
+      const newGarageObjects = [...garageObjects];
+      const garageIndex = newGarageObjects.findIndex((garageObj) => garageObj.location === vehicleObject.garageLocation);
+      const newGarageObject = newGarageObjects[garageIndex];
+
+      for (const vehicle of newGarageObject.vehicles) {
+        if (vehicle.uuid === vehicleObject.uuid) {
+          vehicle.modified = modifiedStatus;
+          setEmptyVehicleObject();
+          break;
+        }
+      }
+
+      setGarageObjects(newGarageObjects);
+      await util.saveObject('@GarageObjectList', newGarageObjects);
+
+      if (modifiedStatus) {
+        ToastAndroid.showWithGravity(
+          'Vehicle set as modified.',
+          ToastAndroid.SHORT,
+          ToastAndroid.TOP, // Not working
+        );
+      } else {
+        ToastAndroid.showWithGravity(
+          'Vehicle set as stock.',
+          ToastAndroid.SHORT,
+          ToastAndroid.TOP, // Not working
+        );
+      }
+
+      refreshVehicleList();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setEmptyVehicleObject();
+      setVehicleMenuActive(false);
+    }
+  }
+
+  const refreshVehicleList = async () => {
+    let allVehicleObjects = [];
+    for (const garageObject of garageObjects) {
+      if (garageObject.vehicles.length > 0) {
+        allVehicleObjects = [...allVehicleObjects, ...garageObject.vehicles].sort(util.compareVehicles);
+      }
+    }
+    setVehicleObjects(allVehicleObjects);
+  };
+
+  const memorizedVehicleObjects = useMemo(() =>
+    vehicleObjects.map((vehicleObj, index) => {
+      const vehicleNameStyle = vehicleObj.modified ? styles.textListItemVehicleB : [styles.textListItemVehicleB, { color: 'magenta' }];
+      return (
+        <View key={index} style={styles.containerList}>
+          <View style={{ flex: 1 }}>
+            <TouchableOpacity
+              onPress={() => openVehicleMenu(vehicleObj)}
+            >
+              <Text style={vehicleNameStyle}>
+                {vehicleObj.vehicleName}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={{ flex: 1 }}>
+            <TouchableOpacity>
+              <Text style={styles.textListItemVehicleM}>
+                {'at ' + vehicleObj.garageLocation}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      );
+    }), [vehicleObjects]);
 
   return (
     <View style={{ height: '100%' }}>
       <ScrollView style={{ zIndex: 0 }}>
         <View style={styles.separatorTop} />
-        {memoizedVehicleObjects}
+        {memorizedVehicleObjects}
         <View style={{ height: 110 }}></View>
       </ScrollView>
 
@@ -218,8 +282,48 @@ const Vehicles = () => {
         <Text style={styles.textButton}>Add New Vehicle</Text>
       </TouchableOpacity>
 
+      {vehicleMenuActive && (
+        <View style={styles.containerVehicleMenu}>
+          <BlurView blurType='light' blurAmount={1} style={StyleSheet.absoluteFill}>
+            <View style={styles.containerVehicleMenuItems}>
+
+              <TouchableOpacity
+                onPress={() => {
+                  setVehicleMenuActive(false);
+                  setVehicleObject({ ...vehicleObject, vehicleName: '', garageLocation: '' });
+                }}
+                style={[styles.buttonRed, { position: 'absolute', top: 0, right: 0 }]}>
+                <Text style={styles.textButton}>Close</Text>
+              </TouchableOpacity>
+
+              <View style={{ left: '20%', width: '60%' }}>
+                <TouchableOpacity
+                  onPress={() => changeVehicleModifiedStatus(!vehicleObject.modified)}
+                  style={vehicleObject.modified ? styles.buttonMagenta : styles.buttonBlack}>
+                  <Text style={styles.textButton}>
+                    {vehicleObject.modified ? 'Mark As Stock' : 'Mark As Modified'}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => util.openVehicleFandomPage(vehicleObject.vehicleName)}
+                  style={styles.buttonYellow}>
+                  <Text style={styles.textButton}>🔗 Open Fandom Page</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => removeVehicle(vehicleObject)}
+                  style={styles.buttonRed}>
+                  <Text style={styles.textButton}>Remove Vehicle</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </BlurView>
+        </View>
+      )}
+
       {loading && (
-        <View style={styles.loadingContainer}>
+        <View style={styles.containerLoading}>
           <BlurView blurType='light' blurAmount={3} style={StyleSheet.absoluteFill}>
             <View style={styles.loadingIndicator}>
               <ActivityIndicator size='large' color='#2D640F' />

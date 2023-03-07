@@ -2,9 +2,27 @@ import { StyleSheet } from 'react-native';
 import util from '../util/Util';
 
 const styles = StyleSheet.create({
+    buttonBlack: {
+        alignItems: 'center',
+        backgroundColor: 'black',
+        borderRadius: 10,
+        elevation: 5,
+        justifyContent: 'center',
+        margin: 10,
+        padding: 10
+    },
     buttonGreen: {
         alignItems: 'center',
         backgroundColor: '#2D640F',
+        borderRadius: 10,
+        elevation: 5,
+        justifyContent: 'center',
+        margin: 10,
+        padding: 10
+    },
+    buttonMagenta: {
+        alignItems: 'center',
+        backgroundColor: 'magenta',
         borderRadius: 10,
         elevation: 5,
         justifyContent: 'center',
@@ -75,11 +93,37 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         padding: 10
     },
+    containerLoading: {
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        bottom: 0,
+        justifyContent: 'center',
+        left: 0,
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        zIndex: 999
+    },
     containerSimpleLists: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         padding: 10,
         paddingTop: 0
+    },
+    containerVehicleMenu: {
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0)',
+        bottom: 0,
+        justifyContent: 'center',
+        left: 0,
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        zIndex: 999
+    },
+    containerVehicleMenuItems: {
+        flex: 1,
+        justifyContent: 'center',
     },
     containerWishlistHeader: {
         alignItems: 'center',
@@ -152,17 +196,6 @@ const styles = StyleSheet.create({
         fontSize: 25,
         marginLeft: 10,
         marginTop: 10
-    },
-    loadingContainer: {
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        bottom: 0,
-        justifyContent: 'center',
-        left: 0,
-        position: 'absolute',
-        right: 0,
-        top: 0,
-        zIndex: 999
     },
     loadingIndicator: {
         alignItems: 'center',
