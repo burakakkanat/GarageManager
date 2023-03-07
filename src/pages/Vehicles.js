@@ -131,23 +131,25 @@ const Vehicles = () => {
 
   const memoizedVehicleObjects = useMemo(() => vehicleObjects.map((vehicleObj, index) => (
     <View key={index} style={styles.containerList}>
-      <TouchableOpacity onPress={() => util.openVehicleFandomPage(vehicleObj.vehicleName)}>
-        <Text style={styles.textListItemVehicleB}>
-          {vehicleObj.vehicleName}
-        </Text>
-      </TouchableOpacity>
-
-      <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
+      <View style={{ flex: 1 }}>
         <TouchableOpacity
-          style={{ marginRight: 20 }}>
+          onPress={() => util.openVehicleFandomPage(vehicleObj.vehicleName)}
+          onLongPress={() => removeVehicle(vehicleObj)}
+        >
+          <Text style={styles.textListItemVehicleB}>
+            {vehicleObj.vehicleName}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={{ flex: 1 }}>
+        <TouchableOpacity
+          onPress={() => util.openVehicleFandomPage(vehicleObj.vehicleName)}
+          onLongPress={() => removeVehicle(vehicleObj)}
+        >
           <Text style={styles.textListItemVehicleM}>
             {'at ' + vehicleObj.garageLocation}
           </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => removeVehicle(vehicleObj)}>
-          <Text style={styles.buttonRemoveVehicle}>Remove</Text>
         </TouchableOpacity>
       </View>
     </View>
