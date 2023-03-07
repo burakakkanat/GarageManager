@@ -296,7 +296,7 @@ const Vehicles = () => {
                 <Text style={styles.textButton}>Close</Text>
               </TouchableOpacity>
 
-              <View style={{ left: '20%', justifyContent: 'center', width: '60%' }}>
+              <View style={{ left: '20%', width: '60%' }}>
                 <TouchableOpacity
                   onPress={() => changeVehicleModifiedStatus(!vehicleObject.modified)}
                   style={vehicleObject.modified ? styles.buttonMagenta : styles.buttonBlack}>
@@ -314,7 +314,7 @@ const Vehicles = () => {
                 <TouchableOpacity
                   onPress={() => removeVehicle(vehicleObject)}
                   style={styles.buttonRed}>
-                  <Text style={styles.textButton}>Remove Garage</Text>
+                  <Text style={styles.textButton}>Remove Vehicle</Text>
                 </TouchableOpacity>
               </View>
             </View>
