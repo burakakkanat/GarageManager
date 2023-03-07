@@ -283,9 +283,9 @@ const Wishlist = () => {
       </Modal>
 
       {loading && (
-        <View style={styles.loadingContainer}>
+        <View style={styles.containerLoading}>
           <BlurView blurType='light' blurAmount={3} style={StyleSheet.absoluteFill}>
-            <View style={styles.loadingIndicator}>
+            <View style={styles.containerVehicleMenu}>
               <ActivityIndicator size='large' color='#2D640F' />
             </View>
           </BlurView>

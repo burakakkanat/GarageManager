@@ -47,7 +47,7 @@ const JohnnyOnTheSpot = () => {
                 <Text style={styles.header}>Settings</Text>
               </View>
 
-              <View style={{height: '25%', marginTop: '65%' }}>
+              <View style={{height: '25%', marginTop: '70%' }}>
                 <View style={styles.containerButton}>
                   <TouchableOpacity
                     style={styles.buttonGreen}
