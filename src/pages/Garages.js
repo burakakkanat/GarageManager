@@ -1,4 +1,4 @@
-import { Alert, Modal, ScrollView, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import { Modal, ScrollView, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { WishlistContext } from '../context/WishlistContext';
 import { VehicleContext } from '../context/VehicleContext';
