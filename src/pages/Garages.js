@@ -18,6 +18,7 @@ const Garages = () => {
   const [oldGarageLocation, setOldGarageLocation] = useState('');
   const [oldGarageTheme, setOldGarageTheme] = useState('');
   const [inProgress, setInProgress] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
 
   // Modal visibility
   const [showGarageDetailsVisible, setShowGarageDetailsVisible] = useState(false);
@@ -96,6 +97,10 @@ const Garages = () => {
 
   const setEmptyGarageObject = async () => {
     setGarageObject({ ...garageObject, location: '', theme: '', capacity: '', disposableVehicles: [], vehicles: [], wishlist: [] });
+  };
+
+  const handleSearchChange = (text) => {
+    setSearchValue(text);
   };
 
   const openAddNewGarageWindow = async () => {
@@ -377,24 +382,39 @@ const Garages = () => {
     setGarageObject({ ...garageObject, disposableVehicles: newDisposableVehicles });
   };
 
-  const memoizedGarageObjects = useMemo(() => garageObjects.map((currentGarageObject, index) => (
+  const filteredGarageObjects = useMemo(() => {
+    return garageObjects.filter((garageObj) =>
+      garageObj.location.toLowerCase().includes(searchValue.toLowerCase()) ||
+      garageObj.theme.toLowerCase().includes(searchValue.toLowerCase())
+    );
+  }, [searchValue, garageObjects]);
+
+  const memoizedGarageObjects = useMemo(() => filteredGarageObjects.map((garageObj, index) => (
     <View key={index} style={styles.containerGarageList}>
       <View style={{ flex: 1 }}>
-        <TouchableOpacity onPress={() => showGarageDetails(currentGarageObject)}>
-          <Text style={styles.textListItemGarageB}>{currentGarageObject.location}</Text>
+        <TouchableOpacity onPress={() => showGarageDetails(garageObj)}>
+          <Text style={styles.textListItemGarageB}>{garageObj.location}</Text>
         </TouchableOpacity>
       </View>
 
       <View style={{ flex: 1 }}>
-        <TouchableOpacity onPress={() => showGarageDetails(currentGarageObject)}>
-          <Text style={styles.textListItemGarageM}>{currentGarageObject.theme}</Text>
+        <TouchableOpacity onPress={() => showGarageDetails(garageObj)}>
+          <Text style={styles.textListItemGarageM}>{garageObj.theme}</Text>
         </TouchableOpacity>
       </View>
     </View>
-  )), [garageObjects]);
+  )), [filteredGarageObjects]);
 
   return (
     <View style={{ flex: 1 }}>
+
+      <TextInput
+        onChangeText={handleSearchChange}
+        placeholder=' Search garage location or theme...'
+        placeholderTextColor='gray'
+        style={styles.textInputSearch}
+        value={searchValue}
+      />
 
       <ScrollView>
         <View style={styles.separatorTop} />
