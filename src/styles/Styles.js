@@ -20,15 +20,6 @@ const styles = StyleSheet.create({
         margin: 10,
         padding: 10
     },
-    buttonMagenta: {
-        alignItems: 'center',
-        backgroundColor: 'magenta',
-        borderRadius: 10,
-        elevation: 5,
-        justifyContent: 'center',
-        margin: 10,
-        padding: 10
-    },
     buttonRed: {
         alignItems: 'center',
         backgroundColor: '#c70000',
@@ -38,7 +29,7 @@ const styles = StyleSheet.create({
         margin: 10,
         padding: 10
     },
-    buttonYellow: {
+    buttonOrange: {
         alignItems: 'center',
         backgroundColor: 'orange',
         borderRadius: 10,

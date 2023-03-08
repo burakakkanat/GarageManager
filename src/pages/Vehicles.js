@@ -195,7 +195,7 @@ const Vehicles = () => {
 
   const memorizedVehicleObjects = useMemo(() =>
     vehicleObjects.map((vehicleObj, index) => {
-      const vehicleNameStyle = vehicleObj.modified ? styles.textListItemVehicleB : [styles.textListItemVehicleB, { color: 'magenta' }];
+      const vehicleNameStyle = vehicleObj.modified ? styles.textListItemVehicleB : [styles.textListItemVehicleB, { color: 'orange' }];
       return (
         <View key={index} style={styles.containerList}>
           <View style={{ flex: 1 }}>
@@ -292,14 +292,14 @@ const Vehicles = () => {
                   setVehicleMenuActive(false);
                   setVehicleObject({ ...vehicleObject, vehicleName: '', garageLocation: '' });
                 }}
-                style={[styles.buttonRed, { position: 'absolute', top: 0, right: 0 }]}>
+                style={[styles.buttonRed, { position: 'absolute', top: 0, left: 0 }]}>
                 <Text style={styles.textButton}>Close</Text>
               </TouchableOpacity>
 
               <View style={{ left: '20%', width: '60%' }}>
                 <TouchableOpacity
                   onPress={() => changeVehicleModifiedStatus(!vehicleObject.modified)}
-                  style={vehicleObject.modified ? styles.buttonMagenta : styles.buttonBlack}>
+                  style={vehicleObject.modified ? styles.buttonOrange : styles.buttonBlack}>
                   <Text style={styles.textButton}>
                     {vehicleObject.modified ? 'Mark As Stock' : 'Mark As Modified'}
                   </Text>
@@ -307,8 +307,8 @@ const Vehicles = () => {
 
                 <TouchableOpacity
                   onPress={() => util.openVehicleFandomPage(vehicleObject.vehicleName)}
-                  style={styles.buttonYellow}>
-                  <Text style={styles.textButton}>🔗 Open Fandom Page</Text>
+                  style={styles.buttonGreen}>
+                  <Text style={styles.textButton}>🔗 View Fandom Page</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity

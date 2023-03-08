@@ -407,7 +407,7 @@ const Garages = () => {
             <View>
               {garageObject.vehicles && garageObject.vehicles.map((vehicleObj, index) => (
                 <View key={index} style={styles.containerSimpleLists}>
-                  <TouchableOpacity>
+                  <TouchableOpacity onPress={() => util.openVehicleFandomPage(vehicleObj.vehicleName)}>
                     <Text style={styles.textGarageDetails}>{vehicleObj?.vehicleName || 'Unknown Vehicle'}</Text>
                   </TouchableOpacity>
                 </View>
@@ -420,7 +420,7 @@ const Garages = () => {
 
             <View>{garageObject.disposableVehicles && garageObject.disposableVehicles.map((disposableVehicle, index) => (
               <View key={index} style={styles.containerSimpleLists}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => util.openVehicleFandomPage(disposableVehicle)}>
                   <Text style={styles.textGarageDetails}>{disposableVehicle}</Text>
                 </TouchableOpacity>
               </View>
@@ -433,7 +433,7 @@ const Garages = () => {
 
             <View>{garageObject.wishlist && garageObject.wishlist.map((wishlistObj, index) => (
               <View key={index} style={styles.containerSimpleLists}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => util.openVehicleFandomPage(wishlistObj.vehicleName)}>
                   <Text style={styles.textGarageDetails}>{wishlistObj?.vehicleName || 'Unknown Vehicle'}</Text>
                 </TouchableOpacity>
               </View>
@@ -533,7 +533,7 @@ const Garages = () => {
             ))}
 
             <TouchableOpacity
-              style={styles.buttonYellow}
+              style={styles.buttonOrange}
               onPress={() => setGarageObject({ ...garageObject, disposableVehicles: [...garageObject.disposableVehicles, ''] })}>
 
               <Text style={styles.textButton}>Add Disposable Vehicle</Text>
@@ -624,7 +624,7 @@ const Garages = () => {
             ))}
 
             <TouchableOpacity
-              style={styles.buttonYellow}
+              style={styles.buttonOrange}
               onPress={() => setGarageObject({ ...garageObject, disposableVehicles: [...garageObject.disposableVehicles, ''] })}>
               <Text style={styles.textButton}>Add Disposable Vehicle</Text>
             </TouchableOpacity>

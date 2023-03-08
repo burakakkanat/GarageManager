@@ -58,7 +58,7 @@ const dataManagementUtil = {
               await util.saveObject('@GarageObjectList', garagesBackup);
 
               ToastAndroid.showWithGravity(
-                'Data retrieved.',
+                'Data restored.',
                 ToastAndroid.SHORT,
                 ToastAndroid.TOP, // Not working
               );
