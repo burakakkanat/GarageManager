@@ -272,8 +272,10 @@ const Vehicles = () => {
     <View style={{ height: '100%' }}>
 
       <TextInput
+        inlineImageLeft='search_icon'
+        inlineImagePadding={20}
         onChangeText={handleSearchChange}
-        placeholder=' Vehicle name or "Stock"...'
+        placeholder='Vehicle name or "Stock"...'
         placeholderTextColor='gray'
         style={styles.textInputSearch}
         value={searchValue}
