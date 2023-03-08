@@ -244,28 +244,27 @@ const Vehicles = () => {
     );
   }, [searchValue, vehicleObjects]);
 
-  const memorizedVehicleObjects = useMemo(
-    () =>
-      filteredVehicleObjects.map((vehicleObj, index) => {
-        const vehicleNameStyle = vehicleObj.modified ? styles.textListItemVehicleB : [styles.textListItemVehicleB, { color: 'orange' }];
-        return (
-          <View key={index} style={styles.containerList}>
-            <View style={{ flex: 1 }}>
-              <TouchableOpacity onPress={() => openVehicleMenu(vehicleObj)}>
-                <Text style={vehicleNameStyle}>{vehicleObj.vehicleName}</Text>
-              </TouchableOpacity>
-            </View>
-
-            <View style={{ flex: 1 }}>
-              <TouchableOpacity>
-                <Text style={styles.textListItemVehicleM}>
-                  {'at ' + vehicleObj.garageLocation}
-                </Text>
-              </TouchableOpacity>
-            </View>
+  const memorizedVehicleObjects = useMemo(() =>
+    filteredVehicleObjects.map((vehicleObj, index) => {
+      const vehicleNameStyle = vehicleObj.modified ? styles.textListItemVehicleB : [styles.textListItemVehicleB, { color: 'orange' }];
+      return (
+        <View key={index} style={styles.containerList}>
+          <View style={{ flex: 1 }}>
+            <TouchableOpacity onPress={() => openVehicleMenu(vehicleObj)}>
+              <Text style={vehicleNameStyle}>{vehicleObj.vehicleName}</Text>
+            </TouchableOpacity>
           </View>
-        );
-      }),
+
+          <View style={{ flex: 1 }}>
+            <TouchableOpacity>
+              <Text style={styles.textListItemVehicleM}>
+                {'at ' + vehicleObj.garageLocation}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      );
+    }),
     [filteredVehicleObjects]
   );
 
