@@ -240,7 +240,7 @@ const Garages = () => {
           setInProgress(false);
           setShowAlert(false);
         }
-      },
+      }
     });
 
     setShowAlert(true);
@@ -261,24 +261,60 @@ const Garages = () => {
   const verifyGarageFields = (garageObjects) => {
 
     if (!garageObject.location.trim()) {
-      Alert.alert('Error', 'Garage location can not be empty.');
-      return;
+
+      setAlertConfig({
+        confirmButtonText: 'OK',
+        message: 'Garage location can not be empty.',
+        showCancelButton: false,
+        title: 'Error',
+        onConfirmPressed: async () => { setShowAlert(false) }
+      });
+
+      setShowAlert(true);
+      return false;
     }
 
     if (!garageObject.theme.trim()) {
-      Alert.alert('Error', 'Garage theme can not be empty.');
-      return;
+
+      setAlertConfig({
+        confirmButtonText: 'OK',
+        message: 'Garage theme can not be empty.',
+        showCancelButton: false,
+        title: 'Error',
+        onConfirmPressed: async () => { setShowAlert(false) }
+      });
+
+      setShowAlert(true);
+      return false;
     }
 
     const garageWithSameLocationIndex = garageObjects.findIndex((garageObj) => garageObj.location === garageObject.location);
     if (garageWithSameLocationIndex !== -1) {
-      Alert.alert('Error', 'Garage at this location already exists.');
+
+      setAlertConfig({
+        confirmButtonText: 'OK',
+        message: 'Garage at this location already exists.',
+        showCancelButton: false,
+        title: 'Error',
+        onConfirmPressed: async () => { setShowAlert(false) }
+      });
+
+      setShowAlert(true);
       return false;
     }
 
     const garageWithSameThemeIndex = garageObjects.findIndex((garageObj) => garageObj.theme === garageObject.theme);
     if (garageWithSameThemeIndex !== -1) {
-      Alert.alert('Error', 'Garage with this theme already exists.');
+
+      setAlertConfig({
+        confirmButtonText: 'OK',
+        message: 'Garage with this theme already exists.',
+        showCancelButton: false,
+        title: 'Error',
+        onConfirmPressed: async () => { setShowAlert(false) }
+      });
+
+      setShowAlert(true);
       return false;
     }
 
@@ -385,14 +421,18 @@ const Garages = () => {
         title={alertConfig.title}
 
         cancelButtonStyle={{
-          marginRight: 5
+          marginRight: 5,
+          width: 100,
+          alignItems: 'center'
         }}
         cancelButtonTextStyle={{
           fontFamily: util.getBoldFontName(),
           fontSize: 12
         }}
         confirmButtonStyle={{
-          marginLeft: 5
+          marginLeft: 5,
+          width: 100,
+          alignItems: 'center'
         }}
         confirmButtonTextStyle={{
           fontFamily: util.getBoldFontName(),
