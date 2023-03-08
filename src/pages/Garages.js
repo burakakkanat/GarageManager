@@ -409,8 +409,10 @@ const Garages = () => {
     <View style={{ flex: 1 }}>
 
       <TextInput
+        inlineImageLeft='search_icon'
+        inlineImagePadding={20}
         onChangeText={handleSearchChange}
-        placeholder=' Search garage location or theme...'
+        placeholder='Garage location or theme...'
         placeholderTextColor='gray'
         style={styles.textInputSearch}
         value={searchValue}

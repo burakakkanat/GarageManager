@@ -209,8 +209,10 @@ const Wishlist = () => {
       </View>
 
       <TextInput
+        inlineImageLeft='search_icon'
+        inlineImagePadding={20}
         onChangeText={handleSearchChange}
-        placeholder=' Search vehicle...'
+        placeholder='Vehicle name...'
         placeholderTextColor='gray'
         style={styles.textInputSearch}
         value={searchValue}

@@ -240,7 +240,7 @@ const Vehicles = () => {
 
   const filteredVehicleObjects = useMemo(() => {
     return vehicleObjects.filter((vehicleObj) =>
-      vehicleObj.vehicleName.toLowerCase().includes(searchValue.toLowerCase())
+      searchValue === 'Stock' ? !vehicleObj.modified : vehicleObj.vehicleName.toLowerCase().includes(searchValue.toLowerCase())
     );
   }, [searchValue, vehicleObjects]);
 
@@ -272,8 +272,10 @@ const Vehicles = () => {
     <View style={{ height: '100%' }}>
 
       <TextInput
+        inlineImageLeft='search_icon'
+        inlineImagePadding={20}
         onChangeText={handleSearchChange}
-        placeholder=' Search vehicle...'
+        placeholder='Vehicle name or "Stock"...'
         placeholderTextColor='gray'
         style={styles.textInputSearch}
         value={searchValue}
