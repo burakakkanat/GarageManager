@@ -418,8 +418,9 @@ const Garages = () => {
         value={searchValue}
       />
 
+      <View style={styles.separatorTop} />
+
       <ScrollView>
-        <View style={styles.separatorTop} />
         {memoizedGarageObjects}
       </ScrollView>
 
