@@ -1,3 +1,4 @@
+import AwesomeAlert from 'react-native-awesome-alerts';
 import { Alert, ToastAndroid } from 'react-native';
 import RNRestart from 'react-native-restart';
 import util from '../util/Util';

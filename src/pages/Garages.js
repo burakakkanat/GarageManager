@@ -1,9 +1,10 @@
-import { Alert, Modal, ScrollView, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import { Modal, ScrollView, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { WishlistContext } from '../context/WishlistContext';
 import { VehicleContext } from '../context/VehicleContext';
 import { useFocusEffect } from '@react-navigation/native';
 import { GarageContext } from '../context/GarageContext';
+import AwesomeAlert from 'react-native-awesome-alerts';
 import styles from '../styles/Styles';
 import uuid from 'react-native-uuid';
 import util from '../util/Util';
@@ -22,6 +23,15 @@ const Garages = () => {
   const [showGarageDetailsVisible, setShowGarageDetailsVisible] = useState(false);
   const [editGarageModalVisible, setEditGarageModalVisible] = useState(false);
   const [addGarageModalVisible, setAddGarageModalVisible] = useState(false);
+
+  // Alert stuff
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({
+    confirmButtonText: '',
+    message: '',
+    showCancelButton: true,
+    title: '',
+  });
 
   const [garageObject, setGarageObject] = useState({
     capacity: '',
@@ -187,56 +197,53 @@ const Garages = () => {
 
   const removeGarageObject = async () => {
 
-    Alert.alert(
-      'Remove Garage',
-      'Are you sure you want to remove garage at ' + oldGarageLocation + '?',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'OK',
-          onPress: async () => {
-            try {
-              setInProgress(true);
+    setAlertConfig({
 
-              // There is only one garage with a specific location so it is safe to use index.
-              const indexToRemove = garageObjects.findIndex(garageObj => garageObj.location === oldGarageLocation);
-              const newGarageObjects = [...garageObjects];
-              if (indexToRemove !== -1) {
-                newGarageObjects.splice(indexToRemove, 1);
-              }
-              setGarageObjects(newGarageObjects);
-              await util.saveObject('@GarageObjectList', newGarageObjects);
+      confirmButtonText: 'Confirm',
+      message: 'Are you sure you want to remove the garage at ' + oldGarageLocation + '?',
+      showCancelButton: true,
+      title: 'Remove Garage',
 
-              // Set new vehicles list for Vehicles page
-              if (garageObject.vehicles.length !== 0) {
-                await removeVehicleObjects(oldGarageLocation);
-              }
-              if (garageObject.wishlist.length !== 0) {
-                await removeWishlistObjects(oldGarageTheme);
-              }
+      onConfirmPressed: async () => {
+        try {
+          setInProgress(true);
 
-              await setEmptyGarageObject();
-              setShowGarageDetailsVisible(false);
+          // There is only one garage with a specific location so it is safe to use index.
+          const indexToRemove = garageObjects.findIndex(garageObj => garageObj.location === oldGarageLocation);
+          const newGarageObjects = [...garageObjects];
+          if (indexToRemove !== -1) {
+            newGarageObjects.splice(indexToRemove, 1);
+          }
+          setGarageObjects(newGarageObjects);
+          await util.saveObject('@GarageObjectList', newGarageObjects);
 
-              ToastAndroid.showWithGravity(
-                'Garage removed.',
-                ToastAndroid.SHORT,
-                ToastAndroid.TOP, // Not working
-              );
+          // Set new vehicles list for Vehicles page
+          if (garageObject.vehicles.length !== 0) {
+            await removeVehicleObjects(oldGarageLocation);
+          }
+          if (garageObject.wishlist.length !== 0) {
+            await removeWishlistObjects(oldGarageTheme);
+          }
 
-            } catch (error) {
-              console.error(error);
-            } finally {
-              setInProgress(false);
-            }
-          },
-        },
-      ],
-      { cancelable: false }
-    );
+          await setEmptyGarageObject();
+          setShowGarageDetailsVisible(false);
+
+          ToastAndroid.showWithGravity(
+            'Garage removed.',
+            ToastAndroid.SHORT,
+            ToastAndroid.TOP, // Not working
+          );
+
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setInProgress(false);
+          setShowAlert(false);
+        }
+      }
+    });
+
+    setShowAlert(true);
   };
 
   const showGarageDetails = async (garageObj) => {
@@ -254,24 +261,60 @@ const Garages = () => {
   const verifyGarageFields = (garageObjects) => {
 
     if (!garageObject.location.trim()) {
-      Alert.alert('Error', 'Garage location can not be empty.');
-      return;
+
+      setAlertConfig({
+        confirmButtonText: 'OK',
+        message: 'Garage location can not be empty.',
+        showCancelButton: false,
+        title: 'Error',
+        onConfirmPressed: async () => { setShowAlert(false) }
+      });
+
+      setShowAlert(true);
+      return false;
     }
 
     if (!garageObject.theme.trim()) {
-      Alert.alert('Error', 'Garage theme can not be empty.');
-      return;
+
+      setAlertConfig({
+        confirmButtonText: 'OK',
+        message: 'Garage theme can not be empty.',
+        showCancelButton: false,
+        title: 'Error',
+        onConfirmPressed: async () => { setShowAlert(false) }
+      });
+
+      setShowAlert(true);
+      return false;
     }
 
     const garageWithSameLocationIndex = garageObjects.findIndex((garageObj) => garageObj.location === garageObject.location);
     if (garageWithSameLocationIndex !== -1) {
-      Alert.alert('Error', 'Garage at this location already exists.');
+
+      setAlertConfig({
+        confirmButtonText: 'OK',
+        message: 'Garage at this location already exists.',
+        showCancelButton: false,
+        title: 'Error',
+        onConfirmPressed: async () => { setShowAlert(false) }
+      });
+
+      setShowAlert(true);
       return false;
     }
 
     const garageWithSameThemeIndex = garageObjects.findIndex((garageObj) => garageObj.theme === garageObject.theme);
     if (garageWithSameThemeIndex !== -1) {
-      Alert.alert('Error', 'Garage with this theme already exists.');
+
+      setAlertConfig({
+        confirmButtonText: 'OK',
+        message: 'Garage with this theme already exists.',
+        showCancelButton: false,
+        title: 'Error',
+        onConfirmPressed: async () => { setShowAlert(false) }
+      });
+
+      setShowAlert(true);
       return false;
     }
 
@@ -363,6 +406,55 @@ const Garages = () => {
         style={styles.buttonGreen}>
         <Text style={styles.textButton}>Add New Garage</Text>
       </TouchableOpacity>
+
+      <AwesomeAlert
+        cancelButtonColor='#c70000'
+        cancelText='Cancel'
+        closeOnHardwareBackPress={true}
+        closeOnTouchOutside={true}
+        confirmButtonColor='#2D640F'
+        confirmText={alertConfig.confirmButtonText}
+        message={alertConfig.message}
+        show={showAlert}
+        showCancelButton={alertConfig.showCancelButton}
+        showConfirmButton={true}
+        title={alertConfig.title}
+
+        cancelButtonStyle={{
+          marginRight: 5,
+          width: 100,
+          alignItems: 'center'
+        }}
+        cancelButtonTextStyle={{
+          fontFamily: util.getBoldFontName(),
+          fontSize: 12
+        }}
+        confirmButtonStyle={{
+          marginLeft: 5,
+          width: 100,
+          alignItems: 'center'
+        }}
+        confirmButtonTextStyle={{
+          fontFamily: util.getBoldFontName(),
+          fontSize: 12
+        }}
+        contentContainerStyle={{
+          backgroundColor: '#F2F2F2'
+        }}
+        messageStyle={{
+          fontFamily: util.getFontName(),
+          fontSize: 12,
+          marginBottom: 10
+        }}
+        titleStyle={{
+          fontFamily: util.getBoldFontName(),
+          fontSize: 15,
+          marginBottom: 10
+        }}
+
+        onConfirmPressed={alertConfig.onConfirmPressed}
+        onCancelPressed={() => { setShowAlert(false); }}
+      />
 
       <Modal
         animationType='slide'
@@ -639,7 +731,7 @@ const Garages = () => {
           </View>
         </View>
       </Modal>
-    </View>
+    </View >
   );
 };
 

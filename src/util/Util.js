@@ -1,7 +1,7 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { InAppBrowser } from 'react-native-inappbrowser-reborn';
-import { Alert, Linking } from 'react-native';
+import { Linking } from 'react-native';
 
 const util = {
     saveObject: async (key, object) => {
@@ -139,10 +139,10 @@ const util = {
                     toolbarColor: '#2D640F'
                 })
             } else {
-                Linking.openURL(url)
+                Linking.openURL(url);
             }
         } catch (error) {
-            Alert.alert(error.message)
+            console.error(error);
         }
     }
 }
