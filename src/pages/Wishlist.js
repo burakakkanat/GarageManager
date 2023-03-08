@@ -210,7 +210,7 @@ const Wishlist = () => {
 
       <TextInput
         onChangeText={handleSearchChange}
-        placeholder=' Search vehicle...'
+        placeholder=' Vehicle name...'
         placeholderTextColor='gray'
         style={styles.textInputSearch}
         value={searchValue}

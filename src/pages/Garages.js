@@ -410,7 +410,7 @@ const Garages = () => {
 
       <TextInput
         onChangeText={handleSearchChange}
-        placeholder=' Search garage location or theme...'
+        placeholder=' Garage location or theme...'
         placeholderTextColor='gray'
         style={styles.textInputSearch}
         value={searchValue}
