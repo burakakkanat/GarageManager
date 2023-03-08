@@ -4,6 +4,7 @@ import { WishlistContext } from '../context/WishlistContext';
 import { VehicleContext } from '../context/VehicleContext';
 import { useFocusEffect } from '@react-navigation/native';
 import { GarageContext } from '../context/GarageContext';
+import AwesomeAlert from 'react-native-awesome-alerts';
 import styles from '../styles/Styles';
 import uuid from 'react-native-uuid';
 import util from '../util/Util';
@@ -22,6 +23,14 @@ const Garages = () => {
   const [showGarageDetailsVisible, setShowGarageDetailsVisible] = useState(false);
   const [editGarageModalVisible, setEditGarageModalVisible] = useState(false);
   const [addGarageModalVisible, setAddGarageModalVisible] = useState(false);
+
+  // Alert stuff
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({
+    message: '',
+    showCancelButton: true,
+    title: '',
+  });
 
   const [garageObject, setGarageObject] = useState({
     capacity: '',
@@ -187,56 +196,52 @@ const Garages = () => {
 
   const removeGarageObject = async () => {
 
-    Alert.alert(
-      'Remove Garage',
-      'Are you sure you want to remove garage at ' + oldGarageLocation + '?',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'OK',
-          onPress: async () => {
-            try {
-              setInProgress(true);
+    setAlertConfig({
 
-              // There is only one garage with a specific location so it is safe to use index.
-              const indexToRemove = garageObjects.findIndex(garageObj => garageObj.location === oldGarageLocation);
-              const newGarageObjects = [...garageObjects];
-              if (indexToRemove !== -1) {
-                newGarageObjects.splice(indexToRemove, 1);
-              }
-              setGarageObjects(newGarageObjects);
-              await util.saveObject('@GarageObjectList', newGarageObjects);
+      message: 'Are you sure you want to remove the garage at ' + oldGarageLocation + '?',
+      showCancelButton: true,
+      title: 'Remove Garage',
+      
+      onConfirmPressed: async () => {
+        try {
+          setInProgress(true);
 
-              // Set new vehicles list for Vehicles page
-              if (garageObject.vehicles.length !== 0) {
-                await removeVehicleObjects(oldGarageLocation);
-              }
-              if (garageObject.wishlist.length !== 0) {
-                await removeWishlistObjects(oldGarageTheme);
-              }
+          // There is only one garage with a specific location so it is safe to use index.
+          const indexToRemove = garageObjects.findIndex(garageObj => garageObj.location === oldGarageLocation);
+          const newGarageObjects = [...garageObjects];
+          if (indexToRemove !== -1) {
+            newGarageObjects.splice(indexToRemove, 1);
+          }
+          setGarageObjects(newGarageObjects);
+          await util.saveObject('@GarageObjectList', newGarageObjects);
 
-              await setEmptyGarageObject();
-              setShowGarageDetailsVisible(false);
+          // Set new vehicles list for Vehicles page
+          if (garageObject.vehicles.length !== 0) {
+            await removeVehicleObjects(oldGarageLocation);
+          }
+          if (garageObject.wishlist.length !== 0) {
+            await removeWishlistObjects(oldGarageTheme);
+          }
 
-              ToastAndroid.showWithGravity(
-                'Garage removed.',
-                ToastAndroid.SHORT,
-                ToastAndroid.TOP, // Not working
-              );
+          await setEmptyGarageObject();
+          setShowGarageDetailsVisible(false);
 
-            } catch (error) {
-              console.error(error);
-            } finally {
-              setInProgress(false);
-            }
-          },
-        },
-      ],
-      { cancelable: false }
-    );
+          ToastAndroid.showWithGravity(
+            'Garage removed.',
+            ToastAndroid.SHORT,
+            ToastAndroid.TOP, // Not working
+          );
+
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setInProgress(false);
+          setShowAlert(false);
+        }
+      },
+    });
+
+    setShowAlert(true);
   };
 
   const showGarageDetails = async (garageObj) => {
@@ -363,6 +368,50 @@ const Garages = () => {
         style={styles.buttonGreen}>
         <Text style={styles.textButton}>Add New Garage</Text>
       </TouchableOpacity>
+
+      <AwesomeAlert
+        showCancelButton={alertConfig.showCancelButton}
+        closeOnHardwareBackPress={true}
+        message={alertConfig.message}
+        confirmButtonColor='#2D640F'
+        cancelButtonColor='#c70000'
+        closeOnTouchOutside={true}
+        title={alertConfig.title}
+        showConfirmButton={true}
+        confirmText='Confirm'
+        cancelText='Cancel'
+        show={showAlert}
+
+        cancelButtonStyle = {{
+          marginRight: 5
+        }}
+        cancelButtonTextStyle = {{
+          fontFamily: util.getBoldFontName(),
+          fontSize: 12
+        }}
+        confirmButtonStyle = {{
+          marginLeft: 5
+        }}
+        confirmButtonTextStyle = {{
+          fontFamily: util.getBoldFontName(),
+          fontSize: 12
+        }}
+        messageStyle = {{
+          fontFamily: util.getFontName(),
+          fontSize: 12,
+          marginBottom: 10
+        }}
+        titleStyle={{
+          fontFamily: util.getBoldFontName(),
+          fontSize: 15,
+          marginBottom: 10
+        }}
+
+        onConfirmPressed={alertConfig.onConfirmPressed}
+        onCancelPressed={() => {
+          setShowAlert(false);
+        }}
+      />
 
       <Modal
         animationType='slide'
@@ -639,7 +688,7 @@ const Garages = () => {
           </View>
         </View>
       </Modal>
-    </View>
+    </View >
   );
 };
 
