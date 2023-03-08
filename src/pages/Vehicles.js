@@ -18,6 +18,7 @@ const Vehicles = () => {
   const [selectedGarageLocation, setSelectedGarageLocation] = useState('');
   const [vehicleMenuActive, setVehicleMenuActive] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
   const [loading, setLoading] = useState(false);
 
   // Alert stuff
@@ -45,15 +46,19 @@ const Vehicles = () => {
       }
       return false;
     };
-  
+
     const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
-  
+
     return () => backHandler.remove();
   }, [vehicleMenuActive]);
 
   const setEmptyVehicleObject = async () => {
     setVehicleObject({ ...vehicleObject, garageLocation: '', modified: true, uuid: '', vehicleName: '' });
   }
+
+  const handleSearchChange = (text) => {
+    setSearchValue(text);
+  };
 
   const openVehicleMenu = (vehicleObj) => {
     setVehicleObject(vehicleObj);
@@ -233,34 +238,48 @@ const Vehicles = () => {
     setVehicleObjects(allVehicleObjects);
   };
 
-  const memorizedVehicleObjects = useMemo(() =>
-    vehicleObjects.map((vehicleObj, index) => {
-      const vehicleNameStyle = vehicleObj.modified ? styles.textListItemVehicleB : [styles.textListItemVehicleB, { color: 'orange' }];
-      return (
-        <View key={index} style={styles.containerList}>
-          <View style={{ flex: 1 }}>
-            <TouchableOpacity
-              onPress={() => openVehicleMenu(vehicleObj)}
-            >
-              <Text style={vehicleNameStyle}>
-                {vehicleObj.vehicleName}
-              </Text>
-            </TouchableOpacity>
-          </View>
+  const filteredVehicleObjects = useMemo(() => {
+    return vehicleObjects.filter((vehicleObj) =>
+      vehicleObj.vehicleName.toLowerCase().includes(searchValue.toLowerCase())
+    );
+  }, [searchValue, vehicleObjects]);
 
-          <View style={{ flex: 1 }}>
-            <TouchableOpacity>
-              <Text style={styles.textListItemVehicleM}>
-                {'at ' + vehicleObj.garageLocation}
-              </Text>
-            </TouchableOpacity>
+  const memorizedVehicleObjects = useMemo(
+    () =>
+      filteredVehicleObjects.map((vehicleObj, index) => {
+        const vehicleNameStyle = vehicleObj.modified ? styles.textListItemVehicleB : [styles.textListItemVehicleB, { color: 'orange' }];
+        return (
+          <View key={index} style={styles.containerList}>
+            <View style={{ flex: 1 }}>
+              <TouchableOpacity onPress={() => openVehicleMenu(vehicleObj)}>
+                <Text style={vehicleNameStyle}>{vehicleObj.vehicleName}</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={{ flex: 1 }}>
+              <TouchableOpacity>
+                <Text style={styles.textListItemVehicleM}>
+                  {'at ' + vehicleObj.garageLocation}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      );
-    }), [vehicleObjects]);
+        );
+      }),
+    [filteredVehicleObjects]
+  );
 
   return (
     <View style={{ height: '100%' }}>
+
+      <TextInput
+        onChangeText={handleSearchChange}
+        placeholder=' Search vehicle...'
+        placeholderTextColor='gray'
+        style={styles.textInputSearch}
+        value={searchValue}
+      />
+
       <ScrollView style={{ zIndex: 0 }}>
         <View style={styles.separatorTop} />
         {memorizedVehicleObjects}

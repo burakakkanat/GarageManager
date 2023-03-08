@@ -18,6 +18,7 @@ const Wishlist = () => {
   const [addWishlistModalVisible, setAddWishlistModalVisible] = useState(false);
   const [selectedGarageTheme, setSelectedGarageTheme] = useState('');
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
   const [loading, setLoading] = useState(false);
 
   // Alert stuff
@@ -47,6 +48,10 @@ const Wishlist = () => {
     setWishlistObject({ garageTheme: '', vehicleName: '', price: '', tradePrice: '' });
     setSelectedGarageTheme(''); // Also reset the value displayed on theme picker
   }
+
+  const handleSearchChange = (text) => {
+    setSearchValue(text);
+  };
 
   const addWishlistItem = async () => {
 
@@ -91,7 +96,7 @@ const Wishlist = () => {
 
         return newWishlistObjects;
       });
-      
+
       setAddWishlistModalVisible(false);
 
       ToastAndroid.showWithGravity(
@@ -156,6 +161,12 @@ const Wishlist = () => {
     setShowAlert(true);
   };
 
+  const filteredWishlistObjects = useMemo(() => {
+    return wishlistObjects.filter((wishlistObj) =>
+      wishlistObj.vehicleName.toLowerCase().includes(searchValue.toLowerCase())
+    );
+  }, [searchValue, wishlistObjects]);
+
   const memoizedRenderWishlistObject = useMemo(() => ({ item: wishlistItem }) => {
     return (
       <TouchableOpacity
@@ -177,7 +188,7 @@ const Wishlist = () => {
         </View>
       </TouchableOpacity>
     );
-  }, [wishlistObjects]);
+  }, [filteredWishlistObjects]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -197,8 +208,18 @@ const Wishlist = () => {
         </View>
       </View>
 
+      <TextInput
+        onChangeText={handleSearchChange}
+        placeholder=' Search vehicle...'
+        placeholderTextColor='gray'
+        style={styles.textInputSearch}
+        value={searchValue}
+      />
+
+      <View style={styles.separatorTop} />
+
       <FlatList
-        data={wishlistObjects}
+        data={filteredWishlistObjects}
         keyExtractor={(item, index) => index.toString()}
         renderItem={memoizedRenderWishlistObject}
       />
