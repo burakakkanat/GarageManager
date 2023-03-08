@@ -1,10 +1,11 @@
-import { ActivityIndicator, Alert, FlatList, Modal, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, Modal, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import React, { useContext, useMemo, useState } from 'react';
 import { WishlistContext } from '../context/WishlistContext';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useFocusEffect } from '@react-navigation/native';
 import { GarageContext } from '../context/GarageContext';
 import { BlurView } from '@react-native-community/blur';
+import AwesomeAlert from 'react-native-awesome-alerts';
 import styles from '../styles/Styles';
 import uuid from 'react-native-uuid';
 import util from '../util/Util';
@@ -18,6 +19,15 @@ const Wishlist = () => {
   const [selectedGarageTheme, setSelectedGarageTheme] = useState('');
   const [pickerOpen, setPickerOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Alert stuff
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({
+    confirmButtonText: '',
+    message: '',
+    showCancelButton: true,
+    title: '',
+  });
 
   const [wishlistObject, setWishlistObject] = useState({
     uuid: '',
@@ -41,7 +51,16 @@ const Wishlist = () => {
   const addWishlistItem = async () => {
 
     if (wishlistObject.garageTheme === '') {
-      Alert.alert('Error', 'Please choose a theme.');
+
+      setAlertConfig({
+        confirmButtonText: 'OK',
+        message: 'Please choose a theme.',
+        showCancelButton: false,
+        title: 'Error',
+        onConfirmPressed: async () => { setShowAlert(false) }
+      });
+
+      setShowAlert(true);
       return;
     }
 
@@ -90,54 +109,51 @@ const Wishlist = () => {
 
   const removeWishlistObject = async (whislistItemToRemove) => {
 
-    Alert.alert(
-      'Remove Wishlist Item',
-      'Are you sure you want to remove this wishlist item?',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'OK',
-          onPress: async () => {
-            try {
-              setLoading(true);
+    setAlertConfig({
 
-              // Remove from garage
-              const newGarageObjects = [...garageObjects];
-              const garageIndex = newGarageObjects.findIndex((garageObj) => garageObj.theme === whislistItemToRemove.garageTheme);
-              const newGarageObject = newGarageObjects[garageIndex];
-              const newWishlist = newGarageObject.wishlist.filter((wishlistObj) => wishlistObj.uuid !== whislistItemToRemove.uuid);
-              newGarageObjects[garageIndex] = { ...newGarageObject, wishlist: newWishlist };
+      confirmButtonText: 'Confirm',
+      message: 'Are you sure you want to remove this wishlist item?',
+      showCancelButton: true,
+      title: 'Remove Wishlist Item',
 
-              setGarageObjects(newGarageObjects);
-              await util.saveObject('@GarageObjectList', newGarageObjects);
+      onConfirmPressed: async () => {
+        try {
+          setLoading(true);
 
-              // Remove from wishlistObjects
-              const indexToRemove = wishlistObjects.findIndex(wishlistObj => wishlistObj.uuid === whislistItemToRemove.uuid);
-              const newWishlistObjects = [...wishlistObjects];
-              if (indexToRemove !== -1) {
-                newWishlistObjects.splice(indexToRemove, 1);
-              }
-              setWishlistObjects(newWishlistObjects);
+          // Remove from garage
+          const newGarageObjects = [...garageObjects];
+          const garageIndex = newGarageObjects.findIndex((garageObj) => garageObj.theme === whislistItemToRemove.garageTheme);
+          const newGarageObject = newGarageObjects[garageIndex];
+          const newWishlist = newGarageObject.wishlist.filter((wishlistObj) => wishlistObj.uuid !== whislistItemToRemove.uuid);
+          newGarageObjects[garageIndex] = { ...newGarageObject, wishlist: newWishlist };
 
-              ToastAndroid.showWithGravity(
-                'Wishlist item removed.',
-                ToastAndroid.SHORT,
-                ToastAndroid.TOP, // Not working
-              );
+          setGarageObjects(newGarageObjects);
+          await util.saveObject('@GarageObjectList', newGarageObjects);
 
-            } catch (error) {
-              console.error(error);
-            } finally {
-              setLoading(false);
-            }
-          },
-        },
-      ],
-      { cancelable: false }
-    );
+          // Remove from wishlistObjects
+          const indexToRemove = wishlistObjects.findIndex(wishlistObj => wishlistObj.uuid === whislistItemToRemove.uuid);
+          const newWishlistObjects = [...wishlistObjects];
+          if (indexToRemove !== -1) {
+            newWishlistObjects.splice(indexToRemove, 1);
+          }
+          setWishlistObjects(newWishlistObjects);
+
+          ToastAndroid.showWithGravity(
+            'Wishlist item removed.',
+            ToastAndroid.SHORT,
+            ToastAndroid.TOP, // Not working
+          );
+
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setLoading(false);
+          setShowAlert(false);
+        }
+      }
+    });
+
+    setShowAlert(true);
   };
 
   const memoizedRenderWishlistObject = useMemo(() => ({ item: wishlistItem }) => {
@@ -192,6 +208,55 @@ const Wishlist = () => {
         onPress={() => setAddWishlistModalVisible(true)}>
         <Text style={styles.textButton}>Add Wishlist Item</Text>
       </TouchableOpacity>
+
+      <AwesomeAlert
+        cancelButtonColor='#c70000'
+        cancelText='Cancel'
+        closeOnHardwareBackPress={true}
+        closeOnTouchOutside={true}
+        confirmButtonColor='#2D640F'
+        confirmText={alertConfig.confirmButtonText}
+        message={alertConfig.message}
+        show={showAlert}
+        showCancelButton={alertConfig.showCancelButton}
+        showConfirmButton={true}
+        title={alertConfig.title}
+
+        cancelButtonStyle={{
+          marginRight: 5,
+          width: 100,
+          alignItems: 'center'
+        }}
+        cancelButtonTextStyle={{
+          fontFamily: util.getBoldFontName(),
+          fontSize: 12
+        }}
+        confirmButtonStyle={{
+          marginLeft: 5,
+          width: 100,
+          alignItems: 'center'
+        }}
+        confirmButtonTextStyle={{
+          fontFamily: util.getBoldFontName(),
+          fontSize: 12
+        }}
+        contentContainerStyle={{
+          backgroundColor: '#F2F2F2'
+        }}
+        messageStyle={{
+          fontFamily: util.getFontName(),
+          fontSize: 12,
+          marginBottom: 10
+        }}
+        titleStyle={{
+          fontFamily: util.getBoldFontName(),
+          fontSize: 15,
+          marginBottom: 10
+        }}
+
+        onConfirmPressed={alertConfig.onConfirmPressed}
+        onCancelPressed={() => { setShowAlert(false); }}
+      />
 
       <Modal
         animationType='slide'

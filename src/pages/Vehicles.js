@@ -1,9 +1,10 @@
-import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import React, { useContext, useMemo, useState } from 'react';
 import { VehicleContext } from '../context/VehicleContext';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { GarageContext } from '../context/GarageContext';
 import { BlurView } from '@react-native-community/blur';
+import AwesomeAlert from 'react-native-awesome-alerts';
 import styles from '../styles/Styles';
 import uuid from 'react-native-uuid';
 import util from '../util/Util';
@@ -18,6 +19,15 @@ const Vehicles = () => {
   const [vehicleMenuActive, setVehicleMenuActive] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Alert stuff
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({
+    confirmButtonText: '',
+    message: '',
+    showCancelButton: true,
+    title: '',
+  });
 
   const [vehicleObject, setVehicleObject] = useState({
     garageLocation: '',
@@ -38,12 +48,30 @@ const Vehicles = () => {
   const addNewVehicle = async () => {
 
     if (!vehicleObject.vehicleName.trim()) {
-      Alert.alert('Error', 'Vehicle name can not be empty.');
+
+      setAlertConfig({
+        confirmButtonText: 'OK',
+        message: 'Vehicle name can not be empty.',
+        showCancelButton: false,
+        title: 'Error',
+        onConfirmPressed: async () => { setShowAlert(false) }
+      });
+
+      setShowAlert(true);
       return;
     }
 
     if (vehicleObject.garageLocation === '') {
-      Alert.alert('Error', 'Please choose a garage.');
+
+      setAlertConfig({
+        confirmButtonText: 'OK',
+        message: 'Please choose a garage.',
+        showCancelButton: false,
+        title: 'Error',
+        onConfirmPressed: async () => { setShowAlert(false) }
+      });
+
+      setShowAlert(true);
       return;
     }
 
@@ -89,57 +117,54 @@ const Vehicles = () => {
 
   const removeVehicle = async () => {
 
-    Alert.alert(
-      'Remove Vehicle',
-      'Are you sure you want to remove ' + vehicleObject.vehicleName + ' in ' + vehicleObject.garageLocation + '?',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'OK',
-          onPress: async () => {
-            try {
-              setLoading(true);
+    setAlertConfig({
 
-              // Remove from the garage
-              const newGarageObjects = [...garageObjects];
-              const garageIndex = newGarageObjects.findIndex((garageObj) => garageObj.location === vehicleObject.garageLocation);
-              const newGarageObject = newGarageObjects[garageIndex];
-              const newVehicleList = newGarageObject.vehicles.filter((vehicleObj) => vehicleObj.uuid !== vehicleObject.uuid);
-              newGarageObjects[garageIndex] = { ...newGarageObject, vehicles: newVehicleList };
+      confirmButtonText: 'Confirm',
+      message: 'Are you sure you want to remove ' + vehicleObject.vehicleName + ' in ' + vehicleObject.garageLocation + '?',
+      showCancelButton: true,
+      title: 'Remove Vehicle',
 
-              setGarageObjects(newGarageObjects);
-              await util.saveObject('@GarageObjectList', newGarageObjects);
+      onConfirmPressed: async () => {
+        try {
+          setLoading(true);
 
-              // Remove from vehicleObjects
-              const indexToRemove = vehicleObjects.findIndex(vehicleObj => vehicleObj.uuid === vehicleObject.uuid);
-              const newVehicleObjects = [...vehicleObjects];
-              if (indexToRemove !== -1) {
-                newVehicleObjects.splice(indexToRemove, 1);
-              }
-              setVehicleObjects(newVehicleObjects);
+          // Remove from the garage
+          const newGarageObjects = [...garageObjects];
+          const garageIndex = newGarageObjects.findIndex((garageObj) => garageObj.location === vehicleObject.garageLocation);
+          const newGarageObject = newGarageObjects[garageIndex];
+          const newVehicleList = newGarageObject.vehicles.filter((vehicleObj) => vehicleObj.uuid !== vehicleObject.uuid);
+          newGarageObjects[garageIndex] = { ...newGarageObject, vehicles: newVehicleList };
 
-              setVehicleMenuActive(false);
+          setGarageObjects(newGarageObjects);
+          await util.saveObject('@GarageObjectList', newGarageObjects);
 
-              ToastAndroid.showWithGravity(
-                'Vehicle removed.',
-                ToastAndroid.SHORT,
-                ToastAndroid.TOP, // Not working
-              );
+          // Remove from vehicleObjects
+          const indexToRemove = vehicleObjects.findIndex(vehicleObj => vehicleObj.uuid === vehicleObject.uuid);
+          const newVehicleObjects = [...vehicleObjects];
+          if (indexToRemove !== -1) {
+            newVehicleObjects.splice(indexToRemove, 1);
+          }
+          setVehicleObjects(newVehicleObjects);
 
-            } catch (error) {
-              console.error(error);
-            } finally {
-              setEmptyVehicleObject();
-              setLoading(false);
-            }
-          },
-        },
-      ],
-      { cancelable: false }
-    );
+          setVehicleMenuActive(false);
+
+          ToastAndroid.showWithGravity(
+            'Vehicle removed.',
+            ToastAndroid.SHORT,
+            ToastAndroid.TOP, // Not working
+          );
+
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setEmptyVehicleObject();
+          setLoading(false);
+          setShowAlert(false);
+        }
+      }
+    });
+
+    setShowAlert(true);
   };
 
   const changeVehicleModifiedStatus = async (modifiedStatus) => {
@@ -281,6 +306,55 @@ const Vehicles = () => {
       >
         <Text style={styles.textButton}>Add New Vehicle</Text>
       </TouchableOpacity>
+
+      <AwesomeAlert
+        cancelButtonColor='#c70000'
+        cancelText='Cancel'
+        closeOnHardwareBackPress={true}
+        closeOnTouchOutside={true}
+        confirmButtonColor='#2D640F'
+        confirmText={alertConfig.confirmButtonText}
+        message={alertConfig.message}
+        show={showAlert}
+        showCancelButton={alertConfig.showCancelButton}
+        showConfirmButton={true}
+        title={alertConfig.title}
+
+        cancelButtonStyle={{
+          marginRight: 5,
+          width: 100,
+          alignItems: 'center'
+        }}
+        cancelButtonTextStyle={{
+          fontFamily: util.getBoldFontName(),
+          fontSize: 12
+        }}
+        confirmButtonStyle={{
+          marginLeft: 5,
+          width: 100,
+          alignItems: 'center'
+        }}
+        confirmButtonTextStyle={{
+          fontFamily: util.getBoldFontName(),
+          fontSize: 12
+        }}
+        contentContainerStyle={{
+          backgroundColor: '#F2F2F2'
+        }}
+        messageStyle={{
+          fontFamily: util.getFontName(),
+          fontSize: 12,
+          marginBottom: 10
+        }}
+        titleStyle={{
+          fontFamily: util.getBoldFontName(),
+          fontSize: 15,
+          marginBottom: 10
+        }}
+
+        onConfirmPressed={alertConfig.onConfirmPressed}
+        onCancelPressed={() => { setShowAlert(false); }}
+      />
 
       {vehicleMenuActive && (
         <View style={styles.containerVehicleMenu}>
