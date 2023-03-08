@@ -292,7 +292,7 @@ const Vehicles = () => {
                   setVehicleMenuActive(false);
                   setVehicleObject({ ...vehicleObject, vehicleName: '', garageLocation: '' });
                 }}
-                style={[styles.buttonRed, { position: 'absolute', top: 0, right: 0 }]}>
+                style={[styles.buttonRed, { position: 'absolute', top: 0, left: 0 }]}>
                 <Text style={styles.textButton}>Close</Text>
               </TouchableOpacity>
 
