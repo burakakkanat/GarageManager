@@ -1,5 +1,5 @@
-import { ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
-import React, { useContext, useMemo, useState } from 'react';
+import { ActivityIndicator, BackHandler, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { VehicleContext } from '../context/VehicleContext';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { GarageContext } from '../context/GarageContext';
@@ -35,6 +35,21 @@ const Vehicles = () => {
     uuid: '',
     vehicleName: '',
   });
+
+  useEffect(() => {
+    const backAction = () => {
+      if (vehicleMenuActive) {
+        setVehicleMenuActive(false);
+        setEmptyVehicleObject();
+        return true;
+      }
+      return false;
+    };
+  
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+  
+    return () => backHandler.remove();
+  }, [vehicleMenuActive]);
 
   const setEmptyVehicleObject = async () => {
     setVehicleObject({ ...vehicleObject, garageLocation: '', modified: true, uuid: '', vehicleName: '' });
@@ -360,15 +375,6 @@ const Vehicles = () => {
         <View style={styles.containerVehicleMenu}>
           <BlurView blurType='light' blurAmount={1} style={StyleSheet.absoluteFill}>
             <View style={styles.containerVehicleMenuItems}>
-
-              <TouchableOpacity
-                onPress={() => {
-                  setVehicleMenuActive(false);
-                  setVehicleObject({ ...vehicleObject, vehicleName: '', garageLocation: '' });
-                }}
-                style={[styles.buttonRed, { position: 'absolute', top: 0, left: 0 }]}>
-                <Text style={styles.textButton}>Close</Text>
-              </TouchableOpacity>
 
               <View style={{ left: '20%', width: '60%' }}>
                 <TouchableOpacity
