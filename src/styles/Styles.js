@@ -253,6 +253,16 @@ const styles = StyleSheet.create({
         marginRight: 10,
         width: '41%'
     },
+    textInputSearch: {
+        borderRadius: 10,
+        borderWidth: 0.5,
+        color: 'grey',
+        fontSize: 12,
+        fontStyle: 'italic',
+        height: 40,
+        margin: 5,
+        marginBottom: 0
+    },
     textListItemGarageB: {
         color: 'black',
         fontFamily: util.getBoldFontName(),
