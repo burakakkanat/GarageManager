@@ -27,6 +27,7 @@ const Garages = () => {
   // Alert stuff
   const [showAlert, setShowAlert] = useState(false);
   const [alertConfig, setAlertConfig] = useState({
+    confirmButtonText: '',
     message: '',
     showCancelButton: true,
     title: '',
@@ -198,10 +199,11 @@ const Garages = () => {
 
     setAlertConfig({
 
+      confirmButtonText: 'Confirm',
       message: 'Are you sure you want to remove the garage at ' + oldGarageLocation + '?',
       showCancelButton: true,
       title: 'Remove Garage',
-      
+
       onConfirmPressed: async () => {
         try {
           setInProgress(true);
@@ -370,33 +372,36 @@ const Garages = () => {
       </TouchableOpacity>
 
       <AwesomeAlert
-        showCancelButton={alertConfig.showCancelButton}
-        closeOnHardwareBackPress={true}
-        message={alertConfig.message}
-        confirmButtonColor='#2D640F'
         cancelButtonColor='#c70000'
-        closeOnTouchOutside={true}
-        title={alertConfig.title}
-        showConfirmButton={true}
-        confirmText='Confirm'
         cancelText='Cancel'
+        closeOnHardwareBackPress={true}
+        closeOnTouchOutside={true}
+        confirmButtonColor='#2D640F'
+        confirmText={alertConfig.confirmButtonText}
+        message={alertConfig.message}
         show={showAlert}
+        showCancelButton={alertConfig.showCancelButton}
+        showConfirmButton={true}
+        title={alertConfig.title}
 
-        cancelButtonStyle = {{
+        cancelButtonStyle={{
           marginRight: 5
         }}
-        cancelButtonTextStyle = {{
+        cancelButtonTextStyle={{
           fontFamily: util.getBoldFontName(),
           fontSize: 12
         }}
-        confirmButtonStyle = {{
+        confirmButtonStyle={{
           marginLeft: 5
         }}
-        confirmButtonTextStyle = {{
+        confirmButtonTextStyle={{
           fontFamily: util.getBoldFontName(),
           fontSize: 12
         }}
-        messageStyle = {{
+        contentContainerStyle={{
+          backgroundColor: '#F2F2F2'
+        }}
+        messageStyle={{
           fontFamily: util.getFontName(),
           fontSize: 12,
           marginBottom: 10
@@ -408,9 +413,7 @@ const Garages = () => {
         }}
 
         onConfirmPressed={alertConfig.onConfirmPressed}
-        onCancelPressed={() => {
-          setShowAlert(false);
-        }}
+        onCancelPressed={() => { setShowAlert(false); }}
       />
 
       <Modal
