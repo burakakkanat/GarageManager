@@ -62,6 +62,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderColor: 'lightgrey',
         flexDirection: 'row',
+        marginHorizontal: 5,
         padding: 8
     },
     containerHeader: {
@@ -83,6 +84,17 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         padding: 10
+    },
+    containerListHeader: {
+        alignItems: 'center',
+        backgroundColor: '#2D640F',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        padding: 10
+    },
+    containerListHeaderText: {
+        flex: 1,
+        marginHorizontal: 3
     },
     containerLoading: {
         alignItems: 'center',
@@ -115,17 +127,6 @@ const styles = StyleSheet.create({
     containerVehicleMenuItems: {
         flex: 1,
         justifyContent: 'center',
-    },
-    containerWishlistHeader: {
-        alignItems: 'center',
-        backgroundColor: '#2D640F',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        padding: 10
-    },
-    containerWishlistText: {
-        flex: 1,
-        marginHorizontal: 3
     },
     dropDownAddVehicleContainerStyle: {
         height: '100%',
@@ -226,11 +227,6 @@ const styles = StyleSheet.create({
         fontSize: 15,
         margin: 10
     },
-    textHeaderWishlist: {
-        color: '#F2F2F2',
-        fontFamily: util.getFontName(),
-        fontSize: 12
-    },
     textInput: {
         borderRadius: 10,
         borderWidth: 0.5,
@@ -262,6 +258,11 @@ const styles = StyleSheet.create({
         height: 40,
         margin: 5,
         marginBottom: 0
+    },
+    textListHeader: {
+        color: '#F2F2F2',
+        fontFamily: util.getFontName(),
+        fontSize: 12
     },
     textListItemGarageB: {
         color: 'black',
