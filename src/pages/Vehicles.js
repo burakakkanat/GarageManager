@@ -285,7 +285,7 @@ const Vehicles = () => {
 
       <ScrollView style={{ zIndex: 0 }}>
         {memorizedVehicleObjects}
-        <View style={{ height: 120 }}></View>
+        <View style={{ height: 115 }}></View>
       </ScrollView>
 
       <View style={[styles.containerAddNewVehicle, { height: addNewVehicleContainerHeight }]}>
