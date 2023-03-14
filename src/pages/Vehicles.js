@@ -281,10 +281,11 @@ const Vehicles = () => {
         value={searchValue}
       />
 
+      <View style={styles.separatorTop} />
+
       <ScrollView style={{ zIndex: 0 }}>
-        <View style={styles.separatorTop} />
         {memorizedVehicleObjects}
-        <View style={{ height: 110 }}></View>
+        <View style={{ height: 115 }}></View>
       </ScrollView>
 
       <View style={[styles.containerAddNewVehicle, { height: addNewVehicleContainerHeight }]}>

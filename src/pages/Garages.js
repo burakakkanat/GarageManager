@@ -408,6 +408,21 @@ const Garages = () => {
   return (
     <View style={{ flex: 1 }}>
 
+      <View style={styles.containerListHeader}>
+        <View style={styles.containerListHeaderText}>
+          <Text style={styles.textListHeader}>Location</Text>
+        </View>
+        <View style={styles.containerListHeaderText}>
+          <Text style={styles.textListHeader}>Theme</Text>
+        </View>
+      </View>
+
+      <View style={styles.separatorTop} />
+
+      <ScrollView>
+        {memoizedGarageObjects}
+      </ScrollView>
+
       <TextInput
         inlineImageLeft='search_icon'
         inlineImagePadding={20}
@@ -417,11 +432,6 @@ const Garages = () => {
         style={styles.textInputSearch}
         value={searchValue}
       />
-
-      <ScrollView>
-        <View style={styles.separatorTop} />
-        {memoizedGarageObjects}
-      </ScrollView>
 
       <TouchableOpacity
         onPress={openAddNewGarageWindow}

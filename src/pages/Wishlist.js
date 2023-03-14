@@ -174,16 +174,16 @@ const Wishlist = () => {
         onPress={() => util.openVehicleFandomPage(wishlistItem.vehicleName)}
         onLongPress={() => removeWishlistObject(wishlistItem)}
       >
-        <View style={styles.containerWishlistText}>
+        <View style={styles.containerListHeaderText}>
           <Text style={styles.textWishlistObjectB}>{wishlistItem.vehicleName}</Text>
         </View>
-        <View style={styles.containerWishlistText}>
+        <View style={styles.containerListHeaderText}>
           <Text style={styles.textWishlistObjectM}>{wishlistItem.garageTheme}</Text>
         </View>
-        <View style={styles.containerWishlistText}>
+        <View style={styles.containerListHeaderText}>
           <Text style={styles.textWishlistObjectB}>{wishlistItem.price}</Text>
         </View>
-        <View style={styles.containerWishlistText}>
+        <View style={styles.containerListHeaderText}>
           <Text style={styles.textWishlistObjectM}>{wishlistItem.tradePrice}</Text>
         </View>
       </TouchableOpacity>
@@ -193,20 +193,28 @@ const Wishlist = () => {
   return (
     <View style={{ flex: 1 }}>
 
-      <View style={styles.containerWishlistHeader}>
-        <View style={styles.containerWishlistText}>
-          <Text style={styles.textHeaderWishlist}>Vehicle</Text>
+      <View style={styles.containerListHeader}>
+        <View style={styles.containerListHeaderText}>
+          <Text style={styles.textListHeader}>Vehicle</Text>
         </View>
-        <View style={styles.containerWishlistText}>
-          <Text style={styles.textHeaderWishlist}>Theme</Text>
+        <View style={styles.containerListHeaderText}>
+          <Text style={styles.textListHeader}>Theme</Text>
         </View>
-        <View style={styles.containerWishlistText}>
-          <Text style={styles.textHeaderWishlist}>Price</Text>
+        <View style={styles.containerListHeaderText}>
+          <Text style={styles.textListHeader}>Price</Text>
         </View>
-        <View style={styles.containerWishlistText}>
-          <Text style={styles.textHeaderWishlist}>Trade Price</Text>
+        <View style={styles.containerListHeaderText}>
+          <Text style={styles.textListHeader}>Trade Price</Text>
         </View>
       </View>
+
+      <View style={styles.separatorTop} />
+
+      <FlatList
+        data={filteredWishlistObjects}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={memoizedRenderWishlistObject}
+      />
 
       <TextInput
         inlineImageLeft='search_icon'
@@ -216,14 +224,6 @@ const Wishlist = () => {
         placeholderTextColor='gray'
         style={styles.textInputSearch}
         value={searchValue}
-      />
-
-      <View style={styles.separatorTop} />
-
-      <FlatList
-        data={filteredWishlistObjects}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={memoizedRenderWishlistObject}
       />
 
       <TouchableOpacity
