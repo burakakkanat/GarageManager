@@ -155,7 +155,7 @@ const Garages = () => {
       const newGarageObjects = [...garageObjects];
       if (indexToRemove !== -1) {
         newGarageObjects.splice(indexToRemove, 1);
-      } 
+      }
 
       if (!verifyGarageFields(newGarageObjects)) {
         return;
