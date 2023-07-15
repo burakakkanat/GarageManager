@@ -239,9 +239,23 @@ const Vehicles = () => {
   };
 
   const filteredVehicleObjects = useMemo(() => {
-    return vehicleObjects.filter((vehicleObj) =>
-      searchValue === 'Stock' ? !vehicleObj.modified : vehicleObj.vehicleName.toLowerCase().includes(searchValue.toLowerCase())
-    );
+
+    return vehicleObjects.filter((vehicleObj) => {
+
+      if (searchValue === 'Stock') {
+
+        !vehicleObj.modified
+
+      } else if (searchValue === 'Modified') {
+
+        vehicleObj.modified
+
+      } else {
+
+        vehicleObj.vehicleName.toLowerCase().includes(searchValue.toLowerCase())
+      }
+    });
+
   }, [searchValue, vehicleObjects]);
 
   const memorizedVehicleObjects = useMemo(() =>
@@ -275,7 +289,7 @@ const Vehicles = () => {
         inlineImageLeft='search_icon'
         inlineImagePadding={20}
         onChangeText={handleSearchChange}
-        placeholder='Vehicle name or "Stock"...'
+        placeholder='"Stock", "Modified" or vehicle name...'
         placeholderTextColor='gray'
         style={styles.textInputSearch}
         value={searchValue}
