@@ -1,12 +1,15 @@
-import AwesomeAlert from 'react-native-awesome-alerts';
+import { firebase } from '@react-native-firebase/database';
 import { Alert, ToastAndroid } from 'react-native';
 import RNRestart from 'react-native-restart';
 import util from '../util/Util';
 
+const databaseReference = firebase
+  .app()
+  .database('https://johnny-on-the-spot-130a2-default-rtdb.europe-west1.firebasedatabase.app/')
+  .ref('/me');
+
 const dataManagementUtil = {
 
-  // Last executed: 28.02.2023 15:55
-  // garageObjects have objects in vehicles and wishlist arrays
   backupData: async () => {
 
     Alert.alert(
@@ -21,15 +24,24 @@ const dataManagementUtil = {
           text: 'OK',
           onPress: async () => {
             try {
-
+              
               const garages = await util.retrieveObject('@GarageObjectList');
-              await util.saveObject('@GarageObjectListBackup', garages);
 
-              ToastAndroid.showWithGravity(
-                'Backup successful.',
-                ToastAndroid.SHORT,
-                ToastAndroid.TOP, // Not working
-              );
+              databaseReference.set(garages)
+                .then(() => {
+                  ToastAndroid.showWithGravity(
+                    'Backup successful.',
+                    ToastAndroid.SHORT,
+                    ToastAndroid.TOP, // Not working
+                  );
+                })
+                .catch((error) => {
+                  ToastAndroid.showWithGravity(
+                    'Backup failed.',
+                    ToastAndroid.SHORT,
+                    ToastAndroid.TOP, // Not working
+                  );
+                });
 
             } catch (error) {
               console.error(error);
@@ -55,8 +67,25 @@ const dataManagementUtil = {
           onPress: async () => {
             try {
 
-              const garagesBackup = await util.retrieveObject('@GarageObjectListBackup');
-              await util.saveObject('@GarageObjectList', garagesBackup);
+              const snapshot = await databaseReference.once('value');
+              const restoredGarageObjects = snapshot.val();
+
+              const filledGarageObjects = restoredGarageObjects.map(garageObject => {
+
+                const disposableVehicles = garageObject.hasOwnProperty('disposableVehicles') ? garageObject.disposableVehicles : [];
+                const vehicles = garageObject.hasOwnProperty('vehicles') ? garageObject.vehicles : [];
+                const wishlist = garageObject.hasOwnProperty('wishlist') ? garageObject.wishlist : [];
+
+                return {
+                  ...garageObject,
+                  disposableVehicles,
+                  vehicles,
+                  wishlist
+                };
+
+              });
+
+              await util.saveObject('@GarageObjectList', filledGarageObjects);
 
               ToastAndroid.showWithGravity(
                 'Data restored.',
@@ -67,6 +96,13 @@ const dataManagementUtil = {
               RNRestart.restart();
 
             } catch (error) {
+
+              ToastAndroid.showWithGravity(
+                'Data restoration failed.',
+                ToastAndroid.SHORT,
+                ToastAndroid.TOP, // Not working
+              );
+
               console.error(error);
             }
           },
@@ -92,13 +128,23 @@ const dataManagementUtil = {
 
               await util.saveObject('@GarageObjectList', []);
 
-              ToastAndroid.showWithGravity(
-                'All data cleared.',
-                ToastAndroid.SHORT,
-                ToastAndroid.TOP, // Not working
-              );
+              databaseReference.set(null)
+              .then(() => {
+                ToastAndroid.showWithGravity(
+                  'All data cleared.',
+                  ToastAndroid.SHORT,
+                  ToastAndroid.TOP, // Not working
+                );
 
-              RNRestart.restart();
+                RNRestart.restart();
+              })
+              .catch((error) => {
+                ToastAndroid.showWithGravity(
+                  'Operation failed.',
+                  ToastAndroid.SHORT,
+                  ToastAndroid.TOP, // Not working
+                );
+              });
 
             } catch (error) {
               console.error(error);

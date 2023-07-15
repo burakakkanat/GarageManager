@@ -2,6 +2,18 @@ import { StyleSheet } from 'react-native';
 import util from '../util/Util';
 
 const styles = StyleSheet.create({
+    backupIdContainer: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        marginBottom: 10,
+        marginTop: 20,
+        paddingHorizontal: 20,
+    },
+    backupIdText: {
+        color: 'black',
+        flex: 1,
+        fontSize: 14,
+    },
     buttonBlack: {
         alignItems: 'center',
         backgroundColor: 'black',
