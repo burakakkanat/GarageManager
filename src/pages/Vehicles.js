@@ -239,23 +239,13 @@ const Vehicles = () => {
   };
 
   const filteredVehicleObjects = useMemo(() => {
-
-    return vehicleObjects.filter((vehicleObj) => {
-
-      if (searchValue === 'Stock') {
-
-        !vehicleObj.modified
-
-      } else if (searchValue === 'Modified') {
-
-        vehicleObj.modified
-
-      } else {
-
-        vehicleObj.vehicleName.toLowerCase().includes(searchValue.toLowerCase())
-      }
-    });
-
+    if (searchValue === 'Stock') {
+      return vehicleObjects.filter((vehicleObj) => !vehicleObj.modified);
+    } else if (searchValue === 'Modified') {
+      return vehicleObjects.filter((vehicleObj) => vehicleObj.modified);
+    } else {
+      return vehicleObjects.filter((vehicleObj) => vehicleObj.vehicleName.toLowerCase().includes(searchValue.toLowerCase()));
+    }
   }, [searchValue, vehicleObjects]);
 
   const memorizedVehicleObjects = useMemo(() =>

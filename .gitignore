@@ -65,3 +65,4 @@ yarn-error.log
 # My files
 Scratch/
 android/gradle.properties
+/android/app/google-services.json
