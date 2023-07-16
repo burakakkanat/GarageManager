@@ -100,7 +100,7 @@ const Wishlist = () => {
       setAddWishlistModalVisible(false);
 
       ToastAndroid.showWithGravity(
-        'Wishlist item added.',
+        'Wishlist item added',
         ToastAndroid.SHORT,
         ToastAndroid.TOP, // Not working
       );
@@ -144,7 +144,7 @@ const Wishlist = () => {
           setWishlistObjects(newWishlistObjects);
 
           ToastAndroid.showWithGravity(
-            'Wishlist item removed.',
+            'Wishlist item removed',
             ToastAndroid.SHORT,
             ToastAndroid.TOP, // Not working
           );

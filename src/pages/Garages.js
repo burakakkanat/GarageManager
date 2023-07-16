@@ -132,7 +132,7 @@ const Garages = () => {
       setAddGarageModalVisible(false);
 
       ToastAndroid.showWithGravity(
-        'Garage added.',
+        'Garage added',
         ToastAndroid.SHORT,
         ToastAndroid.TOP, // Not working
       );
@@ -188,7 +188,7 @@ const Garages = () => {
       setEditGarageModalVisible(false);
 
       ToastAndroid.showWithGravity(
-        'Garage edited.',
+        'Garage edited',
         ToastAndroid.SHORT,
         ToastAndroid.TOP, // Not working
       );
@@ -234,7 +234,7 @@ const Garages = () => {
           setShowGarageDetailsVisible(false);
 
           ToastAndroid.showWithGravity(
-            'Garage removed.',
+            'Garage removed',
             ToastAndroid.SHORT,
             ToastAndroid.TOP, // Not working
           );

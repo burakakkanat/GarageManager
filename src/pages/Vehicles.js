@@ -121,7 +121,7 @@ const Vehicles = () => {
       });
 
       ToastAndroid.showWithGravity(
-        'Vehicle added.',
+        'Vehicle added',
         ToastAndroid.SHORT,
         ToastAndroid.TOP, // Not working
       );
@@ -169,7 +169,7 @@ const Vehicles = () => {
           setVehicleMenuActive(false);
 
           ToastAndroid.showWithGravity(
-            'Vehicle removed.',
+            'Vehicle removed',
             ToastAndroid.SHORT,
             ToastAndroid.TOP, // Not working
           );
@@ -207,13 +207,13 @@ const Vehicles = () => {
 
       if (modifiedStatus) {
         ToastAndroid.showWithGravity(
-          'Vehicle set as modified.',
+          'Vehicle marked as modified',
           ToastAndroid.SHORT,
           ToastAndroid.TOP, // Not working
         );
       } else {
         ToastAndroid.showWithGravity(
-          'Vehicle set as stock.',
+          'Vehicle marked as stock',
           ToastAndroid.SHORT,
           ToastAndroid.TOP, // Not working
         );

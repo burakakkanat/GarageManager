@@ -6,6 +6,7 @@ import { GarageContextProvider } from './src/context/GarageContext';
 import { NavigationContainer } from '@react-navigation/native';
 import dataManagementUtil from './src/util/DataManagementUtil';
 import SettingsIcon from './src/images/settingsIcon.png';
+import AwesomeAlert from 'react-native-awesome-alerts';
 import React, { useEffect, useState } from 'react';
 import Wishlist from './src/pages/Wishlist';
 import Vehicles from './src/pages/Vehicles';
@@ -18,10 +19,21 @@ const Tab = createMaterialTopTabNavigator();
 
 const JohnnyOnTheSpot = () => {
 
-  const [backupIdDialogVisible, setBackupIdDialogVisible] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
+
+  // Backup stuff
+  const [backupIdDialogVisible, setBackupIdDialogVisible] = useState(false);
   const [dialogInputValue, setDialogInputValue] = useState('');
   const [backupId, setBackupId] = useState('');
+
+  // Alert stuff
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({
+    confirmButtonText: '',
+    message: '',
+    showCancelButton: true,
+    title: '',
+  });
 
   useEffect(() => {
     const getBackupId = async () => {
@@ -39,23 +51,91 @@ const JohnnyOnTheSpot = () => {
   };
 
   const restoreData = async () => {
+
     if (!backupId || backupId.length === 0) {
+
       setBackupIdDialogVisible(true);
+
     } else {
-      dataManagementUtil.restoreFromBackup();
+
+      setAlertConfig({
+
+        confirmButtonText: 'Confirm',
+        message: 'Are you sure you want to restore data from your latest backup?',
+        showCancelButton: true,
+        title: 'Restore Data',
+
+        onConfirmPressed: async () => {
+          try {
+            dataManagementUtil.restoreFromBackup();
+          } catch (error) {
+            console.error(error);
+          } finally {
+            setShowAlert(false);
+          }
+        }
+      });
+
+      setShowAlert(true);
     }
   }
 
-  const handleCancel = async () => {
-    setDialogInputValue('');
-    setBackupIdDialogVisible(false);
-  }
-
-  const handleSubmit = async () => {
+  const handleBackupIdDialogSubmit = async () => {
     setBackupId(dialogInputValue);
     await util.saveObject('@BackupId', dialogInputValue);
     setBackupIdDialogVisible(false);
     dataManagementUtil.restoreFromBackup();
+  }
+
+  const handleBackupIdDialogCancel = async () => {
+    setDialogInputValue('');
+    setBackupIdDialogVisible(false);
+  }
+
+  const backupData = async () => {
+
+    setAlertConfig({
+
+      confirmButtonText: 'Confirm',
+      message: 'Are you sure you want to backup your current data?',
+      showCancelButton: true,
+      title: 'Backup Data',
+
+      onConfirmPressed: async () => {
+        try {
+          dataManagementUtil.backupData();
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setShowAlert(false);
+        }
+      }
+    });
+
+    setShowAlert(true);
+  }
+
+  const clearAllData = async () => {
+
+    setAlertConfig({
+
+      confirmButtonText: 'Confirm',
+      message: 'This will erase your data from the application and the backup server. Are you sure?',
+      showCancelButton: true,
+      title: 'Clear All Data',
+
+      onConfirmPressed: async () => {
+        try {
+          dataManagementUtil.clearAllData();
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setShowAlert(false);
+        }
+      }
+    });
+
+    setShowAlert(true);
   }
 
   const renderBackupIdSection = () => {
@@ -125,7 +205,7 @@ const JohnnyOnTheSpot = () => {
                 <View style={styles.containerButton}>
                   <TouchableOpacity
                     style={styles.buttonGreen}
-                    onPress={dataManagementUtil.backupData}>
+                    onPress={backupData}>
                     <Text style={styles.textButton}>Backup</Text>
                   </TouchableOpacity>
                 </View>
@@ -139,7 +219,7 @@ const JohnnyOnTheSpot = () => {
                 <View style={styles.containerButton}>
                   <TouchableOpacity
                     style={styles.buttonRed}
-                    onPress={dataManagementUtil.clearAllData}>
+                    onPress={clearAllData}>
                     <Text style={styles.textButton}>Clear All</Text>
                   </TouchableOpacity>
                 </View>
@@ -158,10 +238,59 @@ const JohnnyOnTheSpot = () => {
                   <Dialog.Input
                     style={styles.textBackupIdDetails}
                     onChangeText={text => setDialogInputValue(text)} />
-                  <Dialog.Button label="Cancel" style={styles.textButton} onPress={handleCancel} />
-                  <Dialog.Button label="Submit" style={styles.textButton} onPress={handleSubmit} />
+                  <Dialog.Button label="Cancel" style={styles.textButton} onPress={handleBackupIdDialogCancel} />
+                  <Dialog.Button label="Submit" style={styles.textButton} onPress={handleBackupIdDialogSubmit} />
                 </Dialog.Container>
               </View>
+
+              <AwesomeAlert
+                cancelButtonColor='#c70000'
+                cancelText='Cancel'
+                closeOnHardwareBackPress={true}
+                closeOnTouchOutside={true}
+                confirmButtonColor='#2D640F'
+                confirmText={alertConfig.confirmButtonText}
+                message={alertConfig.message}
+                show={showAlert}
+                showCancelButton={alertConfig.showCancelButton}
+                showConfirmButton={true}
+                title={alertConfig.title}
+
+                cancelButtonStyle={{
+                  marginRight: 5,
+                  width: 100,
+                  alignItems: 'center'
+                }}
+                cancelButtonTextStyle={{
+                  fontFamily: util.getBoldFontName(),
+                  fontSize: 12
+                }}
+                confirmButtonStyle={{
+                  marginLeft: 5,
+                  width: 100,
+                  alignItems: 'center'
+                }}
+                confirmButtonTextStyle={{
+                  fontFamily: util.getBoldFontName(),
+                  fontSize: 12
+                }}
+                contentContainerStyle={{
+                  backgroundColor: '#F2F2F2'
+                }}
+                messageStyle={{
+                  fontFamily: util.getFontName(),
+                  fontSize: 12,
+                  marginBottom: 10
+                }}
+                titleStyle={{
+                  fontFamily: util.getBoldFontName(),
+                  fontSize: 15,
+                  marginBottom: 10
+                }}
+
+                onConfirmPressed={alertConfig.onConfirmPressed}
+                onCancelPressed={() => { setShowAlert(false); }}
+              />
             </Modal>
 
           </WishlistContextProvider>
