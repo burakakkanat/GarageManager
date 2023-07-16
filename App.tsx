@@ -1,7 +1,5 @@
 import { Clipboard, Image, Modal, Text, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { WishlistContextProvider } from './src/context/WishlistContext';
-import { VehicleContextProvider } from './src/context/VehicleContext';
 import { GarageContextProvider } from './src/context/GarageContext';
 import { NavigationContainer } from '@react-navigation/native';
 import dataManagementUtil from './src/util/DataManagementUtil';
@@ -18,10 +16,21 @@ const Tab = createMaterialTopTabNavigator();
 
 const JohnnyOnTheSpot = () => {
 
-  const [backupIdDialogVisible, setBackupIdDialogVisible] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
+
+  // Backup stuff
+  const [backupIdDialogVisible, setBackupIdDialogVisible] = useState(false);
   const [dialogInputValue, setDialogInputValue] = useState('');
   const [backupId, setBackupId] = useState('');
+
+  // Alert stuff
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({
+    confirmButtonText: '',
+    message: '',
+    showCancelButton: true,
+    title: '',
+  });
 
   useEffect(() => {
     const getBackupId = async () => {
@@ -38,24 +47,101 @@ const JohnnyOnTheSpot = () => {
     setSettingsModalVisible(true);
   };
 
+  const backupData = async () => {
+
+    setAlertConfig({
+
+      confirmButtonText: 'Confirm',
+      message: 'Are you sure you want to backup your current data?',
+      showCancelButton: true,
+      title: 'Backup Data',
+
+      onConfirmPressed: async () => {
+        try {
+          dataManagementUtil.backupData();
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setShowAlert(false);
+        }
+      },
+      onCancelPressed: async () => {
+        setShowAlert(false);
+      }
+    });
+
+    setShowAlert(true);
+  }
+
   const restoreData = async () => {
+
     if (!backupId || backupId.length === 0) {
+
       setBackupIdDialogVisible(true);
+
     } else {
-      dataManagementUtil.restoreFromBackup();
+
+      setAlertConfig({
+
+        confirmButtonText: 'Confirm',
+        message: 'Are you sure you want to restore data from your latest backup?',
+        showCancelButton: true,
+        title: 'Restore Data',
+
+        onConfirmPressed: async () => {
+          try {
+            dataManagementUtil.restoreFromBackup();
+          } catch (error) {
+            console.error(error);
+          } finally {
+            setShowAlert(false);
+          }
+        },
+        onCancelPressed: async () => {
+          setShowAlert(false);
+        }
+      });
+
+      setShowAlert(true);
     }
   }
 
-  const handleCancel = async () => {
-    setDialogInputValue('');
-    setBackupIdDialogVisible(false);
-  }
-
-  const handleSubmit = async () => {
+  const handleBackupIdDialogSubmit = async () => {
     setBackupId(dialogInputValue);
     await util.saveObject('@BackupId', dialogInputValue);
     setBackupIdDialogVisible(false);
     dataManagementUtil.restoreFromBackup();
+  }
+
+  const handleBackupIdDialogCancel = async () => {
+    setDialogInputValue('');
+    setBackupIdDialogVisible(false);
+  }
+
+  const clearAllData = async () => {
+
+    setAlertConfig({
+
+      confirmButtonText: 'Confirm',
+      message: 'This will erase your data from the application and the backup server. Are you sure?',
+      showCancelButton: true,
+      title: 'Clear All Data',
+
+      onConfirmPressed: async () => {
+        try {
+          dataManagementUtil.clearAllData();
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setShowAlert(false);
+        }
+      },
+      onCancelPressed: async () => {
+        setShowAlert(false);
+      }
+    });
+
+    setShowAlert(true);
   }
 
   const renderBackupIdSection = () => {
@@ -82,8 +168,6 @@ const JohnnyOnTheSpot = () => {
   return (
     <NavigationContainer>
       <GarageContextProvider>
-        <VehicleContextProvider>
-          <WishlistContextProvider>
 
             <View style={styles.containerHeaderMain}>
               <Text style={styles.headerMain}> Johnny-on-the-Spot </Text>
@@ -125,7 +209,7 @@ const JohnnyOnTheSpot = () => {
                 <View style={styles.containerButton}>
                   <TouchableOpacity
                     style={styles.buttonGreen}
-                    onPress={dataManagementUtil.backupData}>
+                    onPress={backupData}>
                     <Text style={styles.textButton}>Backup</Text>
                   </TouchableOpacity>
                 </View>
@@ -139,7 +223,7 @@ const JohnnyOnTheSpot = () => {
                 <View style={styles.containerButton}>
                   <TouchableOpacity
                     style={styles.buttonRed}
-                    onPress={dataManagementUtil.clearAllData}>
+                    onPress={clearAllData}>
                     <Text style={styles.textButton}>Clear All</Text>
                   </TouchableOpacity>
                 </View>
@@ -158,14 +242,15 @@ const JohnnyOnTheSpot = () => {
                   <Dialog.Input
                     style={styles.textBackupIdDetails}
                     onChangeText={text => setDialogInputValue(text)} />
-                  <Dialog.Button label="Cancel" style={styles.textButton} onPress={handleCancel} />
-                  <Dialog.Button label="Submit" style={styles.textButton} onPress={handleSubmit} />
+                  <Dialog.Button label="Cancel" style={styles.textButton} onPress={handleBackupIdDialogCancel} />
+                  <Dialog.Button label="Submit" style={styles.textButton} onPress={handleBackupIdDialogSubmit} />
                 </Dialog.Container>
               </View>
+
             </Modal>
 
-          </WishlistContextProvider>
-        </VehicleContextProvider>
+            {util.renderAwesomeAlert(alertConfig, showAlert)}
+
       </GarageContextProvider>
     </NavigationContainer >
   );

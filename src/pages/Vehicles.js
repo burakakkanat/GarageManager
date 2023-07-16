@@ -1,17 +1,14 @@
-import { ActivityIndicator, BackHandler, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import { BackHandler, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { VehicleContext } from '../context/VehicleContext';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { GarageContext } from '../context/GarageContext';
 import { BlurView } from '@react-native-community/blur';
-import AwesomeAlert from 'react-native-awesome-alerts';
 import styles from '../styles/Styles';
 import uuid from 'react-native-uuid';
 import util from '../util/Util';
 
 const Vehicles = () => {
 
-  const { vehicleObjects, setVehicleObjects } = useContext(VehicleContext);
   const { garageObjects, setGarageObjects } = useContext(GarageContext);
 
   const [addNewVehicleContainerHeight, setAddVehicleContainerHeight] = useState(55);
@@ -19,7 +16,7 @@ const Vehicles = () => {
   const [vehicleMenuActive, setVehicleMenuActive] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [inProgress, setInProgress] = useState(false);
 
   // Alert stuff
   const [showAlert, setShowAlert] = useState(false);
@@ -40,8 +37,7 @@ const Vehicles = () => {
   useEffect(() => {
     const backAction = () => {
       if (vehicleMenuActive) {
-        setVehicleMenuActive(false);
-        setEmptyVehicleObject();
+        closeVehicleMenu();
         return true;
       }
       return false;
@@ -65,42 +61,49 @@ const Vehicles = () => {
     setVehicleMenuActive(true);
   };
 
+  const closeVehicleMenu = async () => {
+    setEmptyVehicleObject();
+    setSelectedGarageLocation('');
+    setVehicleMenuActive(false);
+  }
+
   const addNewVehicle = async () => {
 
-    if (!vehicleObject.vehicleName.trim()) {
-
-      setAlertConfig({
-        confirmButtonText: 'OK',
-        message: 'Vehicle name can not be empty.',
-        showCancelButton: false,
-        title: 'Error',
-        onConfirmPressed: async () => { setShowAlert(false) }
-      });
-
-      setShowAlert(true);
-      return;
-    }
-
-    if (vehicleObject.garageLocation === '') {
-
-      setAlertConfig({
-        confirmButtonText: 'OK',
-        message: 'Please choose a garage.',
-        showCancelButton: false,
-        title: 'Error',
-        onConfirmPressed: async () => { setShowAlert(false) }
-      });
-
-      setShowAlert(true);
-      return;
-    }
+    setInProgress(true); // Not working
 
     try {
-      setLoading(true);
+
+      if (!vehicleObject.vehicleName.trim()) {
+
+        setAlertConfig({
+          confirmButtonText: 'OK',
+          message: 'Vehicle name can not be empty.',
+          showCancelButton: false,
+          title: 'Error',
+          onConfirmPressed: async () => { setShowAlert(false) }
+        });
+
+        setShowAlert(true);
+        return;
+      }
+
+      if (vehicleObject.garageLocation === '') {
+
+        setAlertConfig({
+          confirmButtonText: 'OK',
+          message: 'Please choose a garage.',
+          showCancelButton: false,
+          title: 'Error',
+          onConfirmPressed: async () => { setShowAlert(false) }
+        });
+
+        setShowAlert(true);
+        return;
+      }
 
       vehicleObject.uuid = uuid.v4();
 
-      setGarageObjects(prevGarageObjects => {
+      await setGarageObjects(prevGarageObjects => {
         const selectedGarageIndex = prevGarageObjects.findIndex(garageObj => garageObj.location === vehicleObject.garageLocation);
         const selectedGarageObject = prevGarageObjects[selectedGarageIndex];
 
@@ -112,16 +115,8 @@ const Vehicles = () => {
         return [...prevGarageObjects];
       });
 
-      setVehicleObjects(prevVehicleObjects => {
-        const newVehicleObjects = [...prevVehicleObjects];
-        const vehicleInsertionIndex = util.findVehicleInsertionIndex(newVehicleObjects, vehicleObject);
-        newVehicleObjects.splice(vehicleInsertionIndex, 0, vehicleObject);
-
-        return newVehicleObjects;
-      });
-
       ToastAndroid.showWithGravity(
-        'Vehicle added.',
+        'Vehicle added',
         ToastAndroid.SHORT,
         ToastAndroid.TOP, // Not working
       );
@@ -129,10 +124,9 @@ const Vehicles = () => {
     } catch (error) {
       console.error(error);
     } finally {
-      setVehicleObject({ ...vehicleObject, vehicleName: '' });
-      setLoading(false);
+      setVehicleObject({ ...vehicleObject, vehicleName: '' }); // setEmptyVehicleObject isn't used on purpose. This makes easier to add cars back to back.
+      setInProgress(false);
     }
-
   };
 
   const removeVehicle = async () => {
@@ -146,7 +140,7 @@ const Vehicles = () => {
 
       onConfirmPressed: async () => {
         try {
-          setLoading(true);
+          setInProgress(true); // Working but loading icon is overlapped by alert
 
           // Remove from the garage
           const newGarageObjects = [...garageObjects];
@@ -158,18 +152,8 @@ const Vehicles = () => {
           setGarageObjects(newGarageObjects);
           await util.saveObject('@GarageObjectList', newGarageObjects);
 
-          // Remove from vehicleObjects
-          const indexToRemove = vehicleObjects.findIndex(vehicleObj => vehicleObj.uuid === vehicleObject.uuid);
-          const newVehicleObjects = [...vehicleObjects];
-          if (indexToRemove !== -1) {
-            newVehicleObjects.splice(indexToRemove, 1);
-          }
-          setVehicleObjects(newVehicleObjects);
-
-          setVehicleMenuActive(false);
-
           ToastAndroid.showWithGravity(
-            'Vehicle removed.',
+            'Vehicle removed',
             ToastAndroid.SHORT,
             ToastAndroid.TOP, // Not working
           );
@@ -177,10 +161,13 @@ const Vehicles = () => {
         } catch (error) {
           console.error(error);
         } finally {
-          setEmptyVehicleObject();
-          setLoading(false);
+          closeVehicleMenu();
+          setInProgress(false);
           setShowAlert(false);
         }
+      },
+      onCancelPressed: async () => {
+        setShowAlert(false);
       }
     });
 
@@ -189,15 +176,16 @@ const Vehicles = () => {
 
   const changeVehicleModifiedStatus = async (modifiedStatus) => {
 
+    setInProgress(true);
+
     try {
       const newGarageObjects = [...garageObjects];
-      const garageIndex = newGarageObjects.findIndex((garageObj) => garageObj.location === vehicleObject.garageLocation);
+      const garageIndex = newGarageObjects.findIndex(garageObj => garageObj.location === vehicleObject.garageLocation);
       const newGarageObject = newGarageObjects[garageIndex];
 
       for (const vehicle of newGarageObject.vehicles) {
         if (vehicle.uuid === vehicleObject.uuid) {
           vehicle.modified = modifiedStatus;
-          setEmptyVehicleObject();
           break;
         }
       }
@@ -207,46 +195,42 @@ const Vehicles = () => {
 
       if (modifiedStatus) {
         ToastAndroid.showWithGravity(
-          'Vehicle set as modified.',
+          'Vehicle marked as modified',
           ToastAndroid.SHORT,
           ToastAndroid.TOP, // Not working
         );
       } else {
         ToastAndroid.showWithGravity(
-          'Vehicle set as stock.',
+          'Vehicle marked as stock',
           ToastAndroid.SHORT,
           ToastAndroid.TOP, // Not working
         );
       }
 
-      refreshVehicleList();
+
     } catch (error) {
       console.error(error);
     } finally {
-      setEmptyVehicleObject();
-      setVehicleMenuActive(false);
+      closeVehicleMenu();
+      setInProgress(false);
     }
   }
 
-  const refreshVehicleList = async () => {
-    let allVehicleObjects = [];
-    for (const garageObject of garageObjects) {
-      if (garageObject.vehicles.length > 0) {
-        allVehicleObjects = [...allVehicleObjects, ...garageObject.vehicles].sort(util.compareVehicles);
-      }
-    }
-    setVehicleObjects(allVehicleObjects);
-  };
-
   const filteredVehicleObjects = useMemo(() => {
-    if (searchValue === 'Stock') {
-      return vehicleObjects.filter((vehicleObj) => !vehicleObj.modified);
+
+    const allVehicles = garageObjects.flatMap(garage => garage.vehicles);
+
+    if (!searchValue || searchValue == '') {
+      return allVehicles;
+    } else if (searchValue === 'Stock') {
+      return allVehicles.filter((vehicleObj) => !vehicleObj.modified);
     } else if (searchValue === 'Modified') {
-      return vehicleObjects.filter((vehicleObj) => vehicleObj.modified);
+      return allVehicles.filter((vehicleObj) => vehicleObj.modified);
     } else {
-      return vehicleObjects.filter((vehicleObj) => vehicleObj.vehicleName.toLowerCase().includes(searchValue.toLowerCase()));
+      return allVehicles.filter((vehicleObj) => vehicleObj.vehicleName.toLowerCase().includes(searchValue.toLowerCase()));
     }
-  }, [searchValue, vehicleObjects]);
+
+  }, [searchValue, garageObjects]);
 
   const memorizedVehicleObjects = useMemo(() =>
     filteredVehicleObjects.map((vehicleObj, index) => {
@@ -341,60 +325,13 @@ const Vehicles = () => {
 
       <TouchableOpacity
         onPress={addNewVehicle}
-        disabled={loading}
+        disabled={inProgress}
         style={[styles.buttonGreen, { bottom: 0, position: 'absolute', width: '95%', zIndex: 1 }]}
       >
         <Text style={styles.textButton}>Add New Vehicle</Text>
       </TouchableOpacity>
 
-      <AwesomeAlert
-        cancelButtonColor='#c70000'
-        cancelText='Cancel'
-        closeOnHardwareBackPress={true}
-        closeOnTouchOutside={true}
-        confirmButtonColor='#2D640F'
-        confirmText={alertConfig.confirmButtonText}
-        message={alertConfig.message}
-        show={showAlert}
-        showCancelButton={alertConfig.showCancelButton}
-        showConfirmButton={true}
-        title={alertConfig.title}
-
-        cancelButtonStyle={{
-          marginRight: 5,
-          width: 100,
-          alignItems: 'center'
-        }}
-        cancelButtonTextStyle={{
-          fontFamily: util.getBoldFontName(),
-          fontSize: 12
-        }}
-        confirmButtonStyle={{
-          marginLeft: 5,
-          width: 100,
-          alignItems: 'center'
-        }}
-        confirmButtonTextStyle={{
-          fontFamily: util.getBoldFontName(),
-          fontSize: 12
-        }}
-        contentContainerStyle={{
-          backgroundColor: '#F2F2F2'
-        }}
-        messageStyle={{
-          fontFamily: util.getFontName(),
-          fontSize: 12,
-          marginBottom: 10
-        }}
-        titleStyle={{
-          fontFamily: util.getBoldFontName(),
-          fontSize: 15,
-          marginBottom: 10
-        }}
-
-        onConfirmPressed={alertConfig.onConfirmPressed}
-        onCancelPressed={() => { setShowAlert(false); }}
-      />
+      {util.renderAwesomeAlert(alertConfig, showAlert)}
 
       {vehicleMenuActive && (
         <View style={styles.containerVehicleMenu}>
@@ -427,15 +364,8 @@ const Vehicles = () => {
         </View>
       )}
 
-      {loading && (
-        <View style={styles.containerLoading}>
-          <BlurView blurType='light' blurAmount={3} style={StyleSheet.absoluteFill}>
-            <View style={styles.loadingIndicator}>
-              <ActivityIndicator size='large' color='#2D640F' />
-            </View>
-          </BlurView>
-        </View>
-      )}
+      {util.renderInProgress(inProgress)}
+
     </View>
   );
 };

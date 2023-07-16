@@ -1,7 +1,8 @@
-
+import { ActivityIndicator, Linking, StyleSheet, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { InAppBrowser } from 'react-native-inappbrowser-reborn';
-import { Linking } from 'react-native';
+import { BlurView } from '@react-native-community/blur';
+import AwesomeAlert from 'react-native-awesome-alerts';
 
 const util = {
     saveObject: async (key, object) => {
@@ -144,6 +145,71 @@ const util = {
         } catch (error) {
             console.error(error);
         }
+    },
+    renderAwesomeAlert: function (alertConfig, showAlert) {
+
+        return (
+            <AwesomeAlert
+                cancelButtonColor='#c70000'
+                cancelText='Cancel'
+                closeOnHardwareBackPress={true}
+                closeOnTouchOutside={true}
+                confirmButtonColor='#2D640F'
+                confirmText={alertConfig.confirmButtonText}
+                message={alertConfig.message}
+                show={showAlert}
+                showCancelButton={alertConfig.showCancelButton}
+                showConfirmButton={true}
+                title={alertConfig.title}
+
+                cancelButtonStyle={{
+                    marginRight: 5,
+                    width: 100,
+                    alignItems: 'center'
+                }}
+                cancelButtonTextStyle={{
+                    fontFamily: util.getBoldFontName(),
+                    fontSize: 12
+                }}
+                confirmButtonStyle={{
+                    marginLeft: 5,
+                    width: 100,
+                    alignItems: 'center'
+                }}
+                confirmButtonTextStyle={{
+                    fontFamily: util.getBoldFontName(),
+                    fontSize: 12
+                }}
+                contentContainerStyle={{
+                    backgroundColor: '#F2F2F2'
+                }}
+                messageStyle={{
+                    fontFamily: util.getFontName(),
+                    fontSize: 12,
+                    marginBottom: 10
+                }}
+                titleStyle={{
+                    fontFamily: util.getBoldFontName(),
+                    fontSize: 15,
+                    marginBottom: 10
+                }}
+
+                onConfirmPressed={alertConfig.onConfirmPressed}
+                onCancelPressed={alertConfig.onCancelPressed}
+            />
+        )
+    }, renderInProgress: function (inProgress) {
+        return (
+            inProgress && (
+                <View style={styles.containerLoading}>
+                    <BlurView blurType='light' blurAmount={3} style={StyleSheet.absoluteFill}>
+                        <View style={styles.loadingIndicator}>
+                            <ActivityIndicator size='large' color='#2D640F' />
+                        </View>
+                    </BlurView>
+                </View>
+            )
+        )
     }
 }
 
@@ -157,4 +223,22 @@ function getEditedVehicleName(vehicleName) {
     }
 }
 
+const styles = {
+    containerLoading: {
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        bottom: 0,
+        justifyContent: 'center',
+        left: 0,
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        zIndex: 999
+    },
+    loadingIndicator: {
+        alignItems: 'center',
+        flex: 1,
+        justifyContent: 'center',
+    }
+}
 export default util;

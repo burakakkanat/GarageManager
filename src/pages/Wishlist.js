@@ -1,25 +1,21 @@
-import { ActivityIndicator, FlatList, Modal, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import { FlatList, Modal, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import React, { useContext, useMemo, useState } from 'react';
-import { WishlistContext } from '../context/WishlistContext';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useFocusEffect } from '@react-navigation/native';
 import { GarageContext } from '../context/GarageContext';
-import { BlurView } from '@react-native-community/blur';
-import AwesomeAlert from 'react-native-awesome-alerts';
 import styles from '../styles/Styles';
 import uuid from 'react-native-uuid';
 import util from '../util/Util';
 
 const Wishlist = () => {
 
-  const { wishlistObjects, setWishlistObjects } = useContext(WishlistContext);
   const { garageObjects, setGarageObjects } = useContext(GarageContext);
 
   const [addWishlistModalVisible, setAddWishlistModalVisible] = useState(false);
   const [selectedGarageTheme, setSelectedGarageTheme] = useState('');
   const [pickerOpen, setPickerOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [inProgress, setInProgress] = useState(false);
 
   // Alert stuff
   const [showAlert, setShowAlert] = useState(false);
@@ -89,18 +85,10 @@ const Wishlist = () => {
         return [...prevGarageObjects];
       });
 
-      setWishlistObjects(prevWishlistObjects => {
-        const newWishlistObjects = [...prevWishlistObjects];
-        const wishlistInsertionIndex = util.findWishlistInsertionIndex(newWishlistObjects, wishlistObject);
-        newWishlistObjects.splice(wishlistInsertionIndex, 0, wishlistObject);
-
-        return newWishlistObjects;
-      });
-
       setAddWishlistModalVisible(false);
 
       ToastAndroid.showWithGravity(
-        'Wishlist item added.',
+        'Wishlist item added',
         ToastAndroid.SHORT,
         ToastAndroid.TOP, // Not working
       );
@@ -123,7 +111,7 @@ const Wishlist = () => {
 
       onConfirmPressed: async () => {
         try {
-          setLoading(true);
+          setInProgress(true); // Working but loading icon is overlapped by alert
 
           // Remove from garage
           const newGarageObjects = [...garageObjects];
@@ -135,16 +123,8 @@ const Wishlist = () => {
           setGarageObjects(newGarageObjects);
           await util.saveObject('@GarageObjectList', newGarageObjects);
 
-          // Remove from wishlistObjects
-          const indexToRemove = wishlistObjects.findIndex(wishlistObj => wishlistObj.uuid === whislistItemToRemove.uuid);
-          const newWishlistObjects = [...wishlistObjects];
-          if (indexToRemove !== -1) {
-            newWishlistObjects.splice(indexToRemove, 1);
-          }
-          setWishlistObjects(newWishlistObjects);
-
           ToastAndroid.showWithGravity(
-            'Wishlist item removed.',
+            'Wishlist item removed',
             ToastAndroid.SHORT,
             ToastAndroid.TOP, // Not working
           );
@@ -152,9 +132,12 @@ const Wishlist = () => {
         } catch (error) {
           console.error(error);
         } finally {
-          setLoading(false);
+          setInProgress(false);
           setShowAlert(false);
         }
+      },
+      onCancelPressed: async () => {
+        setShowAlert(false);
       }
     });
 
@@ -162,10 +145,18 @@ const Wishlist = () => {
   };
 
   const filteredWishlistObjects = useMemo(() => {
-    return wishlistObjects.filter((wishlistObj) =>
-      wishlistObj.vehicleName.toLowerCase().includes(searchValue.toLowerCase())
-    );
-  }, [searchValue, wishlistObjects]);
+
+    const allWishlistObjects = garageObjects.flatMap(garage => garage.wishlist);
+
+    if (!searchValue || searchValue == '') {
+      return allWishlistObjects;
+    } else {
+      return allWishlistObjects.filter((wishlistObj) =>
+        wishlistObj.vehicleName.toLowerCase().includes(searchValue.toLowerCase())
+      );
+    }
+
+  }, [searchValue, garageObjects]);
 
   const memoizedRenderWishlistObject = useMemo(() => ({ item: wishlistItem }) => {
     return (
@@ -232,54 +223,7 @@ const Wishlist = () => {
         <Text style={styles.textButton}>Add Wishlist Item</Text>
       </TouchableOpacity>
 
-      <AwesomeAlert
-        cancelButtonColor='#c70000'
-        cancelText='Cancel'
-        closeOnHardwareBackPress={true}
-        closeOnTouchOutside={true}
-        confirmButtonColor='#2D640F'
-        confirmText={alertConfig.confirmButtonText}
-        message={alertConfig.message}
-        show={showAlert}
-        showCancelButton={alertConfig.showCancelButton}
-        showConfirmButton={true}
-        title={alertConfig.title}
-
-        cancelButtonStyle={{
-          marginRight: 5,
-          width: 100,
-          alignItems: 'center'
-        }}
-        cancelButtonTextStyle={{
-          fontFamily: util.getBoldFontName(),
-          fontSize: 12
-        }}
-        confirmButtonStyle={{
-          marginLeft: 5,
-          width: 100,
-          alignItems: 'center'
-        }}
-        confirmButtonTextStyle={{
-          fontFamily: util.getBoldFontName(),
-          fontSize: 12
-        }}
-        contentContainerStyle={{
-          backgroundColor: '#F2F2F2'
-        }}
-        messageStyle={{
-          fontFamily: util.getFontName(),
-          fontSize: 12,
-          marginBottom: 10
-        }}
-        titleStyle={{
-          fontFamily: util.getBoldFontName(),
-          fontSize: 15,
-          marginBottom: 10
-        }}
-
-        onConfirmPressed={alertConfig.onConfirmPressed}
-        onCancelPressed={() => { setShowAlert(false); }}
-      />
+      {util.renderAwesomeAlert(alertConfig, showAlert)}
 
       <Modal
         animationType='slide'
@@ -370,15 +314,7 @@ const Wishlist = () => {
         </View>
       </Modal>
 
-      {loading && (
-        <View style={styles.containerLoading}>
-          <BlurView blurType='light' blurAmount={3} style={StyleSheet.absoluteFill}>
-            <View style={styles.loadingIndicator}>
-              <ActivityIndicator size='large' color='#2D640F' />
-            </View>
-          </BlurView>
-        </View>
-      )}
+      {util.renderInProgress(inProgress)}
     </View>
   );
 };

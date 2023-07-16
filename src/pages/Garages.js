@@ -1,18 +1,13 @@
 import { Modal, ScrollView, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { WishlistContext } from '../context/WishlistContext';
-import { VehicleContext } from '../context/VehicleContext';
 import { useFocusEffect } from '@react-navigation/native';
 import { GarageContext } from '../context/GarageContext';
-import AwesomeAlert from 'react-native-awesome-alerts';
 import styles from '../styles/Styles';
 import uuid from 'react-native-uuid';
 import util from '../util/Util';
 
 const Garages = () => {
 
-  const { wishlistObjects, setWishlistObjects } = useContext(WishlistContext);
-  const { vehicleObjects, setVehicleObjects } = useContext(VehicleContext);
   const { garageObjects, setGarageObjects } = useContext(GarageContext);
 
   const [oldGarageLocation, setOldGarageLocation] = useState('');
@@ -63,7 +58,6 @@ const Garages = () => {
     // Get the list of garage names from local storage
     const fetchData = async () => {
       const garages = await util.retrieveObject('@GarageObjectList');
-      setVehicleObjectsAndWishlistObjects(garages);
       setGarageObjects(garages);
     };
     fetchData();
@@ -74,26 +68,6 @@ const Garages = () => {
       setEmptyGarageObject();
     }, [])
   );
-
-  function setVehicleObjectsAndWishlistObjects(garageObjectList) {
-
-    let allWishlistObjects = [];
-    let allVehicleObjects = [];
-
-    for (const garageObject of garageObjectList) {
-
-      if (garageObject.vehicles.length > 0) {
-        allVehicleObjects = [...allVehicleObjects, ...garageObject.vehicles].sort(util.compareVehicles);
-      }
-
-      if (garageObject.wishlist.length > 0) {
-        allWishlistObjects = [...allWishlistObjects, ...garageObject.wishlist].sort(util.compareWishlistItems);
-      }
-    }
-
-    setWishlistObjects(allWishlistObjects);
-    setVehicleObjects(allVehicleObjects);
-  }
 
   const setEmptyGarageObject = async () => {
     setGarageObject({ ...garageObject, location: '', theme: '', capacity: '', disposableVehicles: [], vehicles: [], wishlist: [] });
@@ -132,7 +106,7 @@ const Garages = () => {
       setAddGarageModalVisible(false);
 
       ToastAndroid.showWithGravity(
-        'Garage added.',
+        'Garage added',
         ToastAndroid.SHORT,
         ToastAndroid.TOP, // Not working
       );
@@ -149,7 +123,7 @@ const Garages = () => {
     try {
       setInProgress(true);
 
-      // Firstly, remove edited garage from garageObjects list
+      // First, remove edited garage from garageObjects list
       // There is only one garage with a specific location so it is safe to use index.
       const indexToRemove = garageObjects.findIndex(garageObj => garageObj.location === oldGarageLocation);
       const newGarageObjects = [...garageObjects];
@@ -176,19 +150,11 @@ const Garages = () => {
       await util.saveObject('@GarageObjectList', newGarageObjects);
       setGarageObjects(newGarageObjects);
 
-      // Update vehicle list and wishlist
-      if (oldGarageLocation !== garageObject.location) {
-        await refreshVehicleList();
-      }
-      if (oldGarageTheme !== garageObject.theme) {
-        await refreshWishlist();
-      }
-
       await setEmptyGarageObject();
       setEditGarageModalVisible(false);
 
       ToastAndroid.showWithGravity(
-        'Garage edited.',
+        'Garage edited',
         ToastAndroid.SHORT,
         ToastAndroid.TOP, // Not working
       );
@@ -222,19 +188,11 @@ const Garages = () => {
           setGarageObjects(newGarageObjects);
           await util.saveObject('@GarageObjectList', newGarageObjects);
 
-          // Set new vehicles list for Vehicles page
-          if (garageObject.vehicles.length !== 0) {
-            await removeVehicleObjects(oldGarageLocation);
-          }
-          if (garageObject.wishlist.length !== 0) {
-            await removeWishlistObjects(oldGarageTheme);
-          }
-
           await setEmptyGarageObject();
           setShowGarageDetailsVisible(false);
 
           ToastAndroid.showWithGravity(
-            'Garage removed.',
+            'Garage removed',
             ToastAndroid.SHORT,
             ToastAndroid.TOP, // Not working
           );
@@ -245,6 +203,9 @@ const Garages = () => {
           setInProgress(false);
           setShowAlert(false);
         }
+      },
+      onCancelPressed: async () => {
+        setShowAlert(false);
       }
     });
 
@@ -294,6 +255,7 @@ const Garages = () => {
     }
 
     const garageWithSameLocationIndex = garageObjects.findIndex((garageObj) => garageObj.location === garageObject.location);
+    
     if (garageWithSameLocationIndex !== -1) {
 
       setAlertConfig({
@@ -335,44 +297,6 @@ const Garages = () => {
   const updateWishlistThemes = async (garageObject) => {
     for (const wishlistItem of garageObject.wishlist) {
       wishlistItem.garageTheme = garageObject.theme;
-    }
-  };
-
-  const refreshVehicleList = async () => {
-    let allVehicleObjects = [];
-    for (const garageObject of garageObjects) {
-      if (garageObject.vehicles.length > 0) {
-        allVehicleObjects = [...allVehicleObjects, ...garageObject.vehicles].sort(util.compareVehicles);
-      }
-    }
-    setVehicleObjects(allVehicleObjects);
-  };
-
-  const refreshWishlist = async () => {
-    let allWishlistObjects = [];
-    for (const garageObject of garageObjects) {
-      if (garageObject.wishlist.length > 0) {
-        allWishlistObjects = [...allWishlistObjects, ...garageObject.wishlist].sort(util.compareWishlistItems);
-      }
-    }
-    setWishlistObjects(allWishlistObjects);
-  };
-
-  const removeVehicleObjects = async (garageLocationToRemove) => {
-    try {
-      const newVehicleObjects = vehicleObjects.filter(vehicleObject => vehicleObject.garageLocation !== garageLocationToRemove);
-      setVehicleObjects(newVehicleObjects);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const removeWishlistObjects = async (garageThemeToRemove) => {
-    try {
-      const newWishlistObjects = wishlistObjects.filter(wishlistObject => wishlistObject.garageTheme !== garageThemeToRemove);
-      setWishlistObjects(newWishlistObjects);
-    } catch (error) {
-      console.error(error);
     }
   };
 
@@ -439,54 +363,7 @@ const Garages = () => {
         <Text style={styles.textButton}>Add New Garage</Text>
       </TouchableOpacity>
 
-      <AwesomeAlert
-        cancelButtonColor='#c70000'
-        cancelText='Cancel'
-        closeOnHardwareBackPress={true}
-        closeOnTouchOutside={true}
-        confirmButtonColor='#2D640F'
-        confirmText={alertConfig.confirmButtonText}
-        message={alertConfig.message}
-        show={showAlert}
-        showCancelButton={alertConfig.showCancelButton}
-        showConfirmButton={true}
-        title={alertConfig.title}
-
-        cancelButtonStyle={{
-          marginRight: 5,
-          width: 100,
-          alignItems: 'center'
-        }}
-        cancelButtonTextStyle={{
-          fontFamily: util.getBoldFontName(),
-          fontSize: 12
-        }}
-        confirmButtonStyle={{
-          marginLeft: 5,
-          width: 100,
-          alignItems: 'center'
-        }}
-        confirmButtonTextStyle={{
-          fontFamily: util.getBoldFontName(),
-          fontSize: 12
-        }}
-        contentContainerStyle={{
-          backgroundColor: '#F2F2F2'
-        }}
-        messageStyle={{
-          fontFamily: util.getFontName(),
-          fontSize: 12,
-          marginBottom: 10
-        }}
-        titleStyle={{
-          fontFamily: util.getBoldFontName(),
-          fontSize: 15,
-          marginBottom: 10
-        }}
-
-        onConfirmPressed={alertConfig.onConfirmPressed}
-        onCancelPressed={() => { setShowAlert(false); }}
-      />
+      {util.renderAwesomeAlert(alertConfig, showAlert)}
 
       <Modal
         animationType='slide'

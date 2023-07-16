@@ -8,7 +8,7 @@ async function getDatabaseRef(restore) {
 
   var storedBackupId = await util.retrieveObject('@BackupId');
 
-  if (!storedBackupId || storedBackupId.length == 0) {
+  if (!storedBackupId || storedBackupId.length === 0) {
     if (restore) {
       ToastAndroid.showWithGravity(
         'Data restoration failed. Try restarting your app.',
@@ -34,152 +34,101 @@ const dataManagementUtil = {
 
   backupData: async () => {
 
-    Alert.alert(
-      'Backup Data',
-      'Are you sure you want to backup your current data?',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'OK',
-          onPress: async () => {
-            try {
+    try {
+      const garages = await util.retrieveObject('@GarageObjectList');
+      const databaseRef = await getDatabaseRef(false);
 
-              const garages = await util.retrieveObject('@GarageObjectList');
-              const databaseRef = await getDatabaseRef(false);
+      databaseRef.set(garages)
+        .then(() => {
+          ToastAndroid.showWithGravity(
+            'Backup successful',
+            ToastAndroid.SHORT,
+            ToastAndroid.TOP, // Not working
+          );
+        })
+        .catch((error) => {
+          ToastAndroid.showWithGravity(
+            'Backup failed',
+            ToastAndroid.SHORT,
+            ToastAndroid.TOP, // Not working
+          );
+        });
 
-              databaseRef.set(garages)
-                .then(() => {
-                  ToastAndroid.showWithGravity(
-                    'Backup successful.',
-                    ToastAndroid.SHORT,
-                    ToastAndroid.TOP, // Not working
-                  );
-                })
-                .catch((error) => {
-                  ToastAndroid.showWithGravity(
-                    'Backup failed.',
-                    ToastAndroid.SHORT,
-                    ToastAndroid.TOP, // Not working
-                  );
-                });
-
-            } catch (error) {
-              console.error(error);
-            }
-          },
-        },
-      ],
-      { cancelable: false }
-    );
+    } catch (error) {
+      console.error(error);
+    }
   },
   restoreFromBackup: async () => {
 
-    Alert.alert(
-      'Restore Data',
-      'Are you sure you want to restore data from your latest backup?',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'OK',
-          onPress: async () => {
-            try {
+    try {
+      const databaseRef = await getDatabaseRef(true);
+      const snapshot = await databaseRef.once('value');
+      const restoredGarageObjects = snapshot.val();
 
-              const databaseRef = await getDatabaseRef(true);
-              const snapshot = await databaseRef.once('value');
-              const restoredGarageObjects = snapshot.val();
+      const filledGarageObjects = restoredGarageObjects.map(garageObject => {
 
-              const filledGarageObjects = restoredGarageObjects.map(garageObject => {
+        const disposableVehicles = garageObject.hasOwnProperty('disposableVehicles') ? garageObject.disposableVehicles : [];
+        const vehicles = garageObject.hasOwnProperty('vehicles') ? garageObject.vehicles : [];
+        const wishlist = garageObject.hasOwnProperty('wishlist') ? garageObject.wishlist : [];
 
-                const disposableVehicles = garageObject.hasOwnProperty('disposableVehicles') ? garageObject.disposableVehicles : [];
-                const vehicles = garageObject.hasOwnProperty('vehicles') ? garageObject.vehicles : [];
-                const wishlist = garageObject.hasOwnProperty('wishlist') ? garageObject.wishlist : [];
+        return {
+          ...garageObject,
+          disposableVehicles,
+          vehicles,
+          wishlist
+        };
 
-                return {
-                  ...garageObject,
-                  disposableVehicles,
-                  vehicles,
-                  wishlist
-                };
+      });
 
-              });
+      await util.saveObject('@GarageObjectList', filledGarageObjects);
 
-              await util.saveObject('@GarageObjectList', filledGarageObjects);
+      ToastAndroid.showWithGravity(
+        'Data restored',
+        ToastAndroid.SHORT,
+        ToastAndroid.TOP, // Not working
+      );
 
-              ToastAndroid.showWithGravity(
-                'Data restored.',
-                ToastAndroid.SHORT,
-                ToastAndroid.TOP, // Not working
-              );
+      RNRestart.restart();
 
-              RNRestart.restart();
+    } catch (error) {
 
-            } catch (error) {
+      ToastAndroid.showWithGravity(
+        'Data restoration failed',
+        ToastAndroid.SHORT,
+        ToastAndroid.TOP, // Not working
+      );
 
-              ToastAndroid.showWithGravity(
-                'Data restoration failed.',
-                ToastAndroid.SHORT,
-                ToastAndroid.TOP, // Not working
-              );
-
-              console.error(error);
-            }
-          },
-        },
-      ],
-      { cancelable: false }
-    );
+      console.error(error);
+    }
   },
   clearAllData: async () => {
 
-    Alert.alert(
-      'Delete All Data',
-      'Are you sure you want to delete all your data?',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'OK',
-          onPress: async () => {
-            try {
+    try {
 
-              await util.saveObject('@GarageObjectList', []);
-              const databaseRef = await getDatabaseRef(false);
+      await util.saveObject('@GarageObjectList', []);
+      const databaseRef = await getDatabaseRef(false);
 
-              databaseRef.set(null)
-                .then(() => {
-                  ToastAndroid.showWithGravity(
-                    'All data cleared.',
-                    ToastAndroid.SHORT,
-                    ToastAndroid.TOP, // Not working
-                  );
+      databaseRef.set(null)
+        .then(() => {
+          ToastAndroid.showWithGravity(
+            'All data cleared',
+            ToastAndroid.SHORT,
+            ToastAndroid.TOP, // Not working
+          );
 
-                  RNRestart.restart();
-                })
-                .catch((error) => {
-                  ToastAndroid.showWithGravity(
-                    'Operation failed.',
-                    ToastAndroid.SHORT,
-                    ToastAndroid.TOP, // Not working
-                  );
-                });
+          RNRestart.restart();
+        })
+        .catch((error) => {
+          ToastAndroid.showWithGravity(
+            'Operation failed',
+            ToastAndroid.SHORT,
+            ToastAndroid.TOP, // Not working
+          );
+        });
 
-            } catch (error) {
-              console.error(error);
-            }
-          },
-        },
-      ],
-      { cancelable: false }
-    );
-
+    } catch (error) {
+      console.error(error);
+    }
   },
 }
 
