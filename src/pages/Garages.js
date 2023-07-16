@@ -2,6 +2,7 @@ import { Modal, ScrollView, Text, TextInput, ToastAndroid, TouchableOpacity, Vie
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { GarageContext } from '../context/GarageContext';
+import loggerUtil from '../util/LoggerUtil';
 import styles from '../styles/Styles';
 import uuid from 'react-native-uuid';
 import util from '../util/Util';

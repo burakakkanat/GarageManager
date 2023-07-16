@@ -21,7 +21,7 @@ async function getDatabaseRef(restore) {
     }
   }
 
-  const databaseRefPath = '/' + storedBackupId;
+  const databaseRefPath = '/userData/' + storedBackupId;
   const databaseRef = firebase
     .app()
     .database('https://johnny-on-the-spot-130a2-default-rtdb.europe-west1.firebasedatabase.app/')
