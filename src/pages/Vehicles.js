@@ -207,7 +207,6 @@ const Vehicles = () => {
         );
       }
 
-
     } catch (error) {
       console.error(error);
     } finally {

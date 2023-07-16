@@ -198,7 +198,8 @@ const util = {
                 onCancelPressed={alertConfig.onCancelPressed}
             />
         )
-    }, renderInProgress: function (inProgress) {
+    },
+    renderInProgress: function (inProgress) {
         return (
             inProgress && (
                 <View style={styles.containerLoading}>

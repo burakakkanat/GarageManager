@@ -107,8 +107,10 @@ const JohnnyOnTheSpot = () => {
   }
 
   const handleBackupIdDialogSubmit = async () => {
-    setBackupId(dialogInputValue);
-    await util.saveObject('@BackupId', dialogInputValue);
+
+    const backupId = dialogInputValue.trim();
+    setBackupId(backupId);
+    await util.saveObject('@BackupId', backupId);
     setBackupIdDialogVisible(false);
     dataManagementUtil.restoreFromBackup();
   }
