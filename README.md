@@ -1,35 +1,51 @@
 ###### _If you are concerned about safety, feel free to pull the code and build it yourself._
-###### _Alternatively, you can find and download the APK [here](./apk/)._
+###### _Alternatively, you can download the APK [here](./apk/)._
+###### _This app requires an internet connection for opening Wiki pages for vehicles and storing only your garage&vehicle data._
+###### _Demo videos below has lower resolution for size limitations. App looks much better in real life._
+###### _I don't have a MacBook so I couldn't develop the iOS version._
+
 #
 ### _Johnny-on-the-Spot_
-###### A garage and vehicle manager for GTA Online or pretty much any other game. A tribute to our beloved mechanic: [Johnny Jones](https://gta.fandom.com/wiki/Garage_Mechanic)
+###### A garage and vehicle manager for GTA Online. A tribute to our beloved mechanic: [Johnny Jones](https://gta.fandom.com/wiki/Garage_Mechanic)
+
+https://user-images.githubusercontent.com/22921090/229474929-7e1e607a-1bad-4e26-819b-5e89e652ea27.mp4
+
 #
 #### _What you can do:_
 ##### _Garages:_
 
 * ###### You can add, display, edit or remove your garages.
-* ###### Garages have "Location", "Theme", "Available Space", "Vehicles" and "Disposible Vehicles" fields.
+* ###### Garages have "Theme", "Capacity, "Available Space", "Vehicles", "Disposible Vehicles" and "Wishlist" under their details.
+* ###### Each vehicle in garage details are clickable which directs to that vehicles Fandom page, if the vehicle name is entered correctly.
 
-![Garages Page](https://user-images.githubusercontent.com/22921090/219884464-d04b33d7-51d8-45d6-9da1-d298f213e5ea.png)
-
-![Edit Garage Page](https://user-images.githubusercontent.com/22921090/219884469-c7e4801e-81a5-4896-99c9-a386111315c3.png)
-
-* ###### All these details can be viewed by tapping on a garage in the list.
-
-![Garage Details Page](https://user-images.githubusercontent.com/22921090/219884467-2f33aa1b-d616-48e6-9ca4-59f0ba40eaac.png)
+https://user-images.githubusercontent.com/22921090/229475249-9d00d0b8-4761-42b1-922b-5b43069580d8.mp4
 
 ##### _Vehicles:_
-* ###### You can add, display or remove your garages.
-* ###### Each vehicle is assigned to an added garage.
+* ###### You can add and remove vehicles which are assigned to a previously added garage.
 
-![Vehicles Page](https://user-images.githubusercontent.com/22921090/219884539-ae11e667-ebd0-4b80-8832-a3cfcff1c62d.png)
+https://user-images.githubusercontent.com/22921090/229478268-2deaf535-dbdc-46d6-afb4-ac5e954c1ccb.mp4
+
+* ###### If the vehicle name is entered correctly, "View Fandom Page" button will open that vehicles wiki.
+* ###### Vehicles can be marked as "Stock" or "Modified".
+
+https://user-images.githubusercontent.com/22921090/229478734-3b8e1f2f-d5de-452a-85f2-b0f5e6394ede.mp4
 
 ##### _Wishlist:_
-* ###### You can add or remove wishlist items for later purchase.
-* ###### A wishlist item has "Garage", "Vehicle", "Price" and "Trade Price" field.
-* ###### A wishlist item can be removed by tapping on it.
+* ###### You can add or remove wishlist items for later purchase. Each wishlist item is assigned to a previously added garage theme.
+* ###### A wishlist item has "Vehicle", "Theme", "Price" and "Trade Price" fields.
+* ###### Vehicle wiki can be opened by tapping on a wishlist item.
+* ###### Long pressing gives to option to remove that wishlist item.
 
-![Wishlist Page](https://user-images.githubusercontent.com/22921090/219884547-cc928230-eae7-47c4-a070-53f14286e6a7.png)
+https://user-images.githubusercontent.com/22921090/229482075-e2d0c090-2015-4401-ba29-117bd62e9085.mp4
 
-###### _Please remember this is very early stages of development. Bugs may and **will** exist._
+##### _Settings:_
+* ###### You can backup, restore or erase your current data.
+* ###### In case of switching devices, you can restore your data on your new device with your **Backup ID**.
+
+![Settings](https://github.com/burakakkanat/Johnny-on-the-Spot/assets/22921090/0a8fd447-40aa-4567-b8d5-502843778c24)
+
+###### _I did this project solo and I'm kind of new to mobile development. Bugs may and **will** exist._
 ###### _For any bug reports or feature requests, you can reach me through [Reddit](https://www.reddit.com/user/yedifaktoriyel)._
+
+###### _[Settings icon](https://www.flaticon.com/free-icon/setting_2040504?term=settings&page=1&position=1&origin=tag&related_id=2040504) is by [Freepik](https://www.flaticon.com/authors/freepik)._
+###### _[Search icon](https://www.flaticon.com/free-icon/search-interface-symbol_54481?term=search&page=1&position=1&origin=tag&related_id=54481) is by [Catalin Fertu](https://www.flaticon.com/authors/catalin-fertu)._
