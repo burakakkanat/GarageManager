@@ -1,7 +1,6 @@
 import { Clipboard, Image, Modal, Text, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { WishlistContextProvider } from './src/context/WishlistContext';
-import { VehicleContextProvider } from './src/context/VehicleContext';
 import { GarageContextProvider } from './src/context/GarageContext';
 import { NavigationContainer } from '@react-navigation/native';
 import dataManagementUtil from './src/util/DataManagementUtil';
@@ -170,7 +169,6 @@ const JohnnyOnTheSpot = () => {
   return (
     <NavigationContainer>
       <GarageContextProvider>
-        <VehicleContextProvider>
           <WishlistContextProvider>
 
             <View style={styles.containerHeaderMain}>
@@ -256,7 +254,6 @@ const JohnnyOnTheSpot = () => {
             {util.renderAwesomeAlert(alertConfig, showAlert)}
 
           </WishlistContextProvider>
-        </VehicleContextProvider>
       </GarageContextProvider>
     </NavigationContainer >
   );

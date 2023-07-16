@@ -1,6 +1,5 @@
 import { BackHandler, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { VehicleContext } from '../context/VehicleContext';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { GarageContext } from '../context/GarageContext';
 import { BlurView } from '@react-native-community/blur';
@@ -10,7 +9,6 @@ import util from '../util/Util';
 
 const Vehicles = () => {
 
-  const { vehicleObjects, setVehicleObjects } = useContext(VehicleContext);
   const { garageObjects, setGarageObjects } = useContext(GarageContext);
 
   const [addNewVehicleContainerHeight, setAddVehicleContainerHeight] = useState(55);
@@ -117,14 +115,6 @@ const Vehicles = () => {
         return [...prevGarageObjects];
       });
 
-      await setVehicleObjects(prevVehicleObjects => {
-        const newVehicleObjects = [...prevVehicleObjects];
-        const vehicleInsertionIndex = util.findVehicleInsertionIndex(newVehicleObjects, vehicleObject);
-        newVehicleObjects.splice(vehicleInsertionIndex, 0, vehicleObject);
-
-        return newVehicleObjects;
-      });
-
       ToastAndroid.showWithGravity(
         'Vehicle added',
         ToastAndroid.SHORT,
@@ -161,14 +151,6 @@ const Vehicles = () => {
 
           setGarageObjects(newGarageObjects);
           await util.saveObject('@GarageObjectList', newGarageObjects);
-
-          // Remove from vehicleObjects
-          const indexToRemove = vehicleObjects.findIndex(vehicleObj => vehicleObj.uuid === vehicleObject.uuid);
-          const newVehicleObjects = [...vehicleObjects];
-          if (indexToRemove !== -1) {
-            newVehicleObjects.splice(indexToRemove, 1);
-          }
-          await setVehicleObjects(newVehicleObjects);
 
           ToastAndroid.showWithGravity(
             'Vehicle removed',
@@ -211,18 +193,6 @@ const Vehicles = () => {
       setGarageObjects(newGarageObjects);
       await util.saveObject('@GarageObjectList', newGarageObjects);
 
-      await setVehicleObjects(prevVehicleObjects => {
-
-        const updatedVehicleObjects = prevVehicleObjects.map(vehicle => {
-          if (vehicle.uuid === vehicleObject.uuid) {
-            return { ...vehicle, modified: modifiedStatus };
-          }
-          return vehicle;
-        });
-
-        return updatedVehicleObjects;
-      });
-
       if (modifiedStatus) {
         ToastAndroid.showWithGravity(
           'Vehicle marked as modified',
@@ -247,14 +217,20 @@ const Vehicles = () => {
   }
 
   const filteredVehicleObjects = useMemo(() => {
-    if (searchValue === 'Stock') {
-      return vehicleObjects.filter((vehicleObj) => !vehicleObj.modified);
+
+    const allVehicles = garageObjects.flatMap(garage => garage.vehicles);
+
+    if (!searchValue || searchValue == '') {
+      return allVehicles;
+    } else if (searchValue === 'Stock') {
+      return allVehicles.filter((vehicleObj) => !vehicleObj.modified);
     } else if (searchValue === 'Modified') {
-      return vehicleObjects.filter((vehicleObj) => vehicleObj.modified);
+      return allVehicles.filter((vehicleObj) => vehicleObj.modified);
     } else {
-      return vehicleObjects.filter((vehicleObj) => vehicleObj.vehicleName.toLowerCase().includes(searchValue.toLowerCase()));
+      return allVehicles.filter((vehicleObj) => vehicleObj.vehicleName.toLowerCase().includes(searchValue.toLowerCase()));
     }
-  }, [searchValue, vehicleObjects]);
+
+  }, [searchValue, garageObjects]);
 
   const memorizedVehicleObjects = useMemo(() =>
     filteredVehicleObjects.map((vehicleObj, index) => {

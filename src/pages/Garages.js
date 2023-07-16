@@ -1,7 +1,6 @@
 import { Modal, ScrollView, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { WishlistContext } from '../context/WishlistContext';
-import { VehicleContext } from '../context/VehicleContext';
 import { useFocusEffect } from '@react-navigation/native';
 import { GarageContext } from '../context/GarageContext';
 import styles from '../styles/Styles';
@@ -11,7 +10,6 @@ import util from '../util/Util';
 const Garages = () => {
 
   const { wishlistObjects, setWishlistObjects } = useContext(WishlistContext);
-  const { vehicleObjects, setVehicleObjects } = useContext(VehicleContext);
   const { garageObjects, setGarageObjects } = useContext(GarageContext);
 
   const [oldGarageLocation, setOldGarageLocation] = useState('');
@@ -77,21 +75,14 @@ const Garages = () => {
   function setVehicleObjectsAndWishlistObjects(garageObjectList) {
 
     let allWishlistObjects = [];
-    let allVehicleObjects = [];
 
     for (const garageObject of garageObjectList) {
-
-      if (garageObject.vehicles.length > 0) {
-        allVehicleObjects = [...allVehicleObjects, ...garageObject.vehicles].sort(util.compareVehicles);
-      }
-
       if (garageObject.wishlist.length > 0) {
         allWishlistObjects = [...allWishlistObjects, ...garageObject.wishlist].sort(util.compareWishlistItems);
       }
     }
 
     setWishlistObjects(allWishlistObjects);
-    setVehicleObjects(allVehicleObjects);
   }
 
   const setEmptyGarageObject = async () => {
@@ -175,10 +166,6 @@ const Garages = () => {
       await util.saveObject('@GarageObjectList', newGarageObjects);
       setGarageObjects(newGarageObjects);
 
-      // Update vehicle list and wishlist
-      if (oldGarageLocation !== garageObject.location) {
-        await refreshVehicleList();
-      }
       if (oldGarageTheme !== garageObject.theme) {
         await refreshWishlist();
       }
@@ -221,10 +208,6 @@ const Garages = () => {
           setGarageObjects(newGarageObjects);
           await util.saveObject('@GarageObjectList', newGarageObjects);
 
-          // Set new vehicles list for Vehicles page
-          if (garageObject.vehicles.length !== 0) {
-            await removeVehicleObjects(oldGarageLocation);
-          }
           if (garageObject.wishlist.length !== 0) {
             await removeWishlistObjects(oldGarageTheme);
           }
@@ -340,16 +323,6 @@ const Garages = () => {
     }
   };
 
-  const refreshVehicleList = async () => {
-    let allVehicleObjects = [];
-    for (const garageObject of garageObjects) {
-      if (garageObject.vehicles.length > 0) {
-        allVehicleObjects = [...allVehicleObjects, ...garageObject.vehicles].sort(util.compareVehicles);
-      }
-    }
-    setVehicleObjects(allVehicleObjects);
-  };
-
   const refreshWishlist = async () => {
     let allWishlistObjects = [];
     for (const garageObject of garageObjects) {
@@ -358,15 +331,6 @@ const Garages = () => {
       }
     }
     setWishlistObjects(allWishlistObjects);
-  };
-
-  const removeVehicleObjects = async (garageLocationToRemove) => {
-    try {
-      const newVehicleObjects = vehicleObjects.filter(vehicleObject => vehicleObject.garageLocation !== garageLocationToRemove);
-      setVehicleObjects(newVehicleObjects);
-    } catch (error) {
-      console.error(error);
-    }
   };
 
   const removeWishlistObjects = async (garageThemeToRemove) => {
