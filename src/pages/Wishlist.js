@@ -148,7 +148,7 @@ const Wishlist = () => {
 
     const allWishlistObjects = garageObjects.flatMap(garage => garage.wishlist);
 
-    if (!searchValue || searchValue == '') {
+    if (!searchValue || searchValue === '') {
       return allWishlistObjects;
     } else {
       return allWishlistObjects.filter((wishlistObj) =>

@@ -220,7 +220,7 @@ const Vehicles = () => {
 
     const allVehicles = garageObjects.flatMap(garage => garage.vehicles);
 
-    if (!searchValue || searchValue == '') {
+    if (!searchValue || searchValue === '') {
       return allVehicles;
     } else if (searchValue === 'Stock') {
       return allVehicles.filter((vehicleObj) => !vehicleObj.modified);
