@@ -1,6 +1,6 @@
 ###### _If you are concerned about safety, feel free to pull the code and build it yourself._
 ###### _Alternatively, you can download the APK [here](./apk/)._
-###### _This app stores your data completely offline. Opening Wiki pages for vehicles requires an internet connection._
+###### _This app requires an internet connection for opening Wiki pages for vehicles and storing only your garage&vehicle data._
 ###### _Demo videos below has lower resolution for size limitations. App looks much better in real life._
 ###### _I don't have a MacBook so I couldn't develop the iOS version._
 
@@ -40,8 +40,9 @@ https://user-images.githubusercontent.com/22921090/229482075-e2d0c090-2015-4401-
 
 ##### _Settings:_
 * ###### You can backup, restore or erase your current data.
+* ###### In case of switching devices, you can restore your data on your new device with your **Backup ID**.
 
-![image](https://user-images.githubusercontent.com/22921090/229483293-236192af-f142-4894-84a1-9b4ac51f9097.png)
+![Settings](https://github.com/burakakkanat/Johnny-on-the-Spot/assets/22921090/0a8fd447-40aa-4567-b8d5-502843778c24)
 
 ###### _I did this project solo and I'm kind of new to mobile development. Bugs may and **will** exist._
 ###### _For any bug reports or feature requests, you can reach me through [Reddit](https://www.reddit.com/user/yedifaktoriyel)._
