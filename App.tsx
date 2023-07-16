@@ -11,27 +11,24 @@ import Wishlist from './src/pages/Wishlist';
 import Vehicles from './src/pages/Vehicles';
 import Garages from './src/pages/Garages';
 import styles from './src/styles/Styles';
-import uuid from 'react-native-uuid';
+import Dialog from "react-native-dialog";
 import util from './src/util/Util';
 
 const Tab = createMaterialTopTabNavigator();
 
 const JohnnyOnTheSpot = () => {
 
+  const [backupIdDialogVisible, setBackupIdDialogVisible] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
+  const [dialogInputValue, setDialogInputValue] = useState('');
   const [backupId, setBackupId] = useState('');
 
   useEffect(() => {
     const getBackupId = async () => {
-
-      var backupId = await util.retrieveObject('@BackupId');
-
-      if (!backupId || backupId.length == 0) {
-        backupId = uuid.v1();
-        await util.saveObject('@BackupId', backupId);
+      var storedBackupId = await util.retrieveObject('@BackupId');
+      if (storedBackupId && storedBackupId.length !== 0) {
+        setBackupId(storedBackupId);
       }
-
-      setBackupId(backupId);
     };
 
     getBackupId();
@@ -40,6 +37,26 @@ const JohnnyOnTheSpot = () => {
   const showSettings = async () => {
     setSettingsModalVisible(true);
   };
+
+  const restoreData = async () => {
+    if (!backupId || backupId.length === 0) {
+      setBackupIdDialogVisible(true);
+    } else {
+      dataManagementUtil.restoreFromBackup();
+    }
+  }
+
+  const handleCancel = async () => {
+    setDialogInputValue('');
+    setBackupIdDialogVisible(false);
+  }
+
+  const handleSubmit = async () => {
+    setBackupId(dialogInputValue);
+    await util.saveObject('@BackupId', dialogInputValue);
+    setBackupIdDialogVisible(false);
+    dataManagementUtil.restoreFromBackup();
+  }
 
   const renderBackupIdSection = () => {
     if (backupId && backupId.length > 0) {
@@ -52,13 +69,13 @@ const JohnnyOnTheSpot = () => {
           }}
         >
           <Text style={styles.backupIdText}>
-            <Text style={{fontWeight: 'bold'}}>Backup ID (save this): </Text>
+            <Text style={{ fontWeight: 'bold' }}>Backup ID (save this in case of device change): </Text>
             {backupId}
           </Text>
         </TouchableOpacity>
       );
     }
-  
+
     return null;
   };
 
@@ -74,6 +91,23 @@ const JohnnyOnTheSpot = () => {
                 <Image source={SettingsIcon} style={{ width: 25, height: 25 }} />
               </TouchableOpacity>
             </View>
+
+            <Tab.Navigator
+              initialRouteName='Garages'
+              screenOptions={{
+                tabBarLabelStyle: {
+                  fontFamily: 'FOTNewRodin Pro B', fontSize: 12
+                },
+                'tabBarActiveTintColor': '#FFFFFF',
+                'tabBarInactiveTintColor': '#B3E5FC',
+                'tabBarIndicatorStyle': { backgroundColor: '#FFFFFF' },
+                'tabBarStyle': { backgroundColor: '#2D640F' },
+
+              }}>
+              <Tab.Screen name='Garages' component={Garages} />
+              <Tab.Screen name='Vehicles' component={Vehicles} />
+              <Tab.Screen name='Wishlist' component={Wishlist} />
+            </Tab.Navigator>
 
             <Modal
               animationType='slide'
@@ -98,7 +132,7 @@ const JohnnyOnTheSpot = () => {
                 <View style={styles.containerButton}>
                   <TouchableOpacity
                     style={styles.buttonOrange}
-                    onPress={dataManagementUtil.restoreFromBackup}>
+                    onPress={restoreData}>
                     <Text style={styles.textButton}>Restore</Text>
                   </TouchableOpacity>
                 </View>
@@ -114,24 +148,21 @@ const JohnnyOnTheSpot = () => {
               <View>
                 {renderBackupIdSection()}
               </View>
+
+              <View>
+                <Dialog.Container visible={backupIdDialogVisible}>
+                  <Dialog.Title style={styles.textBackupIdDialogTitle}>No Backup ID Found</Dialog.Title>
+                  <Dialog.Description style={styles.textBackupIdDetails}>
+                    Please submit the "Backup Id" you obtained from your other device.
+                  </Dialog.Description>
+                  <Dialog.Input
+                    style={styles.textBackupIdDetails}
+                    onChangeText={text => setDialogInputValue(text)} />
+                  <Dialog.Button label="Cancel" style = {styles.textButton} onPress={handleCancel} />
+                  <Dialog.Button label="Submit" style = {styles.textButton} onPress={handleSubmit} />
+                </Dialog.Container>
+              </View>
             </Modal>
-
-            <Tab.Navigator
-              initialRouteName='Garages'
-              screenOptions={{
-                tabBarLabelStyle: {
-                  fontFamily: 'FOTNewRodin Pro B', fontSize: 12
-                },
-                'tabBarActiveTintColor': '#FFFFFF',
-                'tabBarInactiveTintColor': '#B3E5FC',
-                'tabBarIndicatorStyle': { backgroundColor: '#FFFFFF' },
-                'tabBarStyle': { backgroundColor: '#2D640F' },
-
-              }}>
-              <Tab.Screen name='Garages' component={Garages} />
-              <Tab.Screen name='Vehicles' component={Vehicles} />
-              <Tab.Screen name='Wishlist' component={Wishlist} />
-            </Tab.Navigator>
 
           </WishlistContextProvider>
         </VehicleContextProvider>
