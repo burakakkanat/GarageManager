@@ -18,7 +18,7 @@ const Vehicles = () => {
   const [vehicleMenuActive, setVehicleMenuActive] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [inProgress, setInProgress] = useState(false);
 
   // Alert stuff
   const [showAlert, setShowAlert] = useState(false);
@@ -96,11 +96,11 @@ const Vehicles = () => {
     }
 
     try {
-      setLoading(true);
+      setInProgress(true); // Not working
 
       vehicleObject.uuid = uuid.v4();
 
-      setGarageObjects(prevGarageObjects => {
+      await setGarageObjects(prevGarageObjects => {
         const selectedGarageIndex = prevGarageObjects.findIndex(garageObj => garageObj.location === vehicleObject.garageLocation);
         const selectedGarageObject = prevGarageObjects[selectedGarageIndex];
 
@@ -112,7 +112,7 @@ const Vehicles = () => {
         return [...prevGarageObjects];
       });
 
-      setVehicleObjects(prevVehicleObjects => {
+      await setVehicleObjects(prevVehicleObjects => {
         const newVehicleObjects = [...prevVehicleObjects];
         const vehicleInsertionIndex = util.findVehicleInsertionIndex(newVehicleObjects, vehicleObject);
         newVehicleObjects.splice(vehicleInsertionIndex, 0, vehicleObject);
@@ -130,7 +130,7 @@ const Vehicles = () => {
       console.error(error);
     } finally {
       setVehicleObject({ ...vehicleObject, vehicleName: '' });
-      setLoading(false);
+      setInProgress(false);
     }
 
   };
@@ -146,7 +146,8 @@ const Vehicles = () => {
 
       onConfirmPressed: async () => {
         try {
-          setLoading(true);
+          setInProgress(true); // Working but loading icon is overlapped by alert
+          setVehicleMenuActive(false);
 
           // Remove from the garage
           const newGarageObjects = [...garageObjects];
@@ -164,9 +165,7 @@ const Vehicles = () => {
           if (indexToRemove !== -1) {
             newVehicleObjects.splice(indexToRemove, 1);
           }
-          setVehicleObjects(newVehicleObjects);
-
-          setVehicleMenuActive(false);
+          await setVehicleObjects(newVehicleObjects);
 
           ToastAndroid.showWithGravity(
             'Vehicle removed',
@@ -178,7 +177,7 @@ const Vehicles = () => {
           console.error(error);
         } finally {
           setEmptyVehicleObject();
-          setLoading(false);
+          setInProgress(false);
           setShowAlert(false);
         }
       },
@@ -344,7 +343,7 @@ const Vehicles = () => {
 
       <TouchableOpacity
         onPress={addNewVehicle}
-        disabled={loading}
+        disabled={inProgress}
         style={[styles.buttonGreen, { bottom: 0, position: 'absolute', width: '95%', zIndex: 1 }]}
       >
         <Text style={styles.textButton}>Add New Vehicle</Text>
@@ -383,7 +382,7 @@ const Vehicles = () => {
         </View>
       )}
 
-      {loading && (
+      {inProgress && (
         <View style={styles.containerLoading}>
           <BlurView blurType='light' blurAmount={3} style={StyleSheet.absoluteFill}>
             <View style={styles.loadingIndicator}>

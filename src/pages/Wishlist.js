@@ -18,7 +18,7 @@ const Wishlist = () => {
   const [selectedGarageTheme, setSelectedGarageTheme] = useState('');
   const [pickerOpen, setPickerOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [inProgress, setInProgress] = useState(false);
 
   // Alert stuff
   const [showAlert, setShowAlert] = useState(false);
@@ -122,7 +122,7 @@ const Wishlist = () => {
 
       onConfirmPressed: async () => {
         try {
-          setLoading(true);
+          setInProgress(true); // Working but loading icon is overlapped by alert
 
           // Remove from garage
           const newGarageObjects = [...garageObjects];
@@ -151,7 +151,7 @@ const Wishlist = () => {
         } catch (error) {
           console.error(error);
         } finally {
-          setLoading(false);
+          setInProgress(false);
           setShowAlert(false);
         }
       },
@@ -325,7 +325,7 @@ const Wishlist = () => {
         </View>
       </Modal>
 
-      {loading && (
+      {inProgress && (
         <View style={styles.containerLoading}>
           <BlurView blurType='light' blurAmount={3} style={StyleSheet.absoluteFill}>
             <View style={styles.loadingIndicator}>
