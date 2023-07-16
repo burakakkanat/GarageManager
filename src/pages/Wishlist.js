@@ -1,6 +1,5 @@
 import { FlatList, Modal, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import React, { useContext, useMemo, useState } from 'react';
-import { WishlistContext } from '../context/WishlistContext';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useFocusEffect } from '@react-navigation/native';
 import { GarageContext } from '../context/GarageContext';
@@ -10,7 +9,6 @@ import util from '../util/Util';
 
 const Wishlist = () => {
 
-  const { wishlistObjects, setWishlistObjects } = useContext(WishlistContext);
   const { garageObjects, setGarageObjects } = useContext(GarageContext);
 
   const [addWishlistModalVisible, setAddWishlistModalVisible] = useState(false);
@@ -87,14 +85,6 @@ const Wishlist = () => {
         return [...prevGarageObjects];
       });
 
-      setWishlistObjects(prevWishlistObjects => {
-        const newWishlistObjects = [...prevWishlistObjects];
-        const wishlistInsertionIndex = util.findWishlistInsertionIndex(newWishlistObjects, wishlistObject);
-        newWishlistObjects.splice(wishlistInsertionIndex, 0, wishlistObject);
-
-        return newWishlistObjects;
-      });
-
       setAddWishlistModalVisible(false);
 
       ToastAndroid.showWithGravity(
@@ -133,14 +123,6 @@ const Wishlist = () => {
           setGarageObjects(newGarageObjects);
           await util.saveObject('@GarageObjectList', newGarageObjects);
 
-          // Remove from wishlistObjects
-          const indexToRemove = wishlistObjects.findIndex(wishlistObj => wishlistObj.uuid === whislistItemToRemove.uuid);
-          const newWishlistObjects = [...wishlistObjects];
-          if (indexToRemove !== -1) {
-            newWishlistObjects.splice(indexToRemove, 1);
-          }
-          setWishlistObjects(newWishlistObjects);
-
           ToastAndroid.showWithGravity(
             'Wishlist item removed',
             ToastAndroid.SHORT,
@@ -163,10 +145,18 @@ const Wishlist = () => {
   };
 
   const filteredWishlistObjects = useMemo(() => {
-    return wishlistObjects.filter((wishlistObj) =>
-      wishlistObj.vehicleName.toLowerCase().includes(searchValue.toLowerCase())
-    );
-  }, [searchValue, wishlistObjects]);
+
+    const allWishlistObjects = garageObjects.flatMap(garage => garage.wishlist);
+
+    if (!searchValue || searchValue == '') {
+      return allWishlistObjects;
+    } else {
+      return allWishlistObjects.filter((wishlistObj) =>
+        wishlistObj.vehicleName.toLowerCase().includes(searchValue.toLowerCase())
+      );
+    }
+
+  }, [searchValue, garageObjects]);
 
   const memoizedRenderWishlistObject = useMemo(() => ({ item: wishlistItem }) => {
     return (

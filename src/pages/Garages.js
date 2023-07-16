@@ -1,6 +1,5 @@
 import { Modal, ScrollView, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { WishlistContext } from '../context/WishlistContext';
 import { useFocusEffect } from '@react-navigation/native';
 import { GarageContext } from '../context/GarageContext';
 import styles from '../styles/Styles';
@@ -9,7 +8,6 @@ import util from '../util/Util';
 
 const Garages = () => {
 
-  const { wishlistObjects, setWishlistObjects } = useContext(WishlistContext);
   const { garageObjects, setGarageObjects } = useContext(GarageContext);
 
   const [oldGarageLocation, setOldGarageLocation] = useState('');
@@ -60,7 +58,6 @@ const Garages = () => {
     // Get the list of garage names from local storage
     const fetchData = async () => {
       const garages = await util.retrieveObject('@GarageObjectList');
-      setVehicleObjectsAndWishlistObjects(garages);
       setGarageObjects(garages);
     };
     fetchData();
@@ -71,19 +68,6 @@ const Garages = () => {
       setEmptyGarageObject();
     }, [])
   );
-
-  function setVehicleObjectsAndWishlistObjects(garageObjectList) {
-
-    let allWishlistObjects = [];
-
-    for (const garageObject of garageObjectList) {
-      if (garageObject.wishlist.length > 0) {
-        allWishlistObjects = [...allWishlistObjects, ...garageObject.wishlist].sort(util.compareWishlistItems);
-      }
-    }
-
-    setWishlistObjects(allWishlistObjects);
-  }
 
   const setEmptyGarageObject = async () => {
     setGarageObject({ ...garageObject, location: '', theme: '', capacity: '', disposableVehicles: [], vehicles: [], wishlist: [] });
@@ -139,7 +123,7 @@ const Garages = () => {
     try {
       setInProgress(true);
 
-      // Firstly, remove edited garage from garageObjects list
+      // First, remove edited garage from garageObjects list
       // There is only one garage with a specific location so it is safe to use index.
       const indexToRemove = garageObjects.findIndex(garageObj => garageObj.location === oldGarageLocation);
       const newGarageObjects = [...garageObjects];
@@ -165,10 +149,6 @@ const Garages = () => {
 
       await util.saveObject('@GarageObjectList', newGarageObjects);
       setGarageObjects(newGarageObjects);
-
-      if (oldGarageTheme !== garageObject.theme) {
-        await refreshWishlist();
-      }
 
       await setEmptyGarageObject();
       setEditGarageModalVisible(false);
@@ -207,10 +187,6 @@ const Garages = () => {
           }
           setGarageObjects(newGarageObjects);
           await util.saveObject('@GarageObjectList', newGarageObjects);
-
-          if (garageObject.wishlist.length !== 0) {
-            await removeWishlistObjects(oldGarageTheme);
-          }
 
           await setEmptyGarageObject();
           setShowGarageDetailsVisible(false);
@@ -279,6 +255,7 @@ const Garages = () => {
     }
 
     const garageWithSameLocationIndex = garageObjects.findIndex((garageObj) => garageObj.location === garageObject.location);
+    
     if (garageWithSameLocationIndex !== -1) {
 
       setAlertConfig({
@@ -320,25 +297,6 @@ const Garages = () => {
   const updateWishlistThemes = async (garageObject) => {
     for (const wishlistItem of garageObject.wishlist) {
       wishlistItem.garageTheme = garageObject.theme;
-    }
-  };
-
-  const refreshWishlist = async () => {
-    let allWishlistObjects = [];
-    for (const garageObject of garageObjects) {
-      if (garageObject.wishlist.length > 0) {
-        allWishlistObjects = [...allWishlistObjects, ...garageObject.wishlist].sort(util.compareWishlistItems);
-      }
-    }
-    setWishlistObjects(allWishlistObjects);
-  };
-
-  const removeWishlistObjects = async (garageThemeToRemove) => {
-    try {
-      const newWishlistObjects = wishlistObjects.filter(wishlistObject => wishlistObject.garageTheme !== garageThemeToRemove);
-      setWishlistObjects(newWishlistObjects);
-    } catch (error) {
-      console.error(error);
     }
   };
 
