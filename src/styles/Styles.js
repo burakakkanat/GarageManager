@@ -286,24 +286,24 @@ const styles = StyleSheet.create({
         fontFamily: util.getFontName(),
         fontSize: 12
     },
+    textListItemGarage: {
+        color: 'black',
+        fontFamily: util.getFontName(),
+        fontSize: 11
+    },
     textListItemGarageB: {
         color: 'black',
         fontFamily: util.getBoldFontName(),
         fontSize: 11
     },
-    textListItemGarageM: {
+    textListItemVehicle: {
         color: 'black',
         fontFamily: util.getFontName(),
-        fontSize: 11
+        fontSize: 10.5
     },
     textListItemVehicleB: {
         color: 'black',
         fontFamily: util.getBoldFontName(),
-        fontSize: 10.5
-    },
-    textListItemVehicleM: {
-        color: 'black',
-        fontFamily: util.getFontName(),
         fontSize: 10.5
     },
     textSoftTitle: {
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
         fontSize: 10.5,
         margin: 10
     },
-    textWishlistObjectM: {
+    textWishlistObject: {
         color: 'black',
         fontFamily: util.getFontName(),
         fontSize: 10

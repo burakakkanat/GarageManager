@@ -244,7 +244,7 @@ const Vehicles = () => {
 
           <View style={{ flex: 1 }}>
             <TouchableOpacity>
-              <Text style={styles.textListItemVehicleM}>
+              <Text style={styles.textListItemVehicle}>
                 {'at ' + vehicleObj.garageLocation}
               </Text>
             </TouchableOpacity>

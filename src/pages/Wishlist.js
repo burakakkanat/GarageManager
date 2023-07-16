@@ -169,13 +169,13 @@ const Wishlist = () => {
           <Text style={styles.textWishlistObjectB}>{wishlistItem.vehicleName}</Text>
         </View>
         <View style={styles.containerListHeaderText}>
-          <Text style={styles.textWishlistObjectM}>{wishlistItem.garageTheme}</Text>
+          <Text style={styles.textWishlistObject}>{wishlistItem.garageTheme}</Text>
         </View>
         <View style={styles.containerListHeaderText}>
           <Text style={styles.textWishlistObjectB}>{wishlistItem.price}</Text>
         </View>
         <View style={styles.containerListHeaderText}>
-          <Text style={styles.textWishlistObjectM}>{wishlistItem.tradePrice}</Text>
+          <Text style={styles.textWishlistObject}>{wishlistItem.tradePrice}</Text>
         </View>
       </TouchableOpacity>
     );
