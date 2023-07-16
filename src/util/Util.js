@@ -1,6 +1,6 @@
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { InAppBrowser } from 'react-native-inappbrowser-reborn';
+import AwesomeAlert from 'react-native-awesome-alerts';
 import { Linking } from 'react-native';
 
 const util = {
@@ -144,6 +144,59 @@ const util = {
         } catch (error) {
             console.error(error);
         }
+    },
+    renderAwesomeAlert: function (alertConfig, showAlert) {
+
+        return (
+            <AwesomeAlert
+                cancelButtonColor='#c70000'
+                cancelText='Cancel'
+                closeOnHardwareBackPress={true}
+                closeOnTouchOutside={true}
+                confirmButtonColor='#2D640F'
+                confirmText={alertConfig.confirmButtonText}
+                message={alertConfig.message}
+                show={showAlert}
+                showCancelButton={alertConfig.showCancelButton}
+                showConfirmButton={true}
+                title={alertConfig.title}
+
+                cancelButtonStyle={{
+                    marginRight: 5,
+                    width: 100,
+                    alignItems: 'center'
+                }}
+                cancelButtonTextStyle={{
+                    fontFamily: util.getBoldFontName(),
+                    fontSize: 12
+                }}
+                confirmButtonStyle={{
+                    marginLeft: 5,
+                    width: 100,
+                    alignItems: 'center'
+                }}
+                confirmButtonTextStyle={{
+                    fontFamily: util.getBoldFontName(),
+                    fontSize: 12
+                }}
+                contentContainerStyle={{
+                    backgroundColor: '#F2F2F2'
+                }}
+                messageStyle={{
+                    fontFamily: util.getFontName(),
+                    fontSize: 12,
+                    marginBottom: 10
+                }}
+                titleStyle={{
+                    fontFamily: util.getBoldFontName(),
+                    fontSize: 15,
+                    marginBottom: 10
+                }}
+
+                onConfirmPressed={alertConfig.onConfirmPressed}
+                onCancelPressed={alertConfig.onCancelPressed}
+            />
+        )
     }
 }
 

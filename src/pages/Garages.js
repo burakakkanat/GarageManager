@@ -4,7 +4,6 @@ import { WishlistContext } from '../context/WishlistContext';
 import { VehicleContext } from '../context/VehicleContext';
 import { useFocusEffect } from '@react-navigation/native';
 import { GarageContext } from '../context/GarageContext';
-import AwesomeAlert from 'react-native-awesome-alerts';
 import styles from '../styles/Styles';
 import uuid from 'react-native-uuid';
 import util from '../util/Util';
@@ -245,6 +244,9 @@ const Garages = () => {
           setInProgress(false);
           setShowAlert(false);
         }
+      },
+      onCancelPressed: async () => {
+        setShowAlert(false);
       }
     });
 
@@ -439,54 +441,7 @@ const Garages = () => {
         <Text style={styles.textButton}>Add New Garage</Text>
       </TouchableOpacity>
 
-      <AwesomeAlert
-        cancelButtonColor='#c70000'
-        cancelText='Cancel'
-        closeOnHardwareBackPress={true}
-        closeOnTouchOutside={true}
-        confirmButtonColor='#2D640F'
-        confirmText={alertConfig.confirmButtonText}
-        message={alertConfig.message}
-        show={showAlert}
-        showCancelButton={alertConfig.showCancelButton}
-        showConfirmButton={true}
-        title={alertConfig.title}
-
-        cancelButtonStyle={{
-          marginRight: 5,
-          width: 100,
-          alignItems: 'center'
-        }}
-        cancelButtonTextStyle={{
-          fontFamily: util.getBoldFontName(),
-          fontSize: 12
-        }}
-        confirmButtonStyle={{
-          marginLeft: 5,
-          width: 100,
-          alignItems: 'center'
-        }}
-        confirmButtonTextStyle={{
-          fontFamily: util.getBoldFontName(),
-          fontSize: 12
-        }}
-        contentContainerStyle={{
-          backgroundColor: '#F2F2F2'
-        }}
-        messageStyle={{
-          fontFamily: util.getFontName(),
-          fontSize: 12,
-          marginBottom: 10
-        }}
-        titleStyle={{
-          fontFamily: util.getBoldFontName(),
-          fontSize: 15,
-          marginBottom: 10
-        }}
-
-        onConfirmPressed={alertConfig.onConfirmPressed}
-        onCancelPressed={() => { setShowAlert(false); }}
-      />
+      {util.renderAwesomeAlert(alertConfig, showAlert)}
 
       <Modal
         animationType='slide'

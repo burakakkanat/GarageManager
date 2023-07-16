@@ -6,7 +6,6 @@ import { GarageContextProvider } from './src/context/GarageContext';
 import { NavigationContainer } from '@react-navigation/native';
 import dataManagementUtil from './src/util/DataManagementUtil';
 import SettingsIcon from './src/images/settingsIcon.png';
-import AwesomeAlert from 'react-native-awesome-alerts';
 import React, { useEffect, useState } from 'react';
 import Wishlist from './src/pages/Wishlist';
 import Vehicles from './src/pages/Vehicles';
@@ -50,6 +49,32 @@ const JohnnyOnTheSpot = () => {
     setSettingsModalVisible(true);
   };
 
+  const backupData = async () => {
+
+    setAlertConfig({
+
+      confirmButtonText: 'Confirm',
+      message: 'Are you sure you want to backup your current data?',
+      showCancelButton: true,
+      title: 'Backup Data',
+
+      onConfirmPressed: async () => {
+        try {
+          dataManagementUtil.backupData();
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setShowAlert(false);
+        }
+      },
+      onCancelPressed: async () => {
+        setShowAlert(false);
+      }
+    });
+
+    setShowAlert(true);
+  }
+
   const restoreData = async () => {
 
     if (!backupId || backupId.length === 0) {
@@ -73,6 +98,9 @@ const JohnnyOnTheSpot = () => {
           } finally {
             setShowAlert(false);
           }
+        },
+        onCancelPressed: async () => {
+          setShowAlert(false);
         }
       });
 
@@ -92,29 +120,6 @@ const JohnnyOnTheSpot = () => {
     setBackupIdDialogVisible(false);
   }
 
-  const backupData = async () => {
-
-    setAlertConfig({
-
-      confirmButtonText: 'Confirm',
-      message: 'Are you sure you want to backup your current data?',
-      showCancelButton: true,
-      title: 'Backup Data',
-
-      onConfirmPressed: async () => {
-        try {
-          dataManagementUtil.backupData();
-        } catch (error) {
-          console.error(error);
-        } finally {
-          setShowAlert(false);
-        }
-      }
-    });
-
-    setShowAlert(true);
-  }
-
   const clearAllData = async () => {
 
     setAlertConfig({
@@ -132,6 +137,9 @@ const JohnnyOnTheSpot = () => {
         } finally {
           setShowAlert(false);
         }
+      },
+      onCancelPressed: async () => {
+        setShowAlert(false);
       }
     });
 
@@ -243,55 +251,9 @@ const JohnnyOnTheSpot = () => {
                 </Dialog.Container>
               </View>
 
-              <AwesomeAlert
-                cancelButtonColor='#c70000'
-                cancelText='Cancel'
-                closeOnHardwareBackPress={true}
-                closeOnTouchOutside={true}
-                confirmButtonColor='#2D640F'
-                confirmText={alertConfig.confirmButtonText}
-                message={alertConfig.message}
-                show={showAlert}
-                showCancelButton={alertConfig.showCancelButton}
-                showConfirmButton={true}
-                title={alertConfig.title}
-
-                cancelButtonStyle={{
-                  marginRight: 5,
-                  width: 100,
-                  alignItems: 'center'
-                }}
-                cancelButtonTextStyle={{
-                  fontFamily: util.getBoldFontName(),
-                  fontSize: 12
-                }}
-                confirmButtonStyle={{
-                  marginLeft: 5,
-                  width: 100,
-                  alignItems: 'center'
-                }}
-                confirmButtonTextStyle={{
-                  fontFamily: util.getBoldFontName(),
-                  fontSize: 12
-                }}
-                contentContainerStyle={{
-                  backgroundColor: '#F2F2F2'
-                }}
-                messageStyle={{
-                  fontFamily: util.getFontName(),
-                  fontSize: 12,
-                  marginBottom: 10
-                }}
-                titleStyle={{
-                  fontFamily: util.getBoldFontName(),
-                  fontSize: 15,
-                  marginBottom: 10
-                }}
-
-                onConfirmPressed={alertConfig.onConfirmPressed}
-                onCancelPressed={() => { setShowAlert(false); }}
-              />
             </Modal>
+
+            {util.renderAwesomeAlert(alertConfig, showAlert)}
 
           </WishlistContextProvider>
         </VehicleContextProvider>
