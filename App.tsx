@@ -158,8 +158,8 @@ const JohnnyOnTheSpot = () => {
                   <Dialog.Input
                     style={styles.textBackupIdDetails}
                     onChangeText={text => setDialogInputValue(text)} />
-                  <Dialog.Button label="Cancel" style = {styles.textButton} onPress={handleCancel} />
-                  <Dialog.Button label="Submit" style = {styles.textButton} onPress={handleSubmit} />
+                  <Dialog.Button label="Cancel" style={styles.textButton} onPress={handleCancel} />
+                  <Dialog.Button label="Submit" style={styles.textButton} onPress={handleSubmit} />
                 </Dialog.Container>
               </View>
             </Modal>
