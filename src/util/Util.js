@@ -1,7 +1,8 @@
+import { ActivityIndicator, Linking, StyleSheet, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { InAppBrowser } from 'react-native-inappbrowser-reborn';
+import { BlurView } from '@react-native-community/blur';
 import AwesomeAlert from 'react-native-awesome-alerts';
-import { Linking } from 'react-native';
 
 const util = {
     saveObject: async (key, object) => {
@@ -197,6 +198,18 @@ const util = {
                 onCancelPressed={alertConfig.onCancelPressed}
             />
         )
+    }, renderInProgress: function (inProgress) {
+        return (
+            inProgress && (
+                <View style={styles.containerLoading}>
+                    <BlurView blurType='light' blurAmount={3} style={StyleSheet.absoluteFill}>
+                        <View style={styles.loadingIndicator}>
+                            <ActivityIndicator size='large' color='#2D640F' />
+                        </View>
+                    </BlurView>
+                </View>
+            )
+        )
     }
 }
 
@@ -210,4 +223,22 @@ function getEditedVehicleName(vehicleName) {
     }
 }
 
+const styles = {
+    containerLoading: {
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        bottom: 0,
+        justifyContent: 'center',
+        left: 0,
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        zIndex: 999
+    },
+    loadingIndicator: {
+        alignItems: 'center',
+        flex: 1,
+        justifyContent: 'center',
+    }
+}
 export default util;

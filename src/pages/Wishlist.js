@@ -325,15 +325,7 @@ const Wishlist = () => {
         </View>
       </Modal>
 
-      {inProgress && (
-        <View style={styles.containerLoading}>
-          <BlurView blurType='light' blurAmount={3} style={StyleSheet.absoluteFill}>
-            <View style={styles.loadingIndicator}>
-              <ActivityIndicator size='large' color='#2D640F' />
-            </View>
-          </BlurView>
-        </View>
-      )}
+      {util.renderInProgress(inProgress)}
     </View>
   );
 };

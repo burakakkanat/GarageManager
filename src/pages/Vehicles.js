@@ -39,8 +39,7 @@ const Vehicles = () => {
   useEffect(() => {
     const backAction = () => {
       if (vehicleMenuActive) {
-        setVehicleMenuActive(false);
-        setEmptyVehicleObject();
+        closeVehicleMenu();
         return true;
       }
       return false;
@@ -62,41 +61,47 @@ const Vehicles = () => {
   const openVehicleMenu = (vehicleObj) => {
     setVehicleObject(vehicleObj);
     setVehicleMenuActive(true);
-    setSelectedGarageLocation('');
   };
+
+  const closeVehicleMenu = async () => {
+    setEmptyVehicleObject();
+    setSelectedGarageLocation('');
+    setVehicleMenuActive(false);
+  }
 
   const addNewVehicle = async () => {
 
-    if (!vehicleObject.vehicleName.trim()) {
-
-      setAlertConfig({
-        confirmButtonText: 'OK',
-        message: 'Vehicle name can not be empty.',
-        showCancelButton: false,
-        title: 'Error',
-        onConfirmPressed: async () => { setShowAlert(false) }
-      });
-
-      setShowAlert(true);
-      return;
-    }
-
-    if (vehicleObject.garageLocation === '') {
-
-      setAlertConfig({
-        confirmButtonText: 'OK',
-        message: 'Please choose a garage.',
-        showCancelButton: false,
-        title: 'Error',
-        onConfirmPressed: async () => { setShowAlert(false) }
-      });
-
-      setShowAlert(true);
-      return;
-    }
+    setInProgress(true); // Not working
 
     try {
-      setInProgress(true); // Not working
+
+      if (!vehicleObject.vehicleName.trim()) {
+
+        setAlertConfig({
+          confirmButtonText: 'OK',
+          message: 'Vehicle name can not be empty.',
+          showCancelButton: false,
+          title: 'Error',
+          onConfirmPressed: async () => { setShowAlert(false) }
+        });
+
+        setShowAlert(true);
+        return;
+      }
+
+      if (vehicleObject.garageLocation === '') {
+
+        setAlertConfig({
+          confirmButtonText: 'OK',
+          message: 'Please choose a garage.',
+          showCancelButton: false,
+          title: 'Error',
+          onConfirmPressed: async () => { setShowAlert(false) }
+        });
+
+        setShowAlert(true);
+        return;
+      }
 
       vehicleObject.uuid = uuid.v4();
 
@@ -129,10 +134,9 @@ const Vehicles = () => {
     } catch (error) {
       console.error(error);
     } finally {
-      setVehicleObject({ ...vehicleObject, vehicleName: '' });
+      setVehicleObject({ ...vehicleObject, vehicleName: '' }); // setEmptyVehicleObject isn't used on purpose. This makes easier to add cars back to back.
       setInProgress(false);
     }
-
   };
 
   const removeVehicle = async () => {
@@ -147,7 +151,6 @@ const Vehicles = () => {
       onConfirmPressed: async () => {
         try {
           setInProgress(true); // Working but loading icon is overlapped by alert
-          setVehicleMenuActive(false);
 
           // Remove from the garage
           const newGarageObjects = [...garageObjects];
@@ -176,7 +179,7 @@ const Vehicles = () => {
         } catch (error) {
           console.error(error);
         } finally {
-          setEmptyVehicleObject();
+          closeVehicleMenu();
           setInProgress(false);
           setShowAlert(false);
         }
@@ -191,21 +194,34 @@ const Vehicles = () => {
 
   const changeVehicleModifiedStatus = async (modifiedStatus) => {
 
+    setInProgress(true);
+
     try {
       const newGarageObjects = [...garageObjects];
-      const garageIndex = newGarageObjects.findIndex((garageObj) => garageObj.location === vehicleObject.garageLocation);
+      const garageIndex = newGarageObjects.findIndex(garageObj => garageObj.location === vehicleObject.garageLocation);
       const newGarageObject = newGarageObjects[garageIndex];
 
       for (const vehicle of newGarageObject.vehicles) {
         if (vehicle.uuid === vehicleObject.uuid) {
           vehicle.modified = modifiedStatus;
-          setEmptyVehicleObject();
           break;
         }
       }
 
       setGarageObjects(newGarageObjects);
       await util.saveObject('@GarageObjectList', newGarageObjects);
+
+      await setVehicleObjects(prevVehicleObjects => {
+
+        const updatedVehicleObjects = prevVehicleObjects.map(vehicle => {
+          if (vehicle.uuid === vehicleObject.uuid) {
+            return { ...vehicle, modified: modifiedStatus };
+          }
+          return vehicle;
+        });
+
+        return updatedVehicleObjects;
+      });
 
       if (modifiedStatus) {
         ToastAndroid.showWithGravity(
@@ -221,24 +237,14 @@ const Vehicles = () => {
         );
       }
 
-      refreshVehicleList();
+
     } catch (error) {
       console.error(error);
     } finally {
-      setEmptyVehicleObject();
-      setVehicleMenuActive(false);
+      closeVehicleMenu();
+      setInProgress(false);
     }
   }
-
-  const refreshVehicleList = async () => {
-    let allVehicleObjects = [];
-    for (const garageObject of garageObjects) {
-      if (garageObject.vehicles.length > 0) {
-        allVehicleObjects = [...allVehicleObjects, ...garageObject.vehicles].sort(util.compareVehicles);
-      }
-    }
-    setVehicleObjects(allVehicleObjects);
-  };
 
   const filteredVehicleObjects = useMemo(() => {
     if (searchValue === 'Stock') {
@@ -382,15 +388,8 @@ const Vehicles = () => {
         </View>
       )}
 
-      {inProgress && (
-        <View style={styles.containerLoading}>
-          <BlurView blurType='light' blurAmount={3} style={StyleSheet.absoluteFill}>
-            <View style={styles.loadingIndicator}>
-              <ActivityIndicator size='large' color='#2D640F' />
-            </View>
-          </BlurView>
-        </View>
-      )}
+      {util.renderInProgress(inProgress)}
+
     </View>
   );
 };
