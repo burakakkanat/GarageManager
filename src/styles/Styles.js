@@ -218,6 +218,16 @@ const styles = StyleSheet.create({
         marginTop: 3,
         width: '100%'
     },
+    textBackupIdDetails: {
+        color: '#F2F2F2',
+        fontFamily: util.getFontName(),
+        fontSize: 13
+    },
+    textBackupIdDialogTitle: {
+        color: '#F2F2F2',
+        fontFamily: util.getBoldFontName(),
+        fontSize: 15
+    },
     textButton: {
         color: 'white',
         fontFamily: util.getBoldFontName(),
