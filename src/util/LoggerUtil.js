@@ -17,8 +17,6 @@ const loggerUtil = {
         try {
             const databaseRef = await getLogDatabaseRef(functionName);
             const newDatabaseRef = databaseRef.push();
-            console.debug(newDatabaseRef);
-            console.debug(error);
             newDatabaseRef.set(error.message);
         } catch (error) {
             console.error(error);
