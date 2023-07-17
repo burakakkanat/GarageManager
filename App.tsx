@@ -20,9 +20,9 @@ const JohnnyOnTheSpot = () => {
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
 
   // Backup stuff
-  const [backupIdDialogVisible, setBackupIdDialogVisible] = useState(false);
+  const [userIdDialogVisible, setUserIdDialogVisible] = useState(false);
   const [dialogInputValue, setDialogInputValue] = useState('');
-  const [backupId, setBackupId] = useState('');
+  const [userId, setUserId] = useState('');
 
   // Alert stuff
   const [showAlert, setShowAlert] = useState(false);
@@ -34,14 +34,14 @@ const JohnnyOnTheSpot = () => {
   });
 
   useEffect(() => {
-    const getBackupId = async () => {
-      var storedBackupId = await util.retrieveObject('@BackupId');
-      if (storedBackupId && storedBackupId.length !== 0) {
-        setBackupId(storedBackupId);
+    const getUserId = async () => {
+      var storedUserId = await util.retrieveObject('@UserId');
+      if (storedUserId && storedUserId.length !== 0) {
+        setUserId(storedUserId);
       }
     };
 
-    getBackupId();
+    getUserId();
   }, []);
 
   const showSettings = async () => {
@@ -76,9 +76,9 @@ const JohnnyOnTheSpot = () => {
 
   const restoreData = async () => {
 
-    if (!backupId || backupId.length === 0) {
+    if (!userId || userId.length === 0) {
 
-      setBackupIdDialogVisible(true);
+      setUserIdDialogVisible(true);
 
     } else {
 
@@ -107,22 +107,22 @@ const JohnnyOnTheSpot = () => {
     }
   }
 
-  const handleBackupIdDialogSubmit = async () => {
+  const handleUserIdDialogSubmit = async () => {
 
     try {
-      const backupId = dialogInputValue.trim();
-      setBackupId(backupId);
-      await util.saveObject('@BackupId', backupId);
-      setBackupIdDialogVisible(false);
+      const userId = dialogInputValue.trim();
+      setUserId(userId);
+      await util.saveObject('@UserId', userId);
+      setUserIdDialogVisible(false);
       dataManagementUtil.restoreFromBackup();
     } catch (error) {
-      loggerUtil.logError('App_handleBackupIdDialogSubmit', error);
+      loggerUtil.logError('App_handleUserIdDialogSubmit', error);
     }
   }
 
-  const handleBackupIdDialogCancel = async () => {
+  const handleUserIdDialogCancel = async () => {
     setDialogInputValue('');
-    setBackupIdDialogVisible(false);
+    setUserIdDialogVisible(false);
   }
 
   const clearAllData = async () => {
@@ -151,19 +151,19 @@ const JohnnyOnTheSpot = () => {
     setShowAlert(true);
   }
 
-  const renderBackupIdSection = () => {
-    if (backupId && backupId.length > 0) {
+  const renderUserIdSection = () => {
+    if (userId && userId.length > 0) {
       return (
         <TouchableOpacity
-          style={styles.backupIdContainer}
+          style={styles.userIdContainer}
           onPress={() => {
-            Clipboard.setString(backupId);
+            Clipboard.setString(userId);
             ToastAndroid.show('Copied to clipboard', ToastAndroid.SHORT);
           }}
         >
-          <Text style={styles.backupIdText}>
-            <Text style={{ fontWeight: 'bold' }}>Backup ID (save this in case of device change): </Text>
-            {backupId}
+          <Text style={styles.userIdText}>
+            <Text style={{ fontWeight: 'bold' }}>User ID (save this in case of device change): </Text>
+            {userId}
           </Text>
         </TouchableOpacity>
       );
@@ -237,20 +237,20 @@ const JohnnyOnTheSpot = () => {
           </View>
 
           <View>
-            {renderBackupIdSection()}
+            {renderUserIdSection()}
           </View>
 
           <View>
-            <Dialog.Container visible={backupIdDialogVisible}>
-              <Dialog.Title style={styles.textBackupIdDialogTitle}>No Backup ID Found</Dialog.Title>
-              <Dialog.Description style={styles.textBackupIdDetails}>
+            <Dialog.Container visible={userIdDialogVisible}>
+              <Dialog.Title style={styles.textUserIdDialogTitle}>No User ID Found</Dialog.Title>
+              <Dialog.Description style={styles.textUserIdDetails}>
                 Please submit the "Backup Id" you obtained from your other device.
               </Dialog.Description>
               <Dialog.Input
-                style={styles.textBackupIdDetails}
+                style={styles.textUserIdDetails}
                 onChangeText={text => setDialogInputValue(text)} />
-              <Dialog.Button label="Cancel" style={styles.textButton} onPress={handleBackupIdDialogCancel} />
-              <Dialog.Button label="Submit" style={styles.textButton} onPress={handleBackupIdDialogSubmit} />
+              <Dialog.Button label="Cancel" style={styles.textButton} onPress={handleUserIdDialogCancel} />
+              <Dialog.Button label="Submit" style={styles.textButton} onPress={handleUserIdDialogSubmit} />
             </Dialog.Container>
           </View>
 

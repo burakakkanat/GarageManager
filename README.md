@@ -40,7 +40,7 @@ https://user-images.githubusercontent.com/22921090/229482075-e2d0c090-2015-4401-
 
 ##### _Settings:_
 * ###### You can backup, restore or erase your current data.
-* ###### In case of switching devices, you can restore your data on your new device with your **Backup ID**.
+* ###### In case of switching devices, you can restore your data on your new device with your **User ID**.
 
 ![Settings](https://github.com/burakakkanat/Johnny-on-the-Spot/assets/22921090/0a8fd447-40aa-4567-b8d5-502843778c24)
 
