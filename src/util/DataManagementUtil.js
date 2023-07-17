@@ -6,9 +6,9 @@ import util from '../util/Util';
 
 async function getDatabaseRef(restore) {
 
-  var storedBackupId = await util.retrieveObject('@BackupId');
+  var storedUserId = await util.retrieveObject('@UserId');
 
-  if (!storedBackupId || storedBackupId.length === 0) {
+  if (!storedUserId || storedUserId.length === 0) {
     if (restore) {
       ToastAndroid.showWithGravity(
         'Data restoration failed. Try restarting your app.',
@@ -16,12 +16,12 @@ async function getDatabaseRef(restore) {
         ToastAndroid.TOP, // Not working
       );
     } else {
-      storedBackupId = uuid.v1();
-      await util.saveObject('@BackupId', storedBackupId);
+      storedUserId = uuid.v1();
+      await util.saveObject('@UserId', storedUserId);
     }
   }
 
-  const databaseRefPath = '/' + storedBackupId;
+  const databaseRefPath = '/userData/' + storedUserId;
   const databaseRef = firebase
     .app()
     .database('https://johnny-on-the-spot-130a2-default-rtdb.europe-west1.firebasedatabase.app/')

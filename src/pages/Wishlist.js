@@ -3,6 +3,7 @@ import React, { useContext, useMemo, useState } from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useFocusEffect } from '@react-navigation/native';
 import { GarageContext } from '../context/GarageContext';
+import loggerUtil from '../util/LoggerUtil';
 import styles from '../styles/Styles';
 import uuid from 'react-native-uuid';
 import util from '../util/Util';
@@ -94,13 +95,13 @@ const Wishlist = () => {
       );
 
     } catch (error) {
-      console.error(error);
+      loggerUtil.logError('Wishlist_addWishlistItem', error);
     } finally {
       setEmptyWishlistObject();
     }
   };
 
-  const removeWishlistObject = async (whislistItemToRemove) => {
+  const removeWishlistItem = async (whislistItemToRemove) => {
 
     setAlertConfig({
 
@@ -130,7 +131,7 @@ const Wishlist = () => {
           );
 
         } catch (error) {
-          console.error(error);
+          loggerUtil.logError('Wishlist_removeWishlistItem', error);
         } finally {
           setInProgress(false);
           setShowAlert(false);
@@ -148,7 +149,7 @@ const Wishlist = () => {
 
     const allWishlistObjects = garageObjects.flatMap(garage => garage.wishlist);
 
-    if (!searchValue || searchValue == '') {
+    if (!searchValue || searchValue === '') {
       return allWishlistObjects;
     } else {
       return allWishlistObjects.filter((wishlistObj) =>
@@ -163,19 +164,19 @@ const Wishlist = () => {
       <TouchableOpacity
         style={styles.containerList}
         onPress={() => util.openVehicleFandomPage(wishlistItem.vehicleName)}
-        onLongPress={() => removeWishlistObject(wishlistItem)}
+        onLongPress={() => removeWishlistItem(wishlistItem)}
       >
         <View style={styles.containerListHeaderText}>
-          <Text style={styles.textWishlistObjectB}>{wishlistItem.vehicleName}</Text>
+          <Text style={styles.textWishlistItemB}>{wishlistItem.vehicleName}</Text>
         </View>
         <View style={styles.containerListHeaderText}>
-          <Text style={styles.textWishlistObjectM}>{wishlistItem.garageTheme}</Text>
+          <Text style={styles.textWishlistItem}>{wishlistItem.garageTheme}</Text>
         </View>
         <View style={styles.containerListHeaderText}>
-          <Text style={styles.textWishlistObjectB}>{wishlistItem.price}</Text>
+          <Text style={styles.textWishlistItemB}>{wishlistItem.price}</Text>
         </View>
         <View style={styles.containerListHeaderText}>
-          <Text style={styles.textWishlistObjectM}>{wishlistItem.tradePrice}</Text>
+          <Text style={styles.textWishlistItem}>{wishlistItem.tradePrice}</Text>
         </View>
       </TouchableOpacity>
     );

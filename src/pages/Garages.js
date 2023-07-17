@@ -2,6 +2,7 @@ import { Modal, ScrollView, Text, TextInput, ToastAndroid, TouchableOpacity, Vie
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { GarageContext } from '../context/GarageContext';
+import loggerUtil from '../util/LoggerUtil';
 import styles from '../styles/Styles';
 import uuid from 'react-native-uuid';
 import util from '../util/Util';
@@ -83,6 +84,7 @@ const Garages = () => {
   };
 
   const addGarageObject = async () => {
+
     try {
       setInProgress(true);
 
@@ -112,7 +114,7 @@ const Garages = () => {
       );
 
     } catch (error) {
-      console.error(error);
+      loggerUtil.logError('Garages_addGarageObject', error);
     } finally {
       setInProgress(false);
     }
@@ -160,7 +162,7 @@ const Garages = () => {
       );
 
     } catch (error) {
-      console.error(error);
+      loggerUtil.logError('Garages_editGarageObject', error);
     } finally {
       setInProgress(false);
     }
@@ -198,7 +200,7 @@ const Garages = () => {
           );
 
         } catch (error) {
-          console.error(error);
+          loggerUtil.logError('Garages_removeGarageObject', error);
         } finally {
           setInProgress(false);
           setShowAlert(false);
@@ -226,66 +228,70 @@ const Garages = () => {
 
   const verifyGarageFields = (garageObjects) => {
 
-    if (!garageObject.location.trim()) {
+    try {
+      if (!garageObject.location.trim()) {
 
-      setAlertConfig({
-        confirmButtonText: 'OK',
-        message: 'Garage location can not be empty.',
-        showCancelButton: false,
-        title: 'Error',
-        onConfirmPressed: async () => { setShowAlert(false) }
-      });
+        setAlertConfig({
+          confirmButtonText: 'OK',
+          message: 'Garage location can not be empty.',
+          showCancelButton: false,
+          title: 'Error',
+          onConfirmPressed: async () => { setShowAlert(false) }
+        });
 
-      setShowAlert(true);
-      return false;
+        setShowAlert(true);
+        return false;
+      }
+
+      if (!garageObject.theme.trim()) {
+
+        setAlertConfig({
+          confirmButtonText: 'OK',
+          message: 'Garage theme can not be empty.',
+          showCancelButton: false,
+          title: 'Error',
+          onConfirmPressed: async () => { setShowAlert(false) }
+        });
+
+        setShowAlert(true);
+        return false;
+      }
+
+      const garageWithSameLocationIndex = garageObjects.findIndex((garageObj) => garageObj.location === garageObject.location);
+
+      if (garageWithSameLocationIndex !== -1) {
+
+        setAlertConfig({
+          confirmButtonText: 'OK',
+          message: 'Garage at this location already exists.',
+          showCancelButton: false,
+          title: 'Error',
+          onConfirmPressed: async () => { setShowAlert(false) }
+        });
+
+        setShowAlert(true);
+        return false;
+      }
+
+      const garageWithSameThemeIndex = garageObjects.findIndex((garageObj) => garageObj.theme === garageObject.theme);
+      if (garageWithSameThemeIndex !== -1) {
+
+        setAlertConfig({
+          confirmButtonText: 'OK',
+          message: 'Garage with this theme already exists.',
+          showCancelButton: false,
+          title: 'Error',
+          onConfirmPressed: async () => { setShowAlert(false) }
+        });
+
+        setShowAlert(true);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      loggerUtil.logError('Garages_verifyGarageFields', error);
     }
-
-    if (!garageObject.theme.trim()) {
-
-      setAlertConfig({
-        confirmButtonText: 'OK',
-        message: 'Garage theme can not be empty.',
-        showCancelButton: false,
-        title: 'Error',
-        onConfirmPressed: async () => { setShowAlert(false) }
-      });
-
-      setShowAlert(true);
-      return false;
-    }
-
-    const garageWithSameLocationIndex = garageObjects.findIndex((garageObj) => garageObj.location === garageObject.location);
-    
-    if (garageWithSameLocationIndex !== -1) {
-
-      setAlertConfig({
-        confirmButtonText: 'OK',
-        message: 'Garage at this location already exists.',
-        showCancelButton: false,
-        title: 'Error',
-        onConfirmPressed: async () => { setShowAlert(false) }
-      });
-
-      setShowAlert(true);
-      return false;
-    }
-
-    const garageWithSameThemeIndex = garageObjects.findIndex((garageObj) => garageObj.theme === garageObject.theme);
-    if (garageWithSameThemeIndex !== -1) {
-
-      setAlertConfig({
-        confirmButtonText: 'OK',
-        message: 'Garage with this theme already exists.',
-        showCancelButton: false,
-        title: 'Error',
-        onConfirmPressed: async () => { setShowAlert(false) }
-      });
-
-      setShowAlert(true);
-      return false;
-    }
-
-    return true;
   };
 
   const updateVehicleLocations = async (garageObject) => {
@@ -323,7 +329,7 @@ const Garages = () => {
 
       <View style={{ flex: 1 }}>
         <TouchableOpacity onPress={() => showGarageDetails(garageObj)}>
-          <Text style={styles.textListItemGarageM}>{garageObj.theme}</Text>
+          <Text style={styles.textListItemGarage}>{garageObj.theme}</Text>
         </TouchableOpacity>
       </View>
     </View>

@@ -2,18 +2,6 @@ import { StyleSheet } from 'react-native';
 import util from '../util/Util';
 
 const styles = StyleSheet.create({
-    backupIdContainer: {
-        alignItems: 'center',
-        flexDirection: 'row',
-        marginBottom: 10,
-        marginTop: 20,
-        paddingHorizontal: 20,
-    },
-    backupIdText: {
-        color: 'black',
-        flex: 1,
-        fontSize: 14,
-    },
     buttonBlack: {
         alignItems: 'center',
         backgroundColor: 'black',
@@ -218,16 +206,6 @@ const styles = StyleSheet.create({
         marginTop: 3,
         width: '100%'
     },
-    textBackupIdDetails: {
-        color: '#F2F2F2',
-        fontFamily: util.getFontName(),
-        fontSize: 13
-    },
-    textBackupIdDialogTitle: {
-        color: '#F2F2F2',
-        fontFamily: util.getBoldFontName(),
-        fontSize: 15
-    },
     textButton: {
         color: 'white',
         fontFamily: util.getBoldFontName(),
@@ -286,24 +264,24 @@ const styles = StyleSheet.create({
         fontFamily: util.getFontName(),
         fontSize: 12
     },
+    textListItemGarage: {
+        color: 'black',
+        fontFamily: util.getFontName(),
+        fontSize: 11
+    },
     textListItemGarageB: {
         color: 'black',
         fontFamily: util.getBoldFontName(),
         fontSize: 11
     },
-    textListItemGarageM: {
+    textListItemVehicle: {
         color: 'black',
         fontFamily: util.getFontName(),
-        fontSize: 11
+        fontSize: 10.5
     },
     textListItemVehicleB: {
         color: 'black',
         fontFamily: util.getBoldFontName(),
-        fontSize: 10.5
-    },
-    textListItemVehicleM: {
-        color: 'black',
-        fontFamily: util.getFontName(),
         fontSize: 10.5
     },
     textSoftTitle: {
@@ -312,16 +290,38 @@ const styles = StyleSheet.create({
         fontSize: 10.5,
         margin: 10
     },
-    textWishlistObjectM: {
+    textUserIdDetails: {
+        color: '#F2F2F2',
+        fontFamily: util.getFontName(),
+        fontSize: 13
+    },
+    textUserIdDialogTitle: {
+        color: '#F2F2F2',
+        fontFamily: util.getBoldFontName(),
+        fontSize: 15
+    },
+    textWishlistItem: {
         color: 'black',
         fontFamily: util.getFontName(),
         fontSize: 10
     },
-    textWishlistObjectB: {
+    textWishlistItemB: {
         color: 'black',
         fontFamily: util.getBoldFontName(),
         fontSize: 10
-    }
+    },
+    userIdContainer: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        marginBottom: 10,
+        marginTop: 20,
+        paddingHorizontal: 20,
+    },
+    userIdText: {
+        color: 'black',
+        flex: 1,
+        fontSize: 14,
+    },
 });
 
 export default styles;
