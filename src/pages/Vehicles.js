@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { GarageContext } from '../context/GarageContext';
 import { BlurView } from '@react-native-community/blur';
+import loggerUtil from '../util/LoggerUtil';
 import styles from '../styles/Styles';
 import uuid from 'react-native-uuid';
 import util from '../util/Util';
@@ -122,7 +123,7 @@ const Vehicles = () => {
       );
 
     } catch (error) {
-      console.error(error);
+      loggerUtil.logError('Vehicles_addNewVehicle', error);
     } finally {
       setVehicleObject({ ...vehicleObject, vehicleName: '' }); // setEmptyVehicleObject isn't used on purpose. This makes easier to add cars back to back.
       setInProgress(false);
@@ -159,7 +160,7 @@ const Vehicles = () => {
           );
 
         } catch (error) {
-          console.error(error);
+          loggerUtil.logError('Vehicles_removeVehicle', error);
         } finally {
           closeVehicleMenu();
           setInProgress(false);
@@ -208,7 +209,7 @@ const Vehicles = () => {
       }
 
     } catch (error) {
-      console.error(error);
+      loggerUtil.logError('Vehicles_changeVehicleModifiedStatus', error);
     } finally {
       closeVehicleMenu();
       setInProgress(false);

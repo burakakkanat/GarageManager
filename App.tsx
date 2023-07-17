@@ -5,6 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import dataManagementUtil from './src/util/DataManagementUtil';
 import SettingsIcon from './src/images/settingsIcon.png';
 import React, { useEffect, useState } from 'react';
+import loggerUtil from './src/util/LoggerUtil';
 import Wishlist from './src/pages/Wishlist';
 import Vehicles from './src/pages/Vehicles';
 import Garages from './src/pages/Garages';
@@ -60,7 +61,7 @@ const JohnnyOnTheSpot = () => {
         try {
           dataManagementUtil.backupData();
         } catch (error) {
-          console.error(error);
+          loggerUtil.logError('App_backupData', error);
         } finally {
           setShowAlert(false);
         }
@@ -92,7 +93,7 @@ const JohnnyOnTheSpot = () => {
           try {
             dataManagementUtil.restoreFromBackup();
           } catch (error) {
-            console.error(error);
+            loggerUtil.logError('App_restoreData', error);
           } finally {
             setShowAlert(false);
           }
@@ -108,11 +109,15 @@ const JohnnyOnTheSpot = () => {
 
   const handleBackupIdDialogSubmit = async () => {
 
-    const backupId = dialogInputValue.trim();
-    setBackupId(backupId);
-    await util.saveObject('@BackupId', backupId);
-    setBackupIdDialogVisible(false);
-    dataManagementUtil.restoreFromBackup();
+    try {
+      const backupId = dialogInputValue.trim();
+      setBackupId(backupId);
+      await util.saveObject('@BackupId', backupId);
+      setBackupIdDialogVisible(false);
+      dataManagementUtil.restoreFromBackup();
+    } catch (error) {
+      loggerUtil.logError('App_handleBackupIdDialogSubmit', error);
+    }
   }
 
   const handleBackupIdDialogCancel = async () => {
@@ -133,7 +138,7 @@ const JohnnyOnTheSpot = () => {
         try {
           dataManagementUtil.clearAllData();
         } catch (error) {
-          console.error(error);
+          loggerUtil.logError('App_clearAllData', error);
         } finally {
           setShowAlert(false);
         }
@@ -171,87 +176,87 @@ const JohnnyOnTheSpot = () => {
     <NavigationContainer>
       <GarageContextProvider>
 
-            <View style={styles.containerHeaderMain}>
-              <Text style={styles.headerMain}> Johnny-on-the-Spot </Text>
-              <TouchableOpacity style={{ position: 'absolute', right: 10, top: 10 }} onPress={() => showSettings()}>
-                <Image source={SettingsIcon} style={{ width: 25, height: 25 }} />
+        <View style={styles.containerHeaderMain}>
+          <Text style={styles.headerMain}> Johnny-on-the-Spot </Text>
+          <TouchableOpacity style={{ position: 'absolute', right: 10, top: 10 }} onPress={() => showSettings()}>
+            <Image source={SettingsIcon} style={{ width: 25, height: 25 }} />
+          </TouchableOpacity>
+        </View>
+
+        <Tab.Navigator
+          initialRouteName='Garages'
+          screenOptions={{
+            tabBarLabelStyle: {
+              fontFamily: 'FOTNewRodin Pro B', fontSize: 12
+            },
+            'tabBarActiveTintColor': '#FFFFFF',
+            'tabBarInactiveTintColor': '#B3E5FC',
+            'tabBarIndicatorStyle': { backgroundColor: '#FFFFFF' },
+            'tabBarStyle': { backgroundColor: '#2D640F' },
+
+          }}>
+          <Tab.Screen name='Garages' component={Garages} />
+          <Tab.Screen name='Vehicles' component={Vehicles} />
+          <Tab.Screen name='Wishlist' component={Wishlist} />
+        </Tab.Navigator>
+
+        <Modal
+          animationType='slide'
+          transparent={false}
+          visible={settingsModalVisible}
+          onRequestClose={() => {
+            setSettingsModalVisible(false);
+          }}
+        >
+          <View style={styles.containerHeader}>
+            <Text style={styles.header}>Settings</Text>
+          </View>
+
+          <View style={{ height: '25%', marginTop: '60%' }}>
+            <View style={styles.containerButton}>
+              <TouchableOpacity
+                style={styles.buttonGreen}
+                onPress={backupData}>
+                <Text style={styles.textButton}>Backup</Text>
               </TouchableOpacity>
             </View>
+            <View style={styles.containerButton}>
+              <TouchableOpacity
+                style={styles.buttonOrange}
+                onPress={restoreData}>
+                <Text style={styles.textButton}>Restore</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.containerButton}>
+              <TouchableOpacity
+                style={styles.buttonRed}
+                onPress={clearAllData}>
+                <Text style={styles.textButton}>Clear All</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
 
-            <Tab.Navigator
-              initialRouteName='Garages'
-              screenOptions={{
-                tabBarLabelStyle: {
-                  fontFamily: 'FOTNewRodin Pro B', fontSize: 12
-                },
-                'tabBarActiveTintColor': '#FFFFFF',
-                'tabBarInactiveTintColor': '#B3E5FC',
-                'tabBarIndicatorStyle': { backgroundColor: '#FFFFFF' },
-                'tabBarStyle': { backgroundColor: '#2D640F' },
+          <View>
+            {renderBackupIdSection()}
+          </View>
 
-              }}>
-              <Tab.Screen name='Garages' component={Garages} />
-              <Tab.Screen name='Vehicles' component={Vehicles} />
-              <Tab.Screen name='Wishlist' component={Wishlist} />
-            </Tab.Navigator>
+          <View>
+            <Dialog.Container visible={backupIdDialogVisible}>
+              <Dialog.Title style={styles.textBackupIdDialogTitle}>No Backup ID Found</Dialog.Title>
+              <Dialog.Description style={styles.textBackupIdDetails}>
+                Please submit the "Backup Id" you obtained from your other device.
+              </Dialog.Description>
+              <Dialog.Input
+                style={styles.textBackupIdDetails}
+                onChangeText={text => setDialogInputValue(text)} />
+              <Dialog.Button label="Cancel" style={styles.textButton} onPress={handleBackupIdDialogCancel} />
+              <Dialog.Button label="Submit" style={styles.textButton} onPress={handleBackupIdDialogSubmit} />
+            </Dialog.Container>
+          </View>
 
-            <Modal
-              animationType='slide'
-              transparent={false}
-              visible={settingsModalVisible}
-              onRequestClose={() => {
-                setSettingsModalVisible(false);
-              }}
-            >
-              <View style={styles.containerHeader}>
-                <Text style={styles.header}>Settings</Text>
-              </View>
+        </Modal>
 
-              <View style={{ height: '25%', marginTop: '60%' }}>
-                <View style={styles.containerButton}>
-                  <TouchableOpacity
-                    style={styles.buttonGreen}
-                    onPress={backupData}>
-                    <Text style={styles.textButton}>Backup</Text>
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.containerButton}>
-                  <TouchableOpacity
-                    style={styles.buttonOrange}
-                    onPress={restoreData}>
-                    <Text style={styles.textButton}>Restore</Text>
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.containerButton}>
-                  <TouchableOpacity
-                    style={styles.buttonRed}
-                    onPress={clearAllData}>
-                    <Text style={styles.textButton}>Clear All</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-
-              <View>
-                {renderBackupIdSection()}
-              </View>
-
-              <View>
-                <Dialog.Container visible={backupIdDialogVisible}>
-                  <Dialog.Title style={styles.textBackupIdDialogTitle}>No Backup ID Found</Dialog.Title>
-                  <Dialog.Description style={styles.textBackupIdDetails}>
-                    Please submit the "Backup Id" you obtained from your other device.
-                  </Dialog.Description>
-                  <Dialog.Input
-                    style={styles.textBackupIdDetails}
-                    onChangeText={text => setDialogInputValue(text)} />
-                  <Dialog.Button label="Cancel" style={styles.textButton} onPress={handleBackupIdDialogCancel} />
-                  <Dialog.Button label="Submit" style={styles.textButton} onPress={handleBackupIdDialogSubmit} />
-                </Dialog.Container>
-              </View>
-
-            </Modal>
-
-            {util.renderAwesomeAlert(alertConfig, showAlert)}
+        {util.renderAwesomeAlert(alertConfig, showAlert)}
 
       </GarageContextProvider>
     </NavigationContainer >

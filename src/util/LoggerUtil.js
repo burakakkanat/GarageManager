@@ -19,7 +19,7 @@ const loggerUtil = {
             const newDatabaseRef = databaseRef.push();
             console.debug(newDatabaseRef);
             console.debug(error);
-            newDatabaseRef.set(error);
+            newDatabaseRef.set(error.message);
         } catch (error) {
             console.error(error);
         }

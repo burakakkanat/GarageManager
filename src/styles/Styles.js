@@ -312,12 +312,12 @@ const styles = StyleSheet.create({
         fontSize: 10.5,
         margin: 10
     },
-    textWishlistObject: {
+    textWishlistItem: {
         color: 'black',
         fontFamily: util.getFontName(),
         fontSize: 10
     },
-    textWishlistObjectB: {
+    textWishlistItemB: {
         color: 'black',
         fontFamily: util.getBoldFontName(),
         fontSize: 10
